@@ -1,0 +1,230 @@
+{% extends 'Scratch/index.html' %}
+{% load staticfiles %}
+<link type="text/css" rel="stylesheet" href="{% static 'css/OJ/bootstrap.min.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'css/OJ/007b3a2ed095.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'css/OJ/831c3d7ea04c.css' %}">
+<link type="text/css" rel="stylesheet" href="{% static 'css/OJ/1405c99388d2.css' %}">
+
+
+{% block css %}
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css"/>
+{% endblock css %}
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+    <script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"></script>
+{% endblock script %}
+
+{% block mainbody %}
+    <div class="row" style="position: relative;padding-top:4% ">
+        <div class="col-sm-5 col-md-4" style="position:relative;padding-left: 10%;width: 35%">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        基本信息
+
+                        <a class="btn btn-xs btn-default pull-right edit-profile">
+                            个人资料
+                        </a>
+
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <img style="float:left; margin-right: 15px; margin-top: 5px;" width="80px"
+                         src="https://aliyun-lc-upload.oss-cn-hangzhou.aliyuncs.com/aliyun-lc-upload/default_avatar.png"
+                         class="img-rounded" alt="user avatar">
+                    <h4 class="realname" title="&nbsp;">
+                        &nbsp;
+                    </h4>
+                    <p class="username" title="{{ object.username }}">
+                        {{ object.username }}
+
+                    </p>
+                </div>
+
+            </div>
+
+            <!--<div class="panel panel-default">-->
+            <!--<div class="panel-heading">-->
+            <!--<h3 class="panel-title">-->
+            <!--竞赛-->
+            <!--</h3>-->
+            <!--</div>-->
+            <!--<ul class="list-group">-->
+            <!--<li class="list-group-item">-->
+            <!--<span class="badge progress-bar-success">-->
+            <!--0-->
+            <!--</span>-->
+            <!--<i class="fa fa-cubes fa-fw"></i>&nbsp;完成的竞赛-->
+            <!--</li>-->
+
+            <!--</ul>-->
+            <!--</div>-->
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">进展</h3>
+                </div>
+                <!-- ngIf: ac.selectedMiDist !== null -->
+                <ul class="list-group ng-scope" ng-if="ac.selectedMiDist !== null">
+                    <li class="list-group-item">
+              <span class="badge progress-bar-success">
+                {{ object.problem_solve }}/{{ object.problem_all }}
+              </span>
+                        <i class="fa fa-question fa-lg fa-fw"></i>&nbsp;
+                        解决的题目
+                    </li>
+                    <li class="list-group-item">
+              <span class="badge progress-bar-success">
+                {{ object.problem_sub_success_count }}/{{ object.problem_sub_count }}
+              </span>
+                        <i class="fa fa-cog fa-lg fa-fw"></i>&nbsp;
+                        通过的提交
+                    </li>
+                    <li class="list-group-item">
+              <span class="badge progress-bar-info">
+                {{ object.accept_rate }}%
+              </span>
+                        <i class="fa fa-check fa-lg fa-fw"></i>&nbsp;
+                        通过率
+                    </li>
+                </ul><!-- end ngIf: ac.selectedMiDist !== null -->
+                <div class="panel-body">
+                    <div style="padding-top:15%;height: 60%; width: 100%">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">贡献</h3>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+              <span class="badge progress-bar-success">
+                0
+              </span>
+                        <i class="fa fa-gift fa-fw"></i>&nbsp;点数
+                    </li>
+                    <li class="list-group-item">
+              <span class="badge progress-bar-success">
+                0
+              </span>
+                        <i class="fa fa-question-circle fa-fw"></i>&nbsp;题库
+                    </li>
+                    <li class="list-group-item">
+              <span class="badge progress-bar-success">
+                0
+              </span>
+                        <i class="fa fa-gift fa-fw"></i>&nbsp;测试用例
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-7 col-md-8" style="position:relative;padding-right: 10%;width:65%">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title ng-binding" ng-bind="heatmap_title">在过去时间里内，有{{ object.problem_sub_count }}个提交记录</h3>
+                </div>
+                <div class="panel-body col-centered heatmap-panel">
+                    <div id="cal-heatmap" style="position:relative;">
+
+                        <div class="ch-tooltip" style="display:none">
+                        </div>
+                    </div>
+                    <label class="label label-default" id="previousSelector-a-previous">上一年</label>
+                    <label class="label label-default" id="previousSelector-a-next">下一年</label>
+                </div>
+            </div>
+
+
+            <!-- ngIf: pc.miprogress_data -->
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">最近的提交</h3>
+                </div>
+                <ul class="list-group">
+                    {% for item in subitems %}
+                        <a href="/OJ/problem/{{ item.problem_id }}" class="list-group-item">
+                <span class="badge progress-bar-danger" ng-class="getStatus('20')">
+                  {{ item.status }}
+                </span>
+                            <span class="badge progress-bar-info">
+                  {{ item.tag }}
+                </span>
+                            <b>{{ item.problemName }}</b> &nbsp;
+                            <span class="text-muted">
+                  于{{ item.time }}提交&nbsp;
+                </span>
+                        </a>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+    <script>
+        var datalist = {{ datalist|safe }}
+        var hotmapdata = {{ hotmapdata|safe }}
+        console.log(datalist)
+        console.log(hotmapdata)
+        var data = {
+            datasets: [{
+                data: datalist,
+                backgroundColor: ['rgb(0,201,87)', 'rgb(240,128,128)'],
+            }],
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+                '通过',
+                '其他',
+            ]
+        };
+        $(document).ready(function () {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myDoughnutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+            });
+
+
+            var cal = new CalHeatMap();
+            cal.init({
+                domain: "year",
+                subDomain: "day",
+                cellRadius: 0,
+                previousSelector: "#previousSelector-a-previous",
+                nextSelector: "#previousSelector-a-next",
+                tooltip: true,
+                onTooltip: function (date, nb) {
+                    return $filter('currency')(nb || 0, '€ ', 2);
+                },
+                rowLimit: 10,
+                range: 1,
+                legendHorizontalPosition: "right",
+                label: {
+                    width: 46,
+                    position: "right",
+                    offset: {x: 0, y: 110}
+                },
+                subDomainTitleFormat: {
+                    empty: '无提交记录<br/>{date}',
+                    filled: "{count} {name} {date}"
+                },
+
+                domainLabelFormat: "%Y年",
+                itemName: ["个提交记录<br/>", "个提交记录<br/>"],
+                start: new Date(2018, 1, 1),
+                subDomainDateFormat: "%Y年/%m月/%d日",
+                data: hotmapdata
+            });
+        })
+
+    </script>
+{% endblock mainbody %}

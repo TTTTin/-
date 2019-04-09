@@ -1,0 +1,235 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% load competition_extra %}
+{% load matchArrange_extra %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+    <style>
+        .a-title{
+            color: #E74C3C;
+            text-decoration: underline;
+        }
+    </style>
+    <script type="text/javascript">
+        var myProductionList = null;
+        var selectProduction = null;
+        var firstGo = null;
+        var flag1 = null, flag2 = null;
+        var i;
+        var myList = null;
+        var firstGoSelect = null;
+        var opponentProductionID = null;
+        var gameType = null;
+        function setOpponentProductionID(productionID, kind) {
+            opponentProductionID = productionID;
+            gameType = kind;
+        }
+        function battleAgainstIt() {
+            selectProduction = document.getElementsByName('myProduction');
+            firstGo = document.getElementsByName('firstGo');
+            flag1 = false;
+            flag2 = true;
+            var myProductionID;
+            for(i in selectProduction){
+                if(selectProduction[i].checked){
+                    flag1 = true;
+                    console.log(myProductionList[i][1]);
+                    myProductionID = myProductionList[i][1].toString();
+                }
+            }
+
+            var whoFirstGo;
+            if(firstGo[0].checked){
+                whoFirstGo = 1;
+            }else if(firstGo[1].checked){
+                whoFirstGo = 2;
+            }else{
+                flag2 = false;
+            }
+            if(flag1 && flag2){
+                $.ajax({
+                    url : "{% url 'team_match:team_match_battle_with_others' %}",
+                    type : 'POST',
+                    data : {
+                        'productionID1': myProductionID,
+                        'productionID2': opponentProductionID,
+                        'firstGo': whoFirstGo,
+                        'gameType': gameType
+                    },
+                    dataType : 'json',
+                    success : function (data) {
+                        console.log(data);
+                        if(data.start){
+                            setCookie(data.opCode, 'notAI');
+                            url = "http://" + window.location.host.toString() + "/team_match/production/scratch/build/index.html";
+                            window.open(url + "?id=" + myProductionID + "&opCodeAndMess=" + data.opCode + whoFirstGo.toString(), '_blank')
+                        }else{
+                            window.alert("please wait a moment and then try it again...");
+                        }
+                        $("#selectMyProduction").modal('hide');
+                    },
+                    error : function () {
+                        alert("server error...");
+                    }
+                });
+            }else if(!flag1){
+                if(selectProduction.length === 0){
+                    alert("你还没有相关作品");
+                }else{
+                    alert("请选择你的作品");
+                }
+            }else{
+                alert("请选择先手作品");
+            }
+        }
+        function showMyProductionList(kindOfBattle) {
+            $.ajaxSetup({
+                data:{csrfmiddlewaretoken:'{{ csrf_token }}'},
+            });
+            $.ajax({
+                url : "{% url 'team_match:team_match_production' 'self' %}",
+                type : 'POST',
+                data : {
+                    'kind_of_battle' : kindOfBattle
+                },
+                dataType : 'json',
+                success : function (data) {
+                    myProductionList = data.production_list;
+                    myList = document.getElementById('myProductionList');
+                    myList.innerHTML = '<ul><b>请选择你参与对战的作品</b></ul><br>';
+                    for(i in data.production_list){
+                        myList.innerHTML = myList.innerHTML + '<ul>&emsp;&emsp;<input name="myProduction" type="radio" value="" />' + data.production_list[i][0] + '</ul>';
+                    }
+                    if(data.production_list.length == 0){
+                        myList.innerHTML = myList.innerHTML + '<ul>&emsp;&emsp;你还没有相关作品</ul>';
+                    }
+                    firstGoSelect = document.getElementById('firstGoSelect');
+                    firstGoSelect.innerHTML = '<ul><b>请选择先手作品</b></ul><br>\n' +
+                        '                    <ul>&emsp;&emsp;<input name="firstGo" type="radio" value="" />我方先手</ul>\n' +
+                        '                    <ul>&emsp;&emsp;<input name="firstGo" type="radio" value="" />对方先手</ul>';
+                    $("#selectMyProduction").modal('show');
+                }
+            });
+        }
+
+        function setCookie(name,value) {
+            var minute = 10;
+            var exp = new Date();
+            exp.setTime(exp.getTime() + minute*60*1000);
+            document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString() + ";path=/";
+        }
+    </script>
+{% endblock %}
+
+
+
+{% block mainbody %}
+<div>
+    <div>
+        <br><br>
+    </div>
+
+
+    <div class="modal fade" id="selectMyProduction" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body" id="myProductionList">
+
+                </div>
+                <div class="modal-body" id="firstGoSelect">
+
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills">
+                        <li role="presentation">&emsp;&emsp;&emsp;
+                            <button type="button" class='btn ' onclick="battleAgainstIt()">
+                                开始对战
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+    <div id="type-list" class="col-lg-offset-1 col-lg-10">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <th width="50%">作品名称</th>
+                <th width="30%">作品类型</th>
+                <th width="20%">操作</th>
+            </tr>
+            {% for production_for_battle in production_list %}
+                <tr class="{{ forloop.counter | get_class }}">
+
+                    <td>{{ production_for_battle.production.name }}</td>
+                    {% if production_for_battle.kind_of_battle == 1 %}
+                         <td>五子棋</td>
+                    {% elif production_for_battle.kind_of_battle == 2 %}
+                         <td>贪吃蛇</td>
+                    {% else %}
+                        <td>其它</td>
+                    {% endif %}
+                    <td>
+                        <a data-toggle="modal"
+                           data-target="#selectMyProduction"
+                           onclick="setOpponentProductionID('{{ production_for_battle.production.id }}', '{{ production_for_battle.kind_of_battle }}');showMyProductionList('{{ production_for_battle.kind_of_battle }}');"
+                           style="cursor:pointer">和它对战</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        <div class="pagination" style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% endif %}
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.next_page_number }}">下一页</a>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+
+{% endblock %}

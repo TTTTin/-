@@ -1,0 +1,275 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% load qa_extra %}
+{% load comments static %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'fluent_comments/css/ajaxcomments.css' %}"
+          xmlns="http://www.w3.org/1999/html"/>
+    <link rel="stylesheet" href={% static "css/qa/detail_question.css" %} />
+{% endblock %}
+
+{% block mainbody %}
+
+
+
+
+    <div class="list-group col-lg-offset-2 col-lg-8 download-padding">
+
+        <br>
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active"><a href="#">问题详情</a></li>
+        </ul>
+        <br>
+            <div class="row">
+
+
+
+
+                <div class="col-lg-10 ">
+                    <div id="page">
+                        <div class="fh5co-entry padding">
+                            <div>
+
+                                <h4>{{ question.title }}</h4>
+                                <p>{{ question.description | safe }}</p>
+                                <span class="fh5co-post-date">
+                                        {{  question.user }}
+                                        提问于: {{ question.pub_date }}
+                                        {% if question.pub_date != question.update_date %}
+                                        修改于: {{ question.update_date }}
+                                        {% endif %}
+
+                                </span>
+                                    {% if request.user == question.user %}
+                                        <a href="{% url 'qa:qa_update_question' question.pk %}">修改我的提问</a>
+                                    {% endif %}
+                                    <a id="question_comment_toggle" href="#">{% get_comment_count for question as comment_count %}{{ comment_count }}条评论</a>
+                                    <div id="question_comment" style="display: none">
+                                        {% render_comment_list for question %}
+                                        {% if user.is_authenticated %}
+                                            {% render_comment_form for question %}
+                                        {% else %}
+                                            评论请先登陆
+                                        {% endif %}
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="col-lg-1">
+                    <div class="btn-group-vertical">
+                        {% get_question_vote_status question as question_status %}
+                        <div class="btn-group dropup">
+                              <button type="button" class="btn btn-sm btn-default dropdown-toggle" onclick="vote_question(1);"
+                                {% if question_status == 1%}
+                                      disabled="disabled" style="background:grey"
+                                {% elif question_status == -1 %}
+                                      disabled="disabled"
+                                {% endif %}
+                              >
+                                <span class="caret"></span>
+                              </button>
+                        </div>
+                        <span style="text-align:center;">
+                            &nbsp;&nbsp;{{ question.total_points }}
+                        </span>
+
+                        <div class="btn-group dropdown">
+                              <button type="button" class="btn btn-sm btn-default dropdown-toggle" onclick="vote_question(0);"
+                                  {% if question_status == 1%}
+                                      disabled="disabled"
+                                  {% elif question_status == -1 %}
+                                      disabled="disabled" style="background:grey"
+                                  {% endif %}
+                              >
+                                <span class="caret"></span>
+                              </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if answers.count != 0 %}
+                <br>
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="active"><a href="#">回答详情</a></li>
+                </ul>
+                <br>
+                <br>
+            {% endif %}
+
+                {% for answer in answers %}
+                {% get_answer_vote_status answer as answer_status %}
+                <div class="row">
+
+
+
+
+
+                    <div class="col-lg-10">
+                        <div class="fh5co-entry padding">
+                            <div id="answer{{ answer.pk }}">
+
+                               {{ answer.answer_text  | safe}}
+                                <span class="fh5co-post-date">
+                                        {{ answer.user }}
+                                        回答于: {{ answer.pub_date }}
+                                        {% if answer.updated != answer.pub_date%}
+                                        更新于: {{ answer.updated }}
+                                        {% endif %}
+
+                                </span>
+                                <a id="answer_comment_toggle{{ forloop.counter }}" onclick="toggle_answer({{ forloop.counter }})" href="#">
+                                    {% get_comment_count for answer as comment_count %}{{ comment_count }}条评论</a>
+                                <div id="answer_comment{{ forloop.counter }}" style="display: none">
+                                    {% render_comment_list for qa.answer answer.pk %}
+                                    {% if user.is_authenticated %}
+                                        {% render_comment_form for answer%}
+                                    {% else %}
+                                        评论请先登陆
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        <br>
+                        <ul class="nav nav-tabs">
+                            <li role="presentation" class="active"></li>
+                        </ul>
+                        <br>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-1">
+                        <div class="btn-group-vertical">
+                            <div class="btn-group dropup">
+                                  <button type="button" class="btn btn-sm btn-default dropdown-toggle" onclick="vote_answer({{ answer.pk }}, 1);"
+                                  {% if answer_status == 1%}
+                                          disabled="disabled" style="background:grey"
+                                  {% elif answer_status == -1 %}
+                                          disabled="disabled"
+                                  {% endif %}
+                                  >
+                                    <span class="caret"></span>
+                                  </button>
+                            </div>
+                            <span>
+                                &nbsp;&nbsp;{{ answer.total_points }}
+                            </span>
+
+                            <div class="btn-group dropdown">
+                                  <button type="button" class="btn btn-sm btn-default dropdown-toggle" onclick="vote_answer({{ answer.pk }}, 0);"
+                                  {% if answer_status == 1%}
+                                          disabled="disabled"
+                                  {% elif answer_status == -1 %}
+                                          disabled="disabled" style="background:grey"
+                                  {% endif %}
+
+                                  >
+                                    <span class="caret"></span>
+                                  </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+
+
+
+{#                <div class="col-lg-offset-1  col-lg-8 ">#}
+                <div class="col-lg-10" style="padding-top: 25px; padding-left: 0">
+                    {% if user.is_authenticated %}
+                        {% get_if_answer question as answered %}
+                        {% if answered %}
+                            您已经回答过问题
+                            <a href="/qa/answer/edit/{% get_update_answer_pk question %}"><button type="button" class="btn btn-default">修改我的回答</button></a>
+                        {% else %}
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            {{ form.as_p }}
+                            <input class="btn pull-mid btn-success" type="submit" value="提交回答" />
+                        </form>
+                    {% endif %}
+                 </div>
+                {% else %}
+                    回答问题请先登录
+                {% endif %}
+
+                {% if is_paginated %}
+                <div class="col-lg-12" style="padding-left: 0">
+                    <div class="pagination"  style="margin:0;font-size: small; padding-top: 30px; padding-left: 0">
+                        <span class="page-links">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}">上一页</a>
+                            {% endif %}
+                            <span class="page-current">
+                                第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                            </span>
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}">下一页</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'fluent_comments/js/ajaxcomments.js' %}"></script>
+
+    <script>
+        function vote_question(value) {
+            {% if user.is_authenticated %}
+                $.get('/qa/vote/question/' + '{{ question.pk }}' + '/' + value + '/');
+            {% else %}
+                alert("投票前请先登陆");
+            {% endif %}
+        }
+        function vote_answer(answer, value) {
+            {% if user.is_authenticated %}
+                $.get("/qa/vote/answer/" + answer + '/' + value + '/');
+            {% else %}
+                alert("投票前请先登陆");
+            {% endif %}
+        }
+        $("#question_comment_toggle").click(function () {
+            $("#question_comment").toggle("slow");
+        });
+        function toggle_answer(counter) {
+            $("#answer_comment" + counter).toggle("slow");
+            return false;
+        }
+{#        $("#question_comment_toggle").click(function () {#}
+{#            $("#question_comment").toggle("slow");#}
+{#        })#}
+
+        $(document).ready(function () {
+            $('img').css(
+                {
+                    'height': '',
+                    'width': '',
+                }
+            );
+            $('img').css(
+                {
+                    'height': 'auto !important',
+                    'wdith': 'auto',
+                    'max-width': '100%'
+                });
+            $('img').onclick(function () {
+
+            });
+        });
+    </script>
+{% endblock %}

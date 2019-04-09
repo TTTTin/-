@@ -1,0 +1,64 @@
+.gallery_background{
+  background-color: rgb(199,237,233);
+}
+#page-breadcrumb {
+  /*background-image: url(../img/tour-bg.png);*/
+  /*background-color: #fbfafa;*/
+  /*background-repeat: repeat-x,repeat-y;*/
+  /*height: 280px;*/
+  /*background-position: center;*/
+  margin-bottom: 1%;
+  display: table;
+  position: static;
+  width: 100%;
+    font-weight: bold;
+}
+.gallery_img{
+  width: 180px;
+  height: 180px;
+  margin: auto;
+}
+.gallery_right img:hover{
+
+}
+.right{
+  float: right;
+}
+.gallery_right{
+  width: 25%;
+  height: 50px;
+  float: left;
+}
+h3{
+       color: #669933;
+     /*color: rgb(64, 116, 52);*/
+    font-weight: 600;
+    /*font-weight: bold;*/
+    /*color: #006666;*/
+     /*color: rgb(64, 116, 52);*/
+    /*text-shadow: 3px 3px 3px #0099CC;*/
+    letter-spacing: 0.2rem;
+    font-size: 30px;
+}
+div.text{
+  /*font-family: KaiTi;*/
+  /*font-weight: bold;*/
+  font-size: 17px;
+       color: #669933;
+   /*color: rgb(64, 116, 52);*/
+}
+.gallery_desription {
+  font-size: 18px;
+  /*color: rgb(64, 116, 52);*/
+       color: #669933;
+  /*font-weight: bold;*/
+}
+.tougao{
+  width: 50%;
+}
+.gallery_right p{
+       /*color: #669933;*/
+}
+.warn{
+  width: 30%;
+}

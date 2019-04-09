@@ -1,0 +1,148 @@
+{% extends 'index.html' %}
+{% block content %}
+{#    <style type="text/css">#}
+{#        .sb2{#}
+{#            text-align: center;#}
+{#        }#}
+{#    </style>#}
+
+     <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2 >数据可视化</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a>数据分析</a>
+                        </li>
+                        <li class="active">
+                            <strong>数据可视化</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+     </div>
+
+    <h1><b>2018-06-02义乌比赛结果统计分析</b></h1>
+
+
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+
+					一、竞赛概况
+
+			</h4>
+		</div>
+
+			<div class="panel-body">
+				<h3>竞赛分析</h3>
+
+                暂无<br><br>
+                <div>
+                    <div  style="margin:0px 0px 0px 0px;">
+                        <iframe src="/../t/dataVisualization_competition" frameborder="0" scrolling="no" width="100%" height="1600px" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+	</div>
+
+
+
+
+
+    <div class="panel panel-success">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+
+					二、参赛学生
+
+			</h4>
+		</div>
+
+			<div class="panel-body">
+				<h3>人群分析</h3>
+
+                暂无<br><br>
+                <div>
+                    <div  style="margin:0px 0px 0px 0px;">
+                        <iframe src="/../t/dataVisualization_student" frameborder="0" scrolling="no" width="100%" height="800px" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+	</div>
+
+
+    <div class="panel panel-info">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+
+					三、参赛作品
+
+			</h4>
+		</div>
+
+			<div class="panel-body">
+				<h3>作品分析</h3>
+
+                暂无<br><br>
+                <div>
+                    <div  style="margin:0px 0px 0px 0px;">
+                        <iframe src="/../t/dataVisualization_production" frameborder="0" scrolling="no" width="100%" height="1400px" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+	</div>
+
+
+    <div class="panel panel-warning">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+
+					四、评委打分
+
+			</h4>
+		</div>
+
+			<div class="panel-body">
+				<h3>打分分析</h3>
+
+                暂无<br><br>
+                <div>
+                    <div  style="margin:0px 0px 0px 0px;">
+                         <iframe src="/../t/dataVisualization_judge" frameborder="0" scrolling="no" width="100%" height="1400px" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+	</div>
+
+
+
+
+
+<script type="text/javascript">
+	$(function () { $('#collapseFour').collapse({
+		toggle: false
+	})});
+	$(function () { $('#collapseTwo').collapse('show')});
+	$(function () { $('#collapseThree').collapse('toggle')});
+	$(function () { $('#collapseOne').collapse('hide')});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+    <a href="#top">
+        <img src="/../static/img/totop.png" href="#top"  style="position: fixed; bottom: 40px;right: 0; z-index: 1;cursor: pointer" />
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% load inbox_extra %}
+
+{% block mainbody %}
+{#    <div class="list-group col-lg-offset-2 col-lg-8 download-padding">#}
+{#        <div class="container">#}
+{#            <div class="row">#}
+{#                <div class="col-lg-1 modal-content">#}
+{#                    <a href="/inbox">未读</a><br />#}
+{#                    <a href="/inbox/all">全部</a><br />#}
+{#                </div>#}
+{#                <div class="col-lg-11 modal-content">#}
+{#                    <h3>#}
+{#                        {{ object.actor }}{{ object.verb }}{{ object.target.get_full_name }}#}
+{#                    </h3>#}
+{#                    <p>#}
+{#                        操作人:{{ object.actor }}#}
+{#                        时间:{{ object.timestamp }}#}
+{#                    </p>#}
+{#                    {% if object.description %}#}
+{#                        <p>#}
+{#                            {{ object.description }}#}
+{#                        </p>#}
+{#                        {% get_obj_url object.target as url %}#}
+{#                        {% if url %}#}
+{#                            <a herf="{{ url }}">详情查看</a>#}
+{#                        {% endif %}#}
+{#                    {% endif %}#}
+{##}
+{#                </div>#}
+{##}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    <div class="row col-lg-offset-2 col-lg-6">
+        <ul class="nav nav-tabs ">
+            <li role="presentation"><a href="/inbox">未读</a></li>
+            <li role="presentation"><a href="/inbox/all">全部</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="weidu">
+                <h3>
+                    {{ object.actor }}{{ object.verb }}{{ object.target.get_full_name }}
+                </h3>
+                <p>
+                    操作人:{{ object.actor }}
+                    时间:{{ object.timestamp }}
+                </p>
+                {% if object.description %}
+                    <p>{{ object.description }}</p>
+                    {% get_obj_url object.target as url %}
+                    {% if url %}
+                        <a href={{ url }}>详情查看</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

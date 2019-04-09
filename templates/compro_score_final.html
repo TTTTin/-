@@ -1,0 +1,213 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/t/competition_management_adviser/">竞赛管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong><a href="/t/compro_score_final/{{ pk }}/">成绩查看(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="flexpos">
+        </div>
+
+    <table id="table" class="display" style="width:100%">
+
+        <thead>
+            <tr>
+                <th></th>
+                <th>学校</th>
+                <th>姓名</th>
+                <th>用户名</th>
+                <th>总分</th>
+            </tr>
+        </thead>
+    </table>
+    </div>
+
+{% endblock %}
+{% block script %}
+
+<style type="text/css">
+
+td.details-control {
+    background: url({% static 'img/datatables_details_open.png' %}) no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url({% static 'img/datatables_details_close.png' %}) no-repeat center center;
+}
+</style>
+
+<link href="{% static 'competition/datatables.min.css' %}" rel="stylesheet">
+<script src="{% static 'competition/datatables.min.js' %}"></script>
+<link href="{% static 'competition/Buttons-1.5.1/css/buttons.dataTables.min.css' %}" rel="stylesheet">
+<script src="{% static 'competition/Buttons-1.5.1/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'competition/Buttons-1.5.1/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'competition/jszip.min.js' %}"></script>
+
+<script type="text/javascript">
+        if (document.getElementById('getPage')){
+             document.getElementById('getPage').onclick=function () {
+                var page=Number($("#pagenum").val());
+                console.log(page);
+                var pos=window.location.href.indexOf("?");
+                var hrf="";
+                if(pos==-1){
+                    hrf=window.location.href.slice(0);
+                }else{
+                    hrf =window.location.href.slice(0,pos);
+                }
+                var sortpos=window.location.search.indexOf("sort=");
+                var sortendpos=window.location.search.indexOf("&",sortpos);
+                console.log(sortpos);
+                console.log(window.location.search.slice(sortpos+5));
+                if(sortpos>-1){
+                    if(sortendpos>-1){
+                        window.location.href=hrf+"?page="+page+"&sort="+window.location.search.slice(sortpos+5,sortendpos);
+                    }else {
+                        window.location.href = hrf + "?page=" + page + "&sort=" + window.location.search.slice(sortpos + 5);
+                    }
+                }else {
+                     window.location.href=hrf+"?page="+page;
+                }
+
+             }
+        }
+
+
+/* Formatting function for row details - modify as you need */
+function format ( d ) {
+    // `d` is the original data object for the row
+    var head = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+        '<tr>' +
+        '<td>题目</td>' +
+        '<td>作品编号</td>' +
+        '<td>计算思维得分</td>' +
+        '<td>题目平均得分</td>' +
+        '<td>题目得分</td>' +
+        '<td>教研员打分</td>' +
+        '<td>在线查看</td>' +
+        '</tr>';
+    var column = "";
+    for (var i=0; i < d.detail.length; i++)
+    {
+        column +=
+            '<tr>' +
+            '<td>' + d.detail[i].question + '</td>' +
+            '<td>' + d.detail[i].production + '</td>' +
+            '<td>' + d.detail[i].CT_score + '</td>' +
+            '<td>' + d.detail[i].rater_avg_score + '</td>' +
+            '<td>' + production2score[d.detail[i].production] + '</td>';
+        if(d.detail[i].adviser_score)
+            column += '<td>' + d.detail[i].adviser_score + '</td>';
+        else
+            column += '<td></td>';
+        column += '<td><a href="/productdetail/' + d.detail[i].production + '">查看</a></td>';
+        column += '</tr>';
+    }
+    return head + column;
+}
+
+$(document).ready(function() {
+    var table = $('#table').DataTable({
+        data: list,
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'excel',
+                text: '下载成绩',
+                header: true,
+                filename: "{{ competition_name }}" + "竞赛成绩",
+                title: "{{ competition_name }}" + "成绩汇总表",
+                exportOptions: {
+                        columns: [1,2,3,4]
+                        //取下标1-4列，防止第0行的空白行
+                }
+            }
+        ],
+        columns: [
+            {
+                "className":      'details-control',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ''
+            },
+            { "data": "school" },
+            { "data": "name" },
+            { "data": "user" },
+            { "data": "total_score" }
+        ],
+        language: {
+            "sProcessing": "处理中...",
+            "sLengthMenu": "显示 _MENU_ 项结果",
+            "sZeroRecords": "没有匹配结果",
+            "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+            "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+            "sInfoPostFix": "",
+            "sSearch": "搜索(按姓名):",
+            "sUrl": "",
+            "sEmptyTable": "表中数据为空",
+            "sLoadingRecords": "载入中...",
+            "sInfoThousands": ",",
+            "oPaginate": {
+                "sFirst": "首页",
+                "sPrevious": "上页",
+                "sNext": "下页",
+                "sLast": "末页"
+            },
+            "oAria": {
+                "sSortAscending": ": 以升序排列此列",
+                "sSortDescending": ": 以降序排列此列"
+            }
+        },
+        order: [[4, 'desc']],
+        //默认按照总分从高到底
+        pageLength: 30
+        //默认分页数
+    });
+
+    var detailRows = [];
+
+    // Add event listener for opening and closing details
+    $('#table tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    } );
+
+
+});
+
+
+var list = {{ list|safe }};
+var production2score = {{ production2score|safe }};
+
+
+</script>
+{% endblock %}

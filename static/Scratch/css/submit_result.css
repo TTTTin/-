@@ -1,0 +1,46 @@
+.top{
+    text-align: center;
+    font-weight: bold;
+    font-size: 55px;
+    color:#ffff00;
+    text-shadow: 7px 6px 6px #FF0000;
+}
+.red{
+    font-size:18px;
+    color: #FF0000;
+}
+.blue{
+    font-size: 18px;
+    color: #0e9aef;
+}
+.badges{
+    /*border:1px solid gainsboro;*/
+    width: 250px;
+}
+
+.text{
+    font-weight: bold;
+    font-size: 30px;
+    letter-spacing: 4px;
+    color: #ff0000;
+    text-shadow: 5px 5px 5px #fff000;
+}
+.badges div{
+    margin-top: 2%;
+    color: #ff0000;
+    font-size: 17px;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 3px #FFF000;
+}
+.badges .img{
+    text-align: center;
+    display: block;
+    width: 250px;
+    height: 301px;
+    margin-left: 50%;
+}
+.badges img{
+    width: 250px;
+}

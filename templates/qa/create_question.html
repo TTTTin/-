@@ -1,0 +1,14 @@
+{% extends 'qa/index.html' %}
+
+{% block mainbody %}
+<div class="col-lg-offset-2 col-lg-8" style="padding-top: 50px">
+  <form method="post" action="">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+    <input class="btn pull-middle btn-success" type="submit" value="提交问题" />
+  </form>
+
+</div>
+
+{% endblock %}

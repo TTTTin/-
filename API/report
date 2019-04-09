@@ -1,0 +1,280 @@
+celery_1        | software -> celery:4.1.0 (latentcall) kombu:4.1.0 py:3.6.5
+celery_1        |             billiard:3.5.0.3 redis:2.10.5
+celery_1        | platform -> system:Linux arch:64bit, ELF imp:CPython
+celery_1        | loader   -> celery.loaders.app.AppLoader
+celery_1        | settings -> transport:redis results:redis
+celery_1        | 
+celery_1        | ABSOLUTE_URL_OVERRIDES: {
+celery_1        |  }
+celery_1        | ADMINS: []
+celery_1        | ALLOWED_HOSTS: ['*']
+celery_1        | APPEND_SLASH: True
+celery_1        | AUTHENTICATION_BACKENDS: 
+celery_1        |     ('django.contrib.auth.backends.ModelBackend',)
+celery_1        | AUTH_PASSWORD_VALIDATORS: '********'
+celery_1        | AUTH_USER_MODEL: 'scratch_api.BaseUser'
+celery_1        | AVATAR_AUTO_GENERATE_SIZES: 
+celery_1        |     (160, 160)
+celery_1        | AVATAR_CACHE_ENABLED: False
+celery_1        | AVATAR_CHANGE_TEMPLATE: 'avatar/change_avatar.html'
+celery_1        | AVATAR_CLEANUP_DELETED: True
+celery_1        | AVATAR_DEFAULT_URL: 'img/user_img.png'
+celery_1        | AVATAR_GRAVATAR_FIELD: 'username'
+celery_1        | AVATAR_MAX_AVATARS_PER_USER: 1
+celery_1        | AVATAR_PROVIDERS: 
+celery_1        |     ('avatar.providers.PrimaryAvatarProvider',
+celery_1        |  'avatar.providers.DefaultAvatarProvider')
+celery_1        | BASE_DIR: '/home/django/API'
+celery_1        | CACHES: {
+celery_1        |  'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
+celery_1        | CACHE_MIDDLEWARE_ALIAS: 'default'
+celery_1        | CACHE_MIDDLEWARE_KEY_PREFIX: '********'
+celery_1        | CACHE_MIDDLEWARE_SECONDS: 600
+celery_1        | CELERY_BACKEND_URL: 'redis://redis:6379/0'
+celery_1        | CELERY_BROKER_TRANSPORT: 'redis'
+celery_1        | CELERY_BROKER_URL: 'redis://redis:6379/0'
+celery_1        | CELERY_IMPORTS: 
+celery_1        |     ('scratch_api.tasks',)
+celery_1        | CELERY_RESULT_BACKEND: 'redis'
+celery_1        | CKEDITOR_CONFIGS: {
+celery_1        |     'default': {   'extraPlugins': 'codesnippet,uploadimage,widget,lineutils',
+celery_1        |                    'language': 'zh-Hans',
+celery_1        |                    'removePlugins': 'elementspath',
+celery_1        |                    'skin': 'moono',
+celery_1        |                    'toolbar': 'full'},
+celery_1        |     'qa_ckeditor': {   'extraPlugins': 'codesnippet,uploadimage,widget,lineutils',
+celery_1        |                        'language': 'zh-Hans',
+celery_1        |                        'removePlugins': 'elementspath'}}
+celery_1        | CKEDITOR_IMAGE_BACKEND: 'pillow'
+celery_1        | CKEDITOR_UPLOAD_PATH: 'course/'
+celery_1        | COMMENTS_APP: 'fluent_comments'
+celery_1        | CORS_ALLOW_HEADERS: 
+celery_1        |     ('Authorization',)
+celery_1        | CORS_ALLOW_METHODS: 
+celery_1        |     ('GET', 'POST')
+celery_1        | CORS_ORIGIN_ALLOW_ALL: True
+celery_1        | CRISPY_TEMPLATE_PACK: 'bootstrap3'
+celery_1        | CSRF_COOKIE_AGE: 31449600
+celery_1        | CSRF_COOKIE_DOMAIN: None
+celery_1        | CSRF_COOKIE_HTTPONLY: False
+celery_1        | CSRF_COOKIE_NAME: 'csrftoken'
+celery_1        | CSRF_COOKIE_PATH: '/'
+celery_1        | CSRF_COOKIE_SECURE: False
+celery_1        | CSRF_FAILURE_VIEW: 'django.views.csrf.csrf_failure'
+celery_1        | CSRF_HEADER_NAME: 'HTTP_X_CSRFTOKEN'
+celery_1        | CSRF_TRUSTED_ORIGINS: []
+celery_1        | CSRF_USE_SESSIONS: False
+celery_1        | DATABASES: {
+celery_1        |     'default': {   'ENGINE': 'django.db.backends.sqlite3',
+celery_1        |                    'NAME': '/home/django/API/db.sqlite3'}}
+celery_1        | DATABASE_ROUTERS: '********'
+celery_1        | DATA_UPLOAD_MAX_MEMORY_SIZE: 2621440
+celery_1        | DATA_UPLOAD_MAX_NUMBER_FIELDS: 1000
+celery_1        | DATETIME_FORMAT: 'N j, Y, P'
+celery_1        | DATETIME_INPUT_FORMATS: ['%Y-%m-%d %H:%M:%S',
+celery_1        |  '%Y-%m-%d %H:%M:%S.%f',
+celery_1        |  '%Y-%m-%d %H:%M',
+celery_1        |  '%Y-%m-%d',
+celery_1        |  '%m/%d/%Y %H:%M:%S',
+celery_1        |  '%m/%d/%Y %H:%M:%S.%f',
+celery_1        |  '%m/%d/%Y %H:%M',
+celery_1        |  '%m/%d/%Y',
+celery_1        |  '%m/%d/%y %H:%M:%S',
+celery_1        |  '%m/%d/%y %H:%M:%S.%f',
+celery_1        |  '%m/%d/%y %H:%M',
+celery_1        |  '%m/%d/%y']
+celery_1        | DATE_FORMAT: 'N j, Y'
+celery_1        | DATE_INPUT_FORMATS: ['%Y-%m-%d',
+celery_1        |  '%m/%d/%Y',
+celery_1        |  '%m/%d/%y',
+celery_1        |  '%b %d %Y',
+celery_1        |  '%b %d, %Y',
+celery_1        |  '%d %b %Y',
+celery_1        |  '%d %b, %Y',
+celery_1        |  '%B %d %Y',
+celery_1        |  '%B %d, %Y',
+celery_1        |  '%d %B %Y',
+celery_1        |  '%d %B, %Y']
+celery_1        | DEBUG: True
+celery_1        | DEBUG_PROPAGATE_EXCEPTIONS: False
+celery_1        | DECIMAL_SEPARATOR: '.'
+celery_1        | DEFAULT_CHARSET: 'utf-8'
+celery_1        | DEFAULT_CONTENT_TYPE: 'text/html'
+celery_1        | DEFAULT_EXCEPTION_REPORTER_FILTER: 'django.views.debug.SafeExceptionReporterFilter'
+celery_1        | DEFAULT_FILE_STORAGE: 'django.core.files.storage.FileSystemStorage'
+celery_1        | DEFAULT_FROM_EMAIL: 'tuopinpin@www.tuopinpin.com'
+celery_1        | DEFAULT_INDEX_TABLESPACE: ''
+celery_1        | DEFAULT_TABLESPACE: ''
+celery_1        | DISALLOWED_USER_AGENTS: []
+celery_1        | EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
+celery_1        | EMAIL_HOST: 'smtpdm.aliyun.com'
+celery_1        | EMAIL_HOST_PASSWORD: '********'
+celery_1        | EMAIL_HOST_USER: 'tuopinpin@www.tuopinpin.com'
+celery_1        | EMAIL_PORT: 25
+celery_1        | EMAIL_SSL_CERTFILE: None
+celery_1        | EMAIL_SSL_KEYFILE: '********'
+celery_1        | EMAIL_SUBJECT_PREFIX: '[Django] '
+celery_1        | EMAIL_TIMEOUT: None
+celery_1        | EMAIL_USE_LOCALTIME: False
+celery_1        | EMAIL_USE_SSL: False
+celery_1        | EMAIL_USE_TLS: False
+celery_1        | FILE_CHARSET: 'utf-8'
+celery_1        | FILE_UPLOAD_DIRECTORY_PERMISSIONS: None
+celery_1        | FILE_UPLOAD_HANDLERS: ['django.core.files.uploadhandler.MemoryFileUploadHandler',
+celery_1        |  'django.core.files.uploadhandler.TemporaryFileUploadHandler']
+celery_1        | FILE_UPLOAD_MAX_MEMORY_SIZE: 2621440
+celery_1        | FILE_UPLOAD_PERMISSIONS: None
+celery_1        | FILE_UPLOAD_TEMP_DIR: None
+celery_1        | FIRST_DAY_OF_WEEK: 0
+celery_1        | FIXTURE_DIRS: []
+celery_1        | FLUENT_COMMENTS_EXCLUDE_FIELDS: 
+celery_1        |     ('name', 'email', 'url', 'title')
+celery_1        | FLUENT_COMMENTS_FORM_CLASS: 'API.comments.CommentForm'
+celery_1        | FLUENT_COMMENTS_USE_EMAIL_NOTIFICATION: False
+celery_1        | FORCE_SCRIPT_NAME: None
+celery_1        | FORMAT_MODULE_PATH: None
+celery_1        | FORM_RENDERER: 'django.forms.renderers.DjangoTemplates'
+celery_1        | IGNORABLE_404_URLS: []
+celery_1        | INSTALLED_APPS: ['django.contrib.admin',
+celery_1        |  'django.contrib.auth',
+celery_1        |  'django.contrib.contenttypes',
+celery_1        |  'django.contrib.sessions',
+celery_1        |  'django.contrib.messages',
+celery_1        |  'django.contrib.staticfiles',
+celery_1        |  'scratch_api.apps.ScratchApiConfig',
+celery_1        |  'course.apps.CourseConfig',
+celery_1        |  'rest_framework',
+celery_1        |  'rest_framework.authtoken',
+celery_1        |  'corsheaders',
+celery_1        |  'django_tables2',
+celery_1        |  'ckeditor',
+celery_1        |  'ckeditor_uploader',
+celery_1        |  'website',
+celery_1        |  'dry_rest_permissions',
+celery_1        |  'ordered_model',
+celery_1        |  'production_process',
+celery_1        |  'guardian',
+celery_1        |  'fluent_comments',
+celery_1        |  'threadedcomments',
+celery_1        |  'crispy_forms',
+celery_1        |  'django_comments',
+celery_1        |  'django.contrib.sites',
+celery_1        |  'OJ',
+celery_1        |  'bootstrap4',
+celery_1        |  'django_filters',
+celery_1        |  'notifications',
+celery_1        |  'qa',
+celery_1        |  'mptt',
+celery_1        |  'avatar',
+celery_1        |  'taggit',
+celery_1        |  'qr_code',
+celery_1        |  'pinax.badges',
+celery_1        |  'password_reset']
+celery_1        | INTERNAL_IPS: []
+celery_1        | LANGUAGES: [('zh-hans', '中文简体'), ('en', 'English')]
+celery_1        | LANGUAGES_BIDI: ['he', 'ar', 'fa', 'ur']
+celery_1        | LANGUAGE_CODE: 'zh-hans'
+celery_1        | LANGUAGE_COOKIE_AGE: None
+celery_1        | LANGUAGE_COOKIE_DOMAIN: None
+celery_1        | LANGUAGE_COOKIE_NAME: 'django_language'
+celery_1        | LANGUAGE_COOKIE_PATH: '/'
+celery_1        | LOCALE_PATHS: []
+celery_1        | LOGGING: {
+celery_1        |  }
+celery_1        | LOGGING_CONFIG: 'logging.config.dictConfig'
+celery_1        | LOGIN_REDIRECT_URL: '/t/index'
+celery_1        | LOGIN_URL: '/accounts/login/'
+celery_1        | LOGOUT_REDIRECT_URL: '/t/'
+celery_1        | MANAGERS: []
+celery_1        | MEDIA_ROOT: 'media/'
+celery_1        | MEDIA_URL: '/media/'
+celery_1        | MESSAGE_STORAGE: 'django.contrib.messages.storage.fallback.FallbackStorage'
+celery_1        | MIDDLEWARE: ['django.middleware.security.SecurityMiddleware',
+celery_1        |  'django.contrib.sessions.middleware.SessionMiddleware',
+celery_1        |  'django.middleware.locale.LocaleMiddleware',
+celery_1        |  'corsheaders.middleware.CorsMiddleware',
+celery_1        |  'django.middleware.common.CommonMiddleware',
+celery_1        |  'django.middleware.csrf.CsrfViewMiddleware',
+celery_1        |  'django.contrib.auth.middleware.AuthenticationMiddleware',
+celery_1        |  'scratch_api.middleware.one_session_per_user_middleware',
+celery_1        |  'django.contrib.messages.middleware.MessageMiddleware',
+celery_1        |  'django.middleware.clickjacking.XFrameOptionsMiddleware']
+celery_1        | MIDDLEWARE_CLASSES: ['django.middleware.common.CommonMiddleware',
+celery_1        |  'django.middleware.csrf.CsrfViewMiddleware']
+celery_1        | MIGRATION_MODULES: {
+celery_1        |  }
+celery_1        | MONTH_DAY_FORMAT: 'F j'
+celery_1        | NUMBER_GROUPING: 0
+celery_1        | PASSWORD_HASHERS: '********'
+celery_1        | PASSWORD_RESET_TIMEOUT_DAYS: '********'
+celery_1        | PREPEND_WWW: False
+celery_1        | PROFANITIES_LIST: '********'
+celery_1        | REST_FRAMEWORK: {
+celery_1        |     'DEFAULT_AUTHENTICATION_CLASSES': (   'rest_framework.authentication.TokenAuthentication',),
+celery_1        |     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',)}
+celery_1        | ROOT_URLCONF: 'API.urls'
+celery_1        | SECRET_KEY: '********'
+celery_1        | SECURE_BROWSER_XSS_FILTER: False
+celery_1        | SECURE_CONTENT_TYPE_NOSNIFF: False
+celery_1        | SECURE_HSTS_INCLUDE_SUBDOMAINS: False
+celery_1        | SECURE_HSTS_PRELOAD: False
+celery_1        | SECURE_HSTS_SECONDS: 0
+celery_1        | SECURE_PROXY_SSL_HEADER: None
+celery_1        | SECURE_REDIRECT_EXEMPT: []
+celery_1        | SECURE_SSL_HOST: None
+celery_1        | SECURE_SSL_REDIRECT: False
+celery_1        | SERVER_EMAIL: 'root@localhost'
+celery_1        | SESSION_CACHE_ALIAS: 'default'
+celery_1        | SESSION_COOKIE_AGE: 1209600
+celery_1        | SESSION_COOKIE_DOMAIN: None
+celery_1        | SESSION_COOKIE_HTTPONLY: False
+celery_1        | SESSION_COOKIE_NAME: 'sessionid'
+celery_1        | SESSION_COOKIE_PATH: '/'
+celery_1        | SESSION_COOKIE_SECURE: False
+celery_1        | SESSION_ENGINE: 'django.contrib.sessions.backends.db'
+celery_1        | SESSION_EXPIRE_AT_BROWSER_CLOSE: True
+celery_1        | SESSION_FILE_PATH: None
+celery_1        | SESSION_SAVE_EVERY_REQUEST: False
+celery_1        | SESSION_SERIALIZER: 'django.contrib.sessions.serializers.JSONSerializer'
+celery_1        | SETTINGS_MODULE: 'API.settings'
+celery_1        | SHORT_DATETIME_FORMAT: 'Y/m/d G:i:s'
+celery_1        | SHORT_DATE_FORMAT: 'm/d/Y'
+celery_1        | SIGNING_BACKEND: 'django.core.signing.TimestampSigner'
+celery_1        | SILENCED_SYSTEM_CHECKS: []
+celery_1        | SITE_ID: 2
+celery_1        | STATICFILES_DIRS: 
+celery_1        |     ('/home/django/API/static/',)
+celery_1        | STATICFILES_FINDERS: ['django.contrib.staticfiles.finders.FileSystemFinder',
+celery_1        |  'django.contrib.staticfiles.finders.AppDirectoriesFinder']
+celery_1        | STATICFILES_STORAGE: 'django.contrib.staticfiles.storage.StaticFilesStorage'
+celery_1        | STATIC_ROOT: None
+celery_1        | STATIC_URL: '/static/'
+celery_1        | TEMPLATES: [{'APP_DIRS': True,
+celery_1        |   'BACKEND': 'django.template.backends.django.DjangoTemplates',
+celery_1        |   'DIRS': ['/home/django/API/templates',
+celery_1        |            '/home/django/API/html'],
+celery_1        |   'OPTIONS': {'context_processors': ['django.template.context_processors.debug',
+celery_1        |                                      'django.template.context_processors.request',
+celery_1        |                                      'django.contrib.auth.context_processors.auth',
+celery_1        |                                      'django.contrib.messages.context_processors.messages',
+celery_1        |                                      'django.template.context_processors.request']}}]
+celery_1        | TEST_NON_SERIALIZED_APPS: []
+celery_1        | TEST_RUNNER: 'django.test.runner.DiscoverRunner'
+celery_1        | THOUSAND_SEPARATOR: ','
+celery_1        | TIME_FORMAT: 'P'
+celery_1        | TIME_INPUT_FORMATS: ['%H:%M:%S', '%H:%M:%S.%f', '%H:%M']
+celery_1        | TIME_ZONE: 'Asia/Shanghai'
+celery_1        | USE_ETAGS: False
+celery_1        | USE_I18N: True
+celery_1        | USE_L10N: True
+celery_1        | USE_THOUSAND_SEPARATOR: False
+celery_1        | USE_TZ: True
+celery_1        | USE_X_FORWARDED_HOST: False
+celery_1        | USE_X_FORWARDED_PORT: False
+celery_1        | WSGI_APPLICATION: 'API.wsgi.application'
+celery_1        | X_FRAME_OPTIONS: 'SAMEORIGIN'
+celery_1        | YEAR_MONTH_FORMAT: 'F Y'
+celery_1        | is_overridden: <bound method Settings.is_overridden of <Settings "API.settings">>
+celery_1        | task_serializer: 'json'
+celery_1        | accept_content: ['json', 'pickle']
+celery_1        |

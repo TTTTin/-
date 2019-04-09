@@ -1,0 +1,30 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% load competition_extra %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "team_match/css/chessStyle.css" %} rel="stylesheet" type="text/css"/>
+    <style>
+        .a-title{
+            color: #E74C3C;
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
+{% block mainbody %}
+    <canvas id="chess" width="450px" height="450px"></canvas>
+{% endblock %}
+
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+    <script src={% static "team_match/js/chess.js" %}></script>
+    <script>
+        startGame();
+        play({{ gameDetail|safe }});
+    </script>
+{% endblock %}

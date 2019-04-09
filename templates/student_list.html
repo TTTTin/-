@@ -1,0 +1,526 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+{% block statics2 %}
+    <style>
+    .btn {
+    width: 80px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    background-color: #1ab394;
+    margin: 0 20px;
+
+}
+    </style>
+{#    <style>#}
+{#        .flexpos {#}
+{#            width: 50%;#}
+{#            display: flex;#}
+{#            justify-content: flex-start;#}
+{#            margin-bottom: 1%;#}
+{#        }#}
+{##}
+{#        .flexpos a {#}
+{#            margin-right: 5%;#}
+{#        }#}
+{##}
+{#        li {#}
+{#            list-style: none;#}
+{#        }#}
+{#        .checkbox{#}
+{#            margin: 0 !important;#}
+{#            display: table-cell !important;#}
+{#        }#}
+{#        .checkbox input[type=checkbox]{#}
+{#            margin-left: 10px!important;#}
+{#        }#}
+{#        .btn-flex{#}
+{#            margin-left: 2%;#}
+{#        }#}
+{#    </style>#}
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>学生管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>学生管理</a>
+                </li>
+                <li class="active">
+                    <strong><a href="/t/student_list/">学生管理(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="flexpos">
+        <legend>搜索：</legend>
+        {% csrf_token %}
+        <!--学校选择-->
+        <select style="width: 18%" id="school" onchange="selecSchool(this)">
+            <option>=请选择学校=</option>
+        </select>
+
+        <!--班级选择-->
+        <select style="width: 15%" id="class">
+            <option>=请选择班级=</option>
+        </select>
+
+        <button id="sousuo" name="target" style="margin:auto auto auto 2%;color: #FFFFFF" type="button" class="btn met1">搜索</button>
+        <input type="text" id="sousuo1" placeholder="请输入学生真实姓名.." style="margin-left: 7%;width: 250px;">
+        <button class="btn btn-primary" onclick="return false;" id="sousuobtn">搜索</button>
+        <br/>
+        </div>
+    </div>
+
+
+{#    <div class="wrapper wrapper-content">#}
+{#        <div class="col-lg-12">#}
+{#            <div class="flexpos" >#}
+{#                <input type="text" id="school" placeholder="请输入学校名称" style="margin-left: 7%;">#}
+{#                <input type="text" id="class" placeholder="请输入班级名称" style="margin-left: 7%;"><button class="btn btn-primary" id="sousuobtn">搜索</button>#}
+{#                <input type="text" id="newschool" placeholder="请输入新的学校名称" style="margin-left: 7%;"><button class="btn btn-primary" id="updatebtn">替换</button>#}
+{#                <input type="text" id="newclass" placeholder="请输入新的学校班级名称" style="margin-left: 7%;"><button class="btn btn-primary" id="updateclassbtn">替换</button>#}
+{#                <button class="btn btn-primary btn-flex" id="selectbtn">全选</button>#}
+{#                <button class="btn btn-primary btn-flex" id="notselectbtn">全不选</button>#}
+{#                <button class="btn btn-primary btn-flex" id="notselectbtn">全部替换</button>#}
+{#            </div>#}
+    {% if student_table %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        {% render_table student_table "table/table.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block script %}
+    <link href={% static "Scratch/css/select2.min.css" %} rel="stylesheet">
+    <script src={% static "Scratch/js/select2.full.min.js"%}></script>
+    <script src={% static "js/jquery.cookie.js"%}></script>
+    <script type="text/javascript">
+    function show(str) {
+        return document.getElementById(str);
+     }
+     var format_school = show('school');
+     var format_class = show('class');
+     var btn1 = document.getElementsByClassName('met1')[0];
+
+    $(document).ready(function () {
+        var sousuo = $.cookie('sousuo');
+        var sou_school = $.cookie('sou_school');
+        var sou_class = $.cookie('sou_class');
+        $("#sousuo1").val(sousuo);
+        {#$("#school ").val(sou_school);#}
+        {#$("#class ").val(sou_class);#}
+        {#$("#school option[value='"+sou_school+"']").attr("selected", true);#}
+        {#$("#class option[value='"+sou_class+"']").attr("selected", true);#}
+        {#$("#school").attr("value",sou_school);#}
+        {#$("#class").attr("value",sou_class);#}
+        {#$("#school option[text=s_school]").attr("selected", true);#}
+        {#$("#class option[text=s_class]").attr("selected", true);#}
+        {#btn1.disabled=true;#}
+        {#$("#school").html("");#}
+        {#$("#school").append("<option>" + "=请选择学校=" + "</option>");#}
+        var csrftokens = $("input[name='csrfmiddlewaretoken']").val();
+        $.ajax({
+            url: '/t/get_all_school/',
+            type: 'POST',
+            traditional: false,
+            data: {
+                csrfmiddlewaretoken: csrftokens,
+                get_school: sou_school
+            },
+            success: function (school_list) {
+                var schools = $.parseJSON(school_list);
+                {#var schools = school_list;#}
+                for(var i=0; i<schools.length; i++){
+                    var data = schools[i];
+                    var schoolOpt = document.createElement(('option'));
+                    schoolOpt.innerText = data.name+"("+data.province+data.city+data.district+")";
+                    schoolOpt.value = data.id;
+                    format_school.append(schoolOpt)
+                }
+                $("#school ").val(sou_school);
+                $("#class").html("");
+                $("#class").append("<option>" + "=请选择班级=" + "</option>");
+                var csrftokens = $("input[name='csrfmiddlewaretoken']").val();
+                $.ajax({
+                    url: '/t/get_all_class/',
+                    type: 'POST',
+                    traditional: false,
+                    data: {
+                        csrfmiddlewaretoken: csrftokens,
+                        school: sou_school
+                    },
+                    success: function (class_list) {
+                        var classes = class_list;
+                        for(var i=0; i<classes.length; i++){
+                            var data = classes[i];
+                            var classOpt = document.createElement(('option'));
+                            if(data.is_interest==false){
+                                classOpt.innerText = data.name;
+                                classOpt.value = data.id;
+                                format_class.append(classOpt)
+                            }
+                            else {
+                                classOpt.innerText = data.name+"(兴趣班）";
+                                classOpt.value = data.id;
+                                format_class.append(classOpt)
+                            }
+                        }
+                        $("#class").val(sou_class);
+                    }
+                });
+            }
+        });
+        {#$("#class").val(sou_class);#}
+        console.log(sou_class);
+        console.log("333")
+     });
+
+    $("#school").select2();
+    $("#class").select2();
+
+         /*选择学校之后的处理函数*/
+         function selecSchool(obj) {
+             $("#class").html("");
+             $("#class").append("<option>" + "=请选择班级=" + "</option>");
+             var csrftokens = $("input[name='csrfmiddlewaretoken']").val();
+             var school = $("#school").val();
+             $.ajax({
+                 url: '/t/get_all_class/',
+                 type: 'POST',
+                 traditional: false,
+                 data: {
+                     csrfmiddlewaretoken: csrftokens,
+                     school: school
+                 },
+                 success: function (class_list) {
+                     var classes = class_list;
+                     for(var i=0; i<classes.length; i++){
+                         var data = classes[i];
+                         var classOpt = document.createElement(('option'));
+                         if(data.is_interest==false){
+                             classOpt.innerText = data.name;
+                             classOpt.value = data.id;
+                             format_class.append(classOpt)
+                         }
+                         else {
+                             classOpt.innerText = data.name+"(兴趣班）";
+                             classOpt.value = data.id;
+                             format_class.append(classOpt)
+                         }
+                     }
+                 }
+             })
+         }
+
+         {#function selecClass(obj) {#}
+         {#    btn1.disabled=false;#}
+         {# }#}
+
+        $("#sousuo").click(function () {
+            if($("#school").val()=="=请选择学校=" || $("#class").val()=="=请选择班级="){
+                alert("请先选择学校-班级信息！")
+            }
+            else {
+                var $sousuo = $("#class").val();
+                if ($sousuo == "" || $sousuo=="=请选择班级=") {
+                    window.alert("请选择搜索项..");
+                } else {
+                    window.location.href = "/t/get_all_student/"+ $sousuo;
+                    $.cookie("sou_school", $("#school").val(), {path:"/"});
+                    $.cookie("sou_class", $sousuo, {path:"/"});
+                    console.log($.cookie("sou_school"));
+                    console.log($.cookie("sou_class"))
+                }
+                {#$.ajax({#}
+                {#    url: '/t/get_all_student/',#}
+                {#    type: 'GET',#}
+                {#    data: {#}
+                {#        "class": $("#class").val(),#}
+                {#    },#}
+                {#    async: false,#}
+                {#    success: function (data) {#}
+                {#        console.log("success")#}
+                {#        $("#page").html(data);#}
+                {#    },#}
+                {#    error: function(error) {#}
+                {#        console.log(error);#}
+                {#    }#}
+                {# })#}
+            }
+        })
+
+    $('#sousuobtn').click(function () {
+        var $sousuo = $.trim($("#sousuo1").val());
+        if ($sousuo == "") {
+            window.alert("请输入搜索项..");
+        } else {
+            window.location.href = "/t/get_student_sousuo/" + $sousuo;
+            $.cookie("sousuo", $sousuo, {path:"/"});
+            console.log($.cookie("sousuo"))
+        }
+    });
+    {#var search=window.location.search;#}
+    {#var schoolstart=search.indexOf("school");#}
+    {#var classstart=search.indexOf("class");#}
+    {#if(schoolstart>0){#}
+    {#    var pos=search.indexOf("&");#}
+    {#    var school1=window.decodeURIComponent(search.slice(schoolstart+7,pos));#}
+    {#    $('#school').val(school1);#}
+    {# }#}
+    {#if(classstart>0){#}
+    {#    var class1;#}
+    {#    var pos=search.indexOf("&",classstart);#}
+    {#    if(pos>0){#}
+    {#        class1=decodeURIComponent(search.slice(classstart+6,pos));#}
+    {#    }else {#}
+    {#        class1=decodeURIComponent(search.slice(classstart+6));#}
+    {#    }#}
+    {##}
+    {#    $('#class').val(class1);#}
+    {# }#}
+    {#$('#selectbtn').click(function () {#}
+    {#    console.log($('input[type="checkbox"]'));#}
+    {#    var box=$('input[type="checkbox"]');#}
+    {#    for (var i=0;i<box.length;i++){#}
+    {#        box[i].checked=true;#}
+    {#    }#}
+    {# });#}
+    {# $('#notselectbtn').click(function () {#}
+    {#    var box=$('input[type="checkbox"]');#}
+    {#    for (var i=0;i<box.length;i++){#}
+    {#        box[i].checked=false;#}
+    {#    }#}
+    {# });#}
+    {# $('#updatebtn').click(function () {#}
+    {#     var newschool=$('#newschool').val().trim();#}
+    {#     var stuIds = new Array();#}
+    {#     $.each($('input:checkbox:checked'), function () {#}
+    {#        stuIds.push($(this).val());#}
+    {#     });#}
+    {#     if(newschool==""){#}
+    {#         alert("请输入新的学校名称");#}
+    {#     }else if(stuIds.length==0){#}
+    {#         alert("请选择学生");#}
+    {#     }else {#}
+    {#          var csrftokens = $("input[name='csrfmiddlewaretoken']").val()#}
+    {#        console.log(stuIds);#}
+    {#        $.ajax({#}
+    {#                url: '/t/updateschool/',#}
+    {#                type: 'POST',#}
+    {#                traditional :false,#}
+    {#                data: {csrfmiddlewaretoken:csrftokens,username:stuIds,newschool:newschool},#}
+    {#                success:function(callback){#}
+    {#                    var callback_dict = $.parseJSON(callback);#}
+    {#                    if (callback_dict.status==1002){#}
+    {#                        alert("修改学校名称成功");#}
+    {#                        window.location.reload();#}
+    {#                    }else if(callback_dict.status == 1001){#}
+    {#                        alert("修改学校名称失败失败，请使用其他方式修改或联系管理员");#}
+    {#                        window.location.reload();#}
+    {#            }#}
+    {#        }#}
+    {##}
+    {#            })#}
+    {##}
+    {##}
+    {##}
+    {#     }#}
+    {# });#}
+     function alldeletestu(pk) {
+            {#            console.log(window.location.href)#}
+
+            window.location.href = "/t/alldelete_class_student/"  + pk + '/';
+            {#            window.location=document.referrer;#}
+            return false;
+        }
+ {#    $('#updateclassbtn').click(function () {#}
+ {#    var newclass=$('#newclass').val().trim();#}
+ {#    var stuIds = new Array();#}
+ {#    $.each($('input:checkbox:checked'), function () {#}
+ {#       stuIds.push($(this).val());#}
+ {#    });#}
+ {#    if(newclass==""){#}
+ {#        alert("请输入新的学校班级名称");#}
+ {#    }else if(stuIds.length==0){#}
+ {#        alert("请选择学生");#}
+ {#    }else {#}
+ {#         var csrftokens = $("input[name='csrfmiddlewaretoken']").val()#}
+ {#       $.ajax({#}
+ {#               url: '/t/updateclass/',#}
+ {#               type: 'POST',#}
+ {#               traditional :false,#}
+ {#               data: {csrfmiddlewaretoken:csrftokens,username:stuIds,newclass:newclass},#}
+ {#               success:function(callback){#}
+ {#                   var callback_dict = $.parseJSON(callback);#}
+ {#                   if (callback_dict.status==1002){#}
+ {#                       alert("修改班级名称成功");#}
+ {#                       window.location.reload();#}
+ {#                   }else if(callback_dict.status == 1001){#}
+ {#                       alert("修改班级名称失败失败，请使用其他方式修改或联系管理员");#}
+ {#                       window.location.reload();#}
+ {#           }#}
+ {#       }#}
+ {##}
+ {#           })#}
+ {##}
+ {##}
+ {##}
+ {#    }#}
+ {# });#}
+      window.onload=function () {
+           //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "username" %}
+                $("th.username img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-username" %}
+                $("th.username img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "sex" %}
+                $("th.sex img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-sex" %}
+                $("th.sex img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "format_school" %}
+                $("th.format_school img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-format_school" %}
+                $("th.format_school img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+      };
+{#        $(document).ready(function () {#}
+{#            $('.i-checks').iCheck({#}
+{#                checkboxClass: 'icheckbox_square-green',#}
+{#                radioClass: 'iradio_square-green',#}
+{#            });#}
+{#            $('.ibox-content').hover(function (event) {#}
+{#                var target=event.target;#}
+{#                $(target).find("label").addClass("hover");#}
+{#                $(target).find("div").addClass("hover");#}
+{#            },function (event) {#}
+{#                var target=event.target;#}
+{#                $(target).find("label").removeClass("hover");#}
+{#                $(target).find("div").removeClass("hover");#}
+{#            });#}
+{##}
+{##}
+{##}
+{#            $('.ibox-content').click(function (event) {#}
+{#                console.log(event.target);#}
+{#                var target=event.target;#}
+{#                console.log($(target).parents("li").siblings());#}
+{#                $(target).parents("li").siblings().find("div").removeClass("checked");#}
+{#                $(target).parents("li").siblings().find("input").attr("checked",false);#}
+{#                $(target).find("div").addClass("checked");#}
+{#                $(target).find("input").attr("checked",true);#}
+{#            });#}
+{##}
+{##}
+{#         });#}
+{#        $('#sousuobtn').click(function () {#}
+{#            var $school=$('#school').val().trim();#}
+{#            var $class=$('#class').val().trim();#}
+{#            if($class==""&&$school==""){#}
+{#                window.location.href="/t/student_list";#}
+{#            }#}
+{#            else if($class!=""&&$school==""){#}
+{#                alert("请输入学校名称");#}
+{#            }else {#}
+{#                window.location.href="/t/get_list_student?school="+$school+"&class="+$class;#}
+{#            }#}
+{##}
+{##}
+{#        });#}
+{#        $('#updcourse').click(function () {#}
+{#            var $radios=$('.i-checks input:radio:checked').val();#}
+{#            if($radios===undefined){#}
+{#                alert("请选择课程!");#}
+{#            }else{#}
+{#                window.location.href="/t/course_management/"+$radios;#}
+{#            }#}
+{#        });#}
+{#         $('#chapter').click(function () {#}
+{#            var $radios=$('.i-checks input:radio:checked').val();#}
+{#            if($radios===undefined){#}
+{#                alert("请选择课程!");#}
+{#            }else{#}
+{#                window.location.href="/t/chapter_management/"+$radios;#}
+{#            }#}
+{#        });#}
+{#          $('#delcourse').click(function () {#}
+{#            var $radios=$('.i-checks input:radio:checked').val();#}
+{#            console.log($radios);#}
+{#            if($radios===undefined){#}
+{#                alert("请选择课程!");#}
+{#            }else{#}
+{#             window.location.href="/t/course_management/"+$radios+"/delete/";#}
+{##}
+{#            }#}
+{#        });#}
+
+{#        var $previous=document.getElementById("previous");#}
+{#        var $next=document.getElementById("next");#}
+{#        console.log($previous);#}
+{#        console.log($next);#}
+{#        if($next!=null) {#}
+{#            document.getElementById("next").onclick = function () {#}
+{#                nextval = parseInt($('#current').html()) + 1;#}
+{#                console.log(nextval);#}
+{#                $.ajax({#}
+{#                    url: "/t/course_management?page=" + nextval,#}
+{#                    type: "GET",#}
+{#                    success: function (data) {#}
+{#                        $('#page').html(data)#}
+{#                    },#}
+{#                    error: function (error) {#}
+{#                        console.log(error);#}
+{#                    }#}
+{##}
+{#                })#}
+{#            };#}
+{#        }#}
+{#        if($previous!=null) {#}
+{#            document.getElementById("previous").onclick = function () {#}
+{#                previousval= parseInt($('#current').html()) - 1;#}
+{#                console.log(previousval);#}
+{#                $.ajax({#}
+{#                    url: "/t/course_management?page=" + previousval,#}
+{#                    type: "GET",#}
+{#                    success: function (data) {#}
+{#                        $('#page').html(data)#}
+{#                    },#}
+{#                    error: function (error) {#}
+{#                        console.log(error);#}
+{#                    }#}
+{##}
+{#                });#}
+{#            };#}
+{#        }#}
+
+
+
+</script>
+
+{% endblock %}

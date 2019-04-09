@@ -1,0 +1,31 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% load pinax_badges_tags %}
+{% block css %}
+    <link href={% static "Scratch/css/test_badges.css" %} rel='stylesheet' type='text/css' />
+{% endblock %}
+{% block mainbody %}
+{% badges_for_user user as badges %}
+    <div class=" col-lg-offset-2" style="margin-top: 2%;margin-bottom: 2%;">
+    我的所有徽章
+    </div>
+{% for badge in badges %}
+    <div class="tab-content col-lg-offset-2 badges" >
+
+    <div class="description">
+        {{ badge.description }}
+    </div>
+    <div class="img">
+        <img src="{{ badge.image.url }}" />
+    </div>
+     <div class="name ">
+        {{ badge.name }}
+    </div>
+
+    </div>
+
+{% endfor %}
+
+<br/>
+{% endblock %}
+

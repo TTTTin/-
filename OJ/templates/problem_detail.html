@@ -1,0 +1,472 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>{{ object.title }}</title>#}
+{#</head>#}
+{#<body>#}
+{#    {{ object.title }}#}
+{##}
+{#</body>#}
+{#</html>#}
+
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href={% static "css/problem_detail.css" %}>
+{#    <link rel="stylesheet" href={% static "css/bootstrap.min.css" %}>#}
+    <link rel="stylesheet" type="text/css" href={% static "css/bootstrap-table.css" %}>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+    <style type="text/css" media="screen">
+</style>
+{% endblock css %}
+{% block mainbody %}
+    <div class="container problem_detail_container">
+        <div class="problem_title clearfix">
+            <div>
+                <h3>
+                    <a href="/OJ/problems/">{{ object.id }}. {{ object.title }}</a>
+                </h3>
+            </div>
+        </div>
+        <div>
+            <nav class="tab-view hide-scrollbar">
+                <a class="tab-item icon-btn active" aria-current="true" id="pro_description">
+                    题目描述
+                </a>
+                <a class="tab-item icon-btn" aria-current="false" id="pro_hint">
+                    提示
+                </a>
+                <a class="tab-item icon-btn" aria-current="false" id="pro_submission">
+                    提交记录
+                </a>
+            </nav>
+        </div>
+        <div class="row problem-content" id="problemContent">
+            <div class="problem-description-left">
+                <p>
+                    {% autoescape off %}
+                        {{ object.description }}
+                    {% endautoescape%}
+                </p>
+                <p><strong>示例：</strong></p>
+                <div class="example">
+                    <p><strong>输入描述：</strong>
+                        {% autoescape off %}
+                            {{ object.input_description}}
+                        {% endautoescape%}
+                    </p>
+                    <p><strong>输出描述：</strong>
+                        {% autoescape off %}
+                            {{ object.output_description }}
+                        {% endautoescape%}
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 side-bar problem-description-right">
+                <ul class="side-bar-list">
+                    <li class="list-item">
+                        <span>难度：</span>
+                        <span class="pull-right difficulty-label round label label-Easy" id="level">{{ object.level }}</span>
+                    </li>
+                    <li class="list-item">
+                        <span>运行时间限制：</span>
+                        <span class="pull-right">{{ object.time_limit }}(ms)</span>
+                    </li>
+                    <li class="list-item">
+                        <span>内存限制：</span>
+                        <span class="pull-right">{{ object.memory_limit }}(kb)</span>
+                    </li>
+                    <li class="list-item">
+                        <span>通过数：</span>
+                        <span class="pull-right">{{ object.accepted_number }}</span>
+                    </li>
+                    <li class="list-item">
+                        <span>总提交数：</span>
+                        <span class="pull-right">{{ object.submission_number }}</span>
+                    </li>
+                    <li class="list-item">
+                        <span>作者：</span>
+                        <span class="pull-right">{{ object.author }}</span>
+                    </li>
+                    <li class="list-item">
+                        <span>创建时间：</span>
+                        <span class="pull-right">{{ object.create_time |date:"Y-m-d h:i" }}</span>
+                    </li>
+                    <li class="list-item">
+                        <span>更新时间：</span>
+                        <span class="pull-right">{{ object.update_time |date:"Y-m-d h:i" }}</span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        {#    提示内容#}
+        <div class="container problem_hint_container" id="problemHint">
+            <p>
+                 {{ object.hint }}
+            </p>
+        </div>
+        <div id="language_div" style="font-size: 16px; margin-bottom: 10px;">
+            语言：
+            <select id="selectLanguage" style="height:25px;width:160px;" onclick="changeLanguage(this)">
+                <option value="python2" {% ifequal language 'python2' %}selected="selected"{% endifequal %}>python2</option>
+                <option value="python3" {% ifequal language 'python3' %}selected="selected"{% endifequal %}>python3</option>
+                <option value="java" {% ifequal language 'java' %}selected="selected"{% endifequal %}>java</option>
+                <option value="C++" {% ifequal language 'C++' %}selected="selected"{% endifequal %}>C++</option>
+            </select>
+        </div>
+        <div id="editor">{% if code %}{{ code }}{% else %}"""
+type something here
+"""
+        {% endif %}
+        </div>
+        <div id="submit_and_result">
+            <div class="pull-right" id="submit">
+                <button class="submit btn btn-primary btn-round" id="debugCode">
+                    <span>
+                        在线调试
+                    </span>
+                </button>
+                <button class="submit btn btn-primary btn-round" id="submitCode">
+                    <span>
+                        提交代码
+                    </span>
+                </button>
+                <p id="submitHint" style="color: red;">请先登录！</p>
+            </div>
+            <div class="action submitResult" id="submitResult">
+                <div class="row">
+                    <h4>
+                        <strong>结果：</strong>
+                        <a id="submitReturn" >等待中</a>
+                        <span id="submit_wait_img" class="loading-center">
+                            <img class="img-rounded" alt width="20" src={% static "img/loading.gif" %}>
+                        </span>
+                    </h4>
+                </div>
+            </div>
+        </div>
+{#    提交记录内容#}
+        <div class="submissionContent" id="submissionContent">
+
+        </div>
+    </div>
+
+
+
+<script src={% static "ace/src/ace.js" %} type="text/javascript" charset="utf-8"></script>
+<script>
+    var language = $("#selectLanguage").val();
+    var editor = ace.edit("editor");
+{#    editor.setTheme("ace/theme/monokai");#}
+{#    editor.setTheme("ace/theme/chaos");#}
+    editor.setTheme("ace/theme/xcode");
+    switch (language){
+        case "python2":
+            editor.session.setMode("ace/mode/python");
+            break;
+        case "python3":
+            editor.session.setMode("ace/mode/python");
+            break;
+        case "java":
+            editor.session.setMode("ace/mode/java");
+            $("#debugCode").hide();
+            break;
+        case "C++":
+            editor.session.setMode("ace/mode/c_cpp");
+            $("#debugCode").hide();
+            break;
+    }
+
+    document.getElementById('editor').style.fontSize="25px";
+
+    //难度样式
+
+    var level = document.getElementById('level');
+
+    if(level.innerHTML == 1){
+        level.style.background = "#5cb85c";
+        level.innerHTML = "简单";
+    }else if(level.innerHTML == 2){
+        level.style.background = "#f0ad4e";
+        level.innerHTML = "中等";
+    }else if(level.innerHTML == 3){
+        level.style.background = "#d9534f";
+        level.innerHTML = "困难";
+    }
+    $(document).ready(function () {
+        $("#problemHint").hide();
+        $("#submitResult").hide();
+        $("#submissionContent").hide();
+        $("#pro_hint").click(function () {
+            $("#pro_description").removeClass("active");
+            $("#pro_submission").removeClass("active");
+            $("#pro_hint").addClass("active");
+            $("#problemContent").hide();
+            $("#problemHint").show();
+            $("#language_div").show();
+            $("#editor").show();
+            $("#submit_and_result").show();
+            $("#submissionContent").hide();
+
+        });
+        $("#pro_description").click(function () {
+            $("#pro_description").addClass("active");
+            $("#pro_hint").removeClass("active");
+            $("#pro_submission").removeClass("active");
+            $("#problemContent").show();
+            $("#problemHint").hide();
+            $("#language_div").show();
+            $("#editor").show();
+            $("#submit_and_result").show();
+            $("#submissionContent").hide();
+        });
+        {% if user.is_authenticated %}
+            $("#submitCode").removeAttr("disabled");
+            $("#debugCode").removeAttr("disabled");
+            $("#submitHint").hide();
+        {% else %}
+            $("#submitCode").attr("disabled", "true");
+            $("#debugCode").attr("disabled", "true");
+            $("#submitHint").show();
+        {% endif %}
+        $("#debugCode").click(function () {
+            var code = editor.getValue();
+            if ($("#selectLanguage").val() == "python2") {
+                url = "http://47.98.97.234:8004/live.html?script=";
+            }
+            else {
+                url = "http://www.tuopinpin.com/python/live.html?script=";
+            }
+            url += encodeURI(code);
+            window.open(url);
+        });
+        $("#submitCode").click(function () {
+            $("#submitCode").attr("disabled", "true");
+            $("#submitResult").show();
+            $("#submitReturn").css("color", "#3b84c3");
+            $("#submitReturn").html("等待中");
+            $("#submit_wait_img").show();
+            var code = editor.getValue();
+            console.log(code);
+            $.ajax({
+                headers:{
+                    Authorization: "Token " + $.cookie("token"),
+                    Accept: "application/json; charset=utf-8"
+                },
+                type: 'POST',
+                url: '/OJ/submit/',
+                data:{"code":code, "language": language, "problem": {{object.id}}},
+                success:function (result) {
+                    console.log(result.submission_id);
+                    console.log(result.task_id);
+                    $("#submitReturn").attr("href", "/OJ/submission/"+result.submission_id);
+                    var getResult = setInterval(function () {
+                        $.ajax({
+                            headers:{
+                                Authorization: "Token" + $.cookie("token"),
+                                Accept: "application/json; charset=utf-8"
+                            },
+                            type:"GET",
+                            url: '/OJ/check/',
+                            data:{"submission_id":result.submission_id, "task_id":result.task_id},
+                            dataType: "json",
+                            success:function (result) {
+                                if(result.task_result == "SUCCESS"){
+                                    var submission_result = result.submission_result;
+                                    $("#submitReturn").html(submission_result);
+                                    if(submission_result.indexOf("正确") != -1)
+                                        $("#submitReturn").css("color", "#5cb85c");
+                                    else
+                                        $("#submitReturn").css("color", "#d9534f");
+                                }else if(result.task_result == "ERROR"){
+                                    $("#submitReturn").html("评测错误");
+                                    $("#submitReturn").css("color", "#d9534f");
+                                    console.log("taskResult ERROR:", result.task_result);
+                                }else if (result.task_result == "FAILURE"){
+                                    $("#submitReturn").html("评测失败: " + result.submission_result);
+                                    $("#submitReturn").css("color", "#d9534f");
+                                    console.log("taskResult FAILURE:", result.task_result);
+                                }
+                                clearInterval(getResult);
+                                $("#submit_wait_img").hide();
+                                $("#submitCode").removeAttr("disabled");
+                            },
+                            fail:function (result) {
+                                clearInterval(getResult);
+                                $("#submitReturn").html("查询状态失败");
+                                $("#submitReturn").css("color", "#d9534f");
+                                $("#submit_wait_img").hide();
+                                $("#submitCode").removeAttr("disabled");
+                                console.log("check fail:", result);
+                            }
+                        })
+                    },1000);
+                },
+                error:function (result) {
+                    $("#submitReturn").html("提交失败");
+                    $("#submitReturn").css("color", "#d9534f");
+                    $("#submit_wait_img").hide();
+                    $("#submitCode").removeAttr("disabled");
+                    console.log("submit error:", result);
+                }
+            })
+        });
+        $("#pro_submission").click(function () {
+            {% if user.is_authenticated %}
+                $("#problemHint").hide();
+                $("#problemContent").hide();
+                $("#editor").hide();
+                $("#language_div").hide();
+                $("#submit_and_result").hide();
+
+                $("#submissionContent").show();
+                $("#pro_submission").addClass("active");
+                $("#pro_description").removeClass("active");
+                $("#pro_hint").removeClass("active");
+            {% else %}
+                alert("请先登录");
+                return;
+            {% endif %}
+           $.ajax({
+               headers:{
+                    Authorization: "Token " + $.cookie("token"),
+                    Accept: "application/json; charset=utf-8"
+                },
+               type: 'GET',
+               url: '/OJ/problem_submission_history/',
+               data:{"problem": {{object.id}}},
+               success:function (result) {
+                   console.log(result);
+                   var content = "";
+                   var tableHtml = "<table id=\"sub_table\" class=\"display\">" +
+                       "             <thead>" +
+                       "                <tr>" +
+                       "                    <th>编号</th>" +
+                       "                    <th>提交时间</th>" +
+                       "                    <th>语言</th>" +
+                       "                    <th>结果</th>" +
+                       "                </tr>" +
+                       "            </thead>" +
+                       "            <tbody>";
+                   $.each(result,function (i,item) {
+                        var time = new Date(Date.parse(item.submission_time)).Format("yyyy-MM-dd hh:mm:ss")
+                       content += "<tr class='item_content'>" +
+                           "<td class='item_id'>" + item.id + "</td>" +
+                           "<td>" + time + "</td>" +
+                           "<td>" + item.language + "</td>" +
+                           "<td class='item_result'>" + item.result + "</td>" +
+                            "</tr>"
+                   });
+                   tableHtml += content;
+                   tableHtml += "</tbody>" +
+                       "</table>";
+                   $("#submissionContent").html(tableHtml);
+                   $("#sub_table").dataTable({
+{#                       "paging": false,#}
+                       pageLength: 10,
+                       order: [[0, 'desc']],
+                       language: {
+                            "sProcessing": "处理中...",
+                            "sLengthMenu": "显示 _MENU_ 项结果",
+                            "sZeroRecords": "没有匹配结果",
+                            "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                            "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                            "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                            "sInfoPostFix": "",
+                            "sSearch": "搜索:",
+                            "sUrl": "",
+                            "sEmptyTable": "表中数据为空",
+                            "sLoadingRecords": "载入中...",
+                            "sInfoThousands": ",",
+                            "oPaginate": {
+                                "sFirst": "首页",
+                                "sPrevious": "上页",
+                                "sNext": "下页",
+                                "sLast": "末页"
+                            },
+                            "oAria": {
+                                "sSortAscending": ": 以升序排列此列",
+                                "sSortDescending": ": 以降序排列此列"
+                            }
+                        },
+                       rowCallback: function (row, data, index) {
+                           $(row).click(function () {
+                               location.href="/OJ/submission/" + data[0];
+                           })
+                           if(data[3] == "正确"){
+                               $('td:eq(3)',row).css('color', '#5cb85c');
+                           }else{
+                               $('td:eq(3)',row).css('color', '#d9534f');
+                           }
+                       }
+
+                   });
+               },
+
+               error:function (result) {
+                   console.log("error: "+ result);
+               }
+           }) ;
+        });
+        editor.session.on("change", function (data) {
+            if($("#submitCode").prop("disabled")){
+                $("#submitCode").removeAttr("disabled");
+                $("#submitResult").hide();
+            }
+        });
+        Date.prototype.Format = function (fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1,
+            //月份
+            "d+": this.getDate(),
+            //日
+            "h+": this.getHours(),
+            //小时
+            "m+": this.getMinutes(),
+            //分
+            "s+": this.getSeconds(),
+            //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    };
+    });
+    function changeLanguage(value) {
+        var selectedOption = value.options[value.selectedIndex];
+        language =  selectedOption.value;
+        switch (selectedOption.value){
+            case "python2":
+                editor.session.setMode("ace/mode/python");
+                $("#debugCode").show();
+                break;
+            case "python3":
+                editor.session.setMode("ace/mode/python");
+                $("#debugCode").show();
+                break;
+            case "java":
+                editor.session.setMode("ace/mode/java");
+                $("#debugCode").hide();
+                break;
+            case "C++":
+                editor.session.setMode("ace/mode/c_cpp");
+                $("#debugCode").hide();
+                break;
+        }
+    }
+
+
+</script>
+{% endblock mainbody %}

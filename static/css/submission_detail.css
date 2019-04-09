@@ -1,0 +1,31 @@
+#details-summary{
+    border:1px solid #e0e0e0;
+    padding:12px 20px 20px;
+}
+#status{
+    padding:8px;
+    margin-right: 5px;
+    background-color: #fdfdfd;
+    float: right;
+}
+.inline-wrap{
+    display: inline;
+}
+.text-danger{
+    color: #d05451 !important;
+}
+#submitted-time{
+    margin-right: 10px;
+    float: right;
+}
+.btn, button{
+    border-radius:5px;
+}
+.body{
+    font-size: 20px;
+}
+#editor{
+    margin-top: 20px;
+    width:100%;
+    height:50%;
+}

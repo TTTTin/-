@@ -1,0 +1,131 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% load qa_extra %}
+
+{#{% block mainbody %}#}
+{#    <div class="list-group col-lg-offset-2 col-lg-8 download-padding">#}
+{#            <div class="row">#}
+{#                <div class="col-lg-1 modal-content">#}
+{#                    <a href="/inbox">未读</a><br />#}
+{#                    <a href="/inbox/all">全部</a><br />#}
+{#                </div>#}
+{#                <div class="col-lg-11 modal-content">#}
+{#                    {% for i in queryset %}#}
+{#                        <p>#}
+{#                        <a href="/inbox/detail/{{ i.pk }}/">#}
+{#                            {{ i.actor }}{{ i.verb }}{{ i.target.get_full_name }}#}
+{#                        </a>#}
+{#                            {{ i.timesince }}前#}
+{#                        </p>#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{#                {% if queryset %}#}
+{#                    <div class="">#}
+{#                        <button onclick="mark_read_all()">标记全部已读</button>#}
+{#                    </div>#}
+{#                {% endif %}#}
+{#            </div>#}
+{##}
+{#            {% if is_paginated %}#}
+{#            <div class="pagination"  style="margin:auto 25%;font-size: medium;">#}
+{#                <span class="page-links">#}
+{#                    {% if page_obj.has_previous %}#}
+{#                        <a href="?page={{ page_obj.previous_page_number }}">上一页</a>#}
+{#                    {% endif %}#}
+{#                    <span class="page-current">#}
+{#                        第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页#}
+{#                    </span>#}
+{#                    {% if page_obj.has_next %}#}
+{#                        <a href="?page={{ page_obj.next_page_number }}">下一页</a>#}
+{#                    {% endif %}#}
+{#                </span>#}
+{#            </div>#}
+{##}
+{#            {% endif %}#}
+{##}
+{#    </div>#}
+{#{% endblock %}#}
+
+{% block mainbody %}
+
+    <div class="row col-lg-offset-2 col-lg-6">
+        <ul class="nav nav-tabs ">
+            <li role="presentation"><a href="/inbox">未读</a></li>
+            <li role="presentation"><a href="/inbox/all">全部</a></li>
+        </ul>
+
+
+    <table class="table table-hover">
+            <caption>
+
+            </caption>
+            <thead>
+                <tr>
+                    <th>提醒记录</th>
+                    <th class="text-right">时间</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for i in queryset %}
+                <tr>
+                    <td>
+                        <a href="/inbox/detail/{{ i.pk }}/">
+                                {{ i.actor }}{{ i.verb }}{{ i.target.get_full_name }}
+                            </a>
+                    </td>
+                    <td><p class="text-right">{{ i.timesince | upto:'，' }}前</p></td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    <div id="weidu"></div>
+
+{#        {% if queryset %}#}
+{#            <div class="">#}
+{#                <button class="btn btn-success" onclick="mark_read_all()">标记全部已读</button>#}
+{#            </div>#}
+{#        {% endif %}#}
+
+        <div class="tab-content">
+            {% if is_paginated %}
+                <div class="pagination"  style="margin:auto 25%;font-size: medium;">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}">上一页</a>
+                        {% endif %}
+                        <span class="page-current">
+                            第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">下一页</a>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        function mark_read_all() {
+            $.get('/inbox/markreadall/');
+            location.reload();
+        }
+        $(document).ready(function() {
+            if (window.location.pathname == "/inbox/") {
+                $("#weidu").append('{% if queryset %}\n'+
+                    '                        <div class="">\n'+
+                    '                            <button class="btn btn-success" onclick="mark_read_all()">标记全部已读</button>\n'
+                    +
+                    '                        </div>\n'+
+                    '                    {% endif %}');
+            }
+        })
+    </script>
+{% endblock %}

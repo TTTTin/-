@@ -1,0 +1,72 @@
+{% extends 'index.html' %}
+{% block statics2 %}
+{% load staticfiles %}
+    <style>
+
+         #save{
+            display: block;
+            margin:0 30%;
+             width: 6%;
+        }
+
+        img{
+            height: auto !important; max-width: 100%;
+        }
+        #id_content{
+            margin-left: 4rem!important;
+        }
+        p:nth-last-of-type(1) br +text{
+            text-indent:8rem;
+        }
+    p {
+    text-indent: 0em;
+    line-height: 1.5em;
+}
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/t/compro_management_user/{{ competition }}/">竞赛参赛者（可跳转）</a>
+                </li>
+{#                <li>#}
+{#                    <a ">题目管理(可跳转)</a>#}
+{#                </li>#}
+{#                <li class="active">#}
+{#                    <strong>查看竞赛</strong>#}
+{#                </li>#}
+            </ol>
+        </div>
+
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {{ form.as_p }}
+            {{ form.media }}
+        <input style="margin-left: 5%;margin-top: 5%" id="save" class="btn btn-primary " type="submit" value="保存" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+    $("#id_competition").attr("disabled","disabled")
+    $("#id_user").attr("disabled","disabled")
+    $("#id_tutor").attr("disabled","disabled")
+    $("#save").click(function () {
+        $("#id_competition").attr("disabled",false)
+        $("#id_user").attr("disabled",false)
+        $("#id_tutor").attr("disabled",false)
+    })
+
+    </script>
+{% endblock %}

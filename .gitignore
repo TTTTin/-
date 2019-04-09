@@ -1,0 +1,13 @@
+*.pyc
+*.pyc
+/.idea
+/API/.idea
+/API/media
+db.sqlite3
+/course/migrations
+/OJ/migrations
+/mobile_api/migrations
+/production_process/migrations
+/qa/migrations
+/scratch_api/migrations
+/website/migrations

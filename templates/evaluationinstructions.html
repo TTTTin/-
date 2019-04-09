@@ -1,0 +1,354 @@
+{% extends 'index.html' %}
+{% block content %}
+    <style type="text/css">
+        .sb2{
+            text-align: center;
+        }
+    </style>
+
+     <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2 >CT培训</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a>CT培训</a>
+                        </li>
+                        <li class="active">
+                            <strong>CT评估说明</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+    {% if not no_access %}
+        <div class="container">
+            <h1><b>评分标准：</b></h1>
+            <div class="panel-body col-lg-10 "><h2>Abstraction（抽象化）</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level0">
+                    <h3>如果得分为1</h3>
+
+                    使用Scratch开始编程时，对于最简单的解决方案通常的想法是，在单个程序中通过编程实现一个角色的所有行为。然而，理想情况则是角色行为由不同的程序控制，并且每个程序都处理一个特定的问题。以下为具体的一个例子，该项目在屏幕上绘制了一张图片，其在单个程序中进行编程，绘制了构成图形的两条线。 虽然这是一个有效的实现，但如果将程序分为两部分，则会使得编程和维护程序更为简单，下面的例子设计了两个不同的程序，一个用于绘制前面那条线，另一个绘制第二条线。<br><br>
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss01.jpg"></div></pre>
+
+                    因此，如果想进行任何修改，例如在刚刚所画的其中一条线上进行更改，分成两个程序更容易知道需要操作哪些部分来执行更改。然而，需要点击两次绿旗才能绘制完毕，如下例所示。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss02.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level1">
+                    <h3>如果得分为2</h3>
+
+                    Scratch允许用户定义由一系列指令组成的新块。这些抽象指令可以让您创建简单的程序来读取数据，编程和维护。下面的例子是， Scratch项目在屏幕上画出两条不同长度的橙色线条。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss03.jpg"></div></pre>
+
+                    相比上例重复执行代码2次，如下例所示，可以定义一个名为“画线条”的新块，新块中包含在屏幕上绘制橙色线的指令，并且可以定义该线条的长度是多少。创建自定义块，首先要进入“更多块”类别，然后按创建按钮即可创建一个块。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss04.jpg"></div></pre>
+
+                    创建完成“画线条”块后，即可以在项目的任何程序中调用，如下例所示，通过这种方式，不仅可以避免代码重复，而且使得项目更容易编程和维护。从代码，可以很容易的看出，调用该块时，第一个线条长度为100个步长，第二个线条程度是200步长。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss05.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level2">
+                    <h3>如果得分为3</h3>
+
+                    在一些Scratch项目中，有许多的相同的对象执行相同的操作。通常，解决这一问题的想法是先创建一个角色，再实现该角色的所有行为，一旦上述对象准备完成，则可以根据需要制作该角色的副本。例如，如果需要20个麦宝超人，需要创建20个相同的对象；这时候，如果想改变程序怎么办？那就必须对每一个角色进行修改，比较繁琐。
+                    在这种情况下，最好使用克隆指令，这条抽象指令可以帮助我们动态创建一个角色的精确副本，完美重复该角色的所有动作。
+                    通过下面这个例子来看一下克隆是如何运作的。下例中，在一个项目中实现场景是下雪，则可以先绘制一个雪花对象，编程实现时，通过不断创建克隆使得雪花对象不断出现在屏幕的顶部，然后降落到底部。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss06.jpg"></div></pre>
+
+                    因此，只需编写一个对象，就可以在项目中实现在特定时间创建无限克隆，并在不再需要时将其删除。
+
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>User interactivity（用户交互）</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level3">
+                    <h3>如果得分为1</h3>
+
+                    如下例所示，用户进行交互的最基本的模块是“当绿旗被点击”模块。当Scratch用户点击绿旗时，放置在“当绿旗被点击”模块下的代码会依次运行。这是程序开始执行的标志，如果需要可以将很多程序放在这个模块下。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss07.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level4">
+                    <h3>如果得分为2</h3>
+
+                    在Scratch项目中，也可尝试下例中的方式与用户进行交互。可以通过按键动作、角色点击、编写问题与答案、使用鼠标、以及在用户单击对象时执行操作等模块来实现用户交互。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss08.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level5">
+                    <h3>如果得分为3</h3>
+
+                    在用户交互方面，Scratch为用户提供了一个有趣的方式：用户可以使用摄像头或麦克风与项目中的角色或声音进行交互以触发某些动作。如下例所示，当麦克风捕获的环境声音大于某个阈值时，或者当对象或背景上发生视频运动时，块内代码将被执行。这些区块允许了Scratch作品与用户的充分交互，被执行的可能性非常大。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss09.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 ">
+                <h2>Logic（逻辑性）</h2>
+
+                与逻辑思维相关的指令可以让项目具有动态性，根据情景它们可以表现出不同的行为。在故事项目中，通常都是以线性结构的方式去演绎，因此与逻辑思维相关的指令并不重要。但在其他项目中（如视频游戏），由于需要根据情景去执行不同的动作，故而与逻辑思维相关指令的使用十分重要。
+            </div>
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level6">
+                    <h3>如果得分为1</h3>
+
+                    使用了最基础的逻辑思维块“如果…那么…”，如下例所示，当程序执行时，对块内的条件进行评估，如果结果为真，则执行在“如果…那么”条件中的块语句。在该例中，如果字符碰到紫色，则说“Hello”。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss10.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level7">
+                    <h3>如果得分为2</h3>
+
+                    上例介绍了“如果…那么…”块的功能，下面介绍在各类项目中都是非常实用的另外一种功能块——“如果…那么…否则…”。，与 “如果…那么…”块非常相似，不同点在于“如果…那么…否则…”块包含了两个块集合，如下例所示，当程序执行时，对块内的条件进行评估，如果结果为真，则执行在“如果…那么”条件中的块语句，如果结果为假，则执行“否则…”中的块语句。在该例中，如果字符碰到了紫色，则说“Hello”，否则说“Hi”。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss11.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level8">
+                    <h3>如果得分为3</h3>
+
+                    为项目做决策时，有时需要同时评估多个条件才能执行下一步操作，则需要使用组合条件的逻辑运算。Scratch中可用的逻辑运算有与、或、不成立。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss12.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>Synchronization（同步性）</h2>
+
+            与同步相关的指令允许角色按照编程者想要的顺序行动。
+
+            </div>
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level9">
+                    <h3>如果得分为1</h3>
+
+                    如下例所示， 使用了最简单的角色同步块 “等待”。使用该快，只需把角色等待的时间作为参数写入块内。下例中，使用 “等待”块对两个角色进行对话同步，当一个角色说话时，另一个角色等待，反之亦然。需要注意的是，由于两个角色不会在同一时间进行通话，因此，每个角色等待说话的秒数等于另一个角色所说的秒数。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss13.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level10">
+                    <h3>如果得分为2</h3>
+
+                    “等待”块的使用在程序较小且角色较少的情况下非常简单，但是当程序较大、存在多个角色，或者引起响应的条件不能预估时，使用其他的同步和消息模式将更加有效，如下例所示，当一个角色发生变化时，为了获取另一个角色的响应，可以使用消息传递模式。上例中，当鼠标点击这个角色时，将发送 “消息1”给项目中的所有角色。随后，“当接收到消息1” 指令块被“消息1”激活，即当用户使用鼠标点击这个角色时，另一个角色会说：“Hi！”2秒。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss14.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level11">
+                    <h3>如果得分为3</h3>
+
+                    除了消息传递模式之外，还可以使用其他区块（如“在…之前一直等待”块或“当背景切换到…”块）来同步角色，以便按照项目想要的顺序操控角色。如下例所示，程序将停止执行等待，直到lives=0时，则继续向下执行，说“Hello”2秒；接下来则是，当背景改变为 “backdrop1”时，角色将显示并说“Hi”2秒。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss15.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>Parallelism（并行）</h2>
+
+            大多数的Scratch创作需要一定程度的并行性。并行指的是同时执行几项事情。例如：几个角色同时执行一个动作，或者一个角色同时执行几个动作。
+
+            </div>
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level12">
+                    <h3>如果得分为1</h3>
+
+                    实现并行的最基本、最明显的方法是几个程序皆以“当绿旗被点击”块开头。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss16.jpg"></div></pre>
+
+                    当用户点击绿旗时，所有以该块开始的程序将同时运行，也就是并行运行。为了让一个角色同时做多个动作，可以让角色对应的多个程序以该块开始；为了让多个角色同时行动，可以让各个角色对应的程序以该块开始。
+
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level13">
+                    <h3>如果得分为2</h3>
+
+                    实现并行的另一种方法是使用“当按下…”块，或“当角色被点击时”块，如下例所示，在左例中，当按下空格键时，不同的两个角色将同时执行 “移动10步”操作。在右例中，一个角色对应了两个 “当角色被点击时”块，因此，当用户点击该角色时两个程序将同时执行。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss17.jpg"><img src="/../static/img/ScoreStandard/ss18.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level14">
+                    <h3>如果得分为3</h3>
+
+                    如下例所示，以下区块也可以实现角色的并行。可以创建针对背景的几个给定场景，计时器超过阀值、声音响度超过阈值，以及视频运动大于某个像素值进行判断的并行程序。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss19.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>数据表示</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level15">
+                    <h3>如果得分为1</h3>
+
+                    Scratch项目的每个角色都有特征或属性，并且在每个时刻都存在属性值，这些值也都可以被程序修改。 例如，一个角色具有大小属性，可以将其大小调整为10，使得角色变大。可修改的属性如下。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss20.jpg"><img src="/../static/img/ScoreStandard/ss21.jpg"><img src="/../static/img/ScoreStandard/ss22.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level16">
+                    <h3>如果得分为2</h3>
+
+                    除了修改角色的属性之外，还可以使用其他机制将信息存储到Scratch项目上。 其一是通过变量来存储不同类型的数据，数据可以是级别，剩余生命周期等等。如要创建变量，点击数据目录中的“创建变量”选项并命名即可。如下例所示，创建了lives变量，用它来存储角色碰到紫色的次数。变量设定模块将“lives”的值设定为0，当角色接触到紫色时，通过数值增加模块将“lives”的值加1。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss23.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level17">
+                    <h3>如果得分为3</h3>
+
+                    除了变量之外，还可以使用列表来存储项目信息。列表可以同时存储多个值，是存储数据的理想选择。如要创建列表，点击数据目录中的“创建列表”选项并命名即可。 下例中，定义了“学生”列表。
+                    程序执行时，先删除学生列表中的所有项目，即清空列表。随后向用户询问3次学生姓名，用户输入的名称将插入列表中的末尾。
+
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss24.jpg"></div></pre>
+
+                    下例中，使用上例创建的学生列表来随机选择志愿者的名字。该例中，随机生成一个1到3之间的数字，此数字代表列表中对应的学生名字。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss25.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>流控制</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level18">
+                    <h3>如果得分为1</h3>
+
+                    控制角色行为的最基本的方式是创建一个功能模块集合，这些模块依次执行，如下例所示。当用户点击绿旗后，程序中所有的功能模块依次运行。 从第一块开始，说“Hello！”2秒钟，“移动10步”，随后“转15度”，等待1秒，然后左转15度，最后移动10步结束。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss26.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level19">
+                    <h3>如果得分为2</h3>
+
+                    有时需要一些功能模块有次数限制的重复执行，而不是无限重复运行，这时可以使用带有条件的“重复执行…次”块，如下例所示。左例中，在执行“重复执行…次”模块时，将按照程序中的重复参数重复执行块中内容，即所有功能块将重复10次。 右例中，角色将一直重复执行“移动10步”。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss27.jpg"><img src="/../static/img/ScoreStandard/ss28.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level20">
+                    <h3>如果得分为3</h3>
+
+                    有时会制定条件来控制项目中一组模块所需重复执行的次数，这种情况下，则可以使用功能模块“重复执行直到…”。 如下例所示，角色会不断地重复说“Hello！”2秒，直到碰到鼠标时，说“Hello！”2秒结束，程序将跳转执行下一条指令，说“Hi！”2秒。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss19.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>非正确命名</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level21">
+
+                    当用户使用Scratch进行编程时，创造新的角色时，系统通常会使用 角色1，角色2，…作为默认名称。当有较少的角色时，很容易知道每个名字对应的角色。但是当角色数目增加时，这种对应会非常复杂。 所以为项目的每个角色设置容易识别的名字是一个很好的做法，这会使程序更加方便阅读。 因此，编程时应该避免使用默认名称。
+
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>属性初始化</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level22">
+
+                    许多程序员在学习编程时重复出现的错误之一，就是没有正确的初始化目标属性。属性是什么？它们是角色的特征，在工程执行时可以被修改，例如，位置，大小，颜色，方向等。
+                    使用修改角色特征的块时，应该在程序开始时对其赋予初始值。如下例所示，用户按下空格键后移动角色10步，在其之前，正确的做法是在 “当绿旗被点击”的下面添加“移到…x…y…”块，以便初始化角色的位置。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss30.jpg"><img src="/../static/img/ScoreStandard/ss31.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>死代码</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level23">
+
+                    死代码是程序中从未执行的代码块。例如，当程序中有一部分没有放在可以启动的代码块下方，或者有程序正在等待但永收不到消息，或者程序处于错误的逻辑条件语句下，这些程序都就将不会被执行。
+
+                    <pre class="blocks"><div class="sb2"><img src="/../static/img/ScoreStandard/ss32.jpg"><img src="/../static/img/ScoreStandard/ss33.jpg"></div></pre>
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>声画不匹配</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level24">
+
+                    指的是先播放声音，随后才出现与之匹配的画面，内容不同步。
+
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>广播不匹配</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level25">
+
+                    有些广播只发出没有被接收，有些广播未发出却收到了指令，则为广播不匹配。这种不匹配还有可能造成死代码的出现。
+
+                </section>
+            </div>
+
+            <div class="panel-body col-lg-10 "><h2>递归使用</h2></div>
+
+            <div class="panel-body col-lg-10 col-lg-offset-1">
+                <section id="level26">
+
+                    由于递归本身理解起来比较复杂，所以使用了递归函数的将有额外加分。
+
+                </section>
+            </div>
+            <a href="#top">
+                <img src="/../static/img/totop.png" href="#top"  style="position: fixed; bottom: 40px;right: 0; z-index: 1;cursor: pointer" />
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}

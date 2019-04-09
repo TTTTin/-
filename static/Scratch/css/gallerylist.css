@@ -1,0 +1,25 @@
+.gallery_img{
+    width: 180px !important;
+    height: 180px !important;
+}
+.list-boder{
+    /*text-align: center;*/
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.gallery_background{
+  background-color: rgb(199,237,233) !important;
+}
+.img{
+    text-align: center;
+    margin: auto;
+    margin-bottom: 5px;
+}
+.view_img{
+    margin-right: 20%;
+}
+div.nowrap{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

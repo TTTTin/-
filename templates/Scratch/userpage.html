@@ -1,0 +1,297 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% load comments static %}
+{% load avatar_tags %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'fluent_comments/js/ajaxcomments.js' %}"></script>
+    {% block inside_script %}
+        <script src={% static "Scratch/js/userpage.js" %}></script>
+        <script src={% static "Scratch/js/jquery.combo.select.js" %}></script>
+    {% endblock %}
+{% endblock %}
+
+{% block css %}
+    <link href={% static "Scratch/css/userpage.css" %} rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" type="text/css" href="{% static 'fluent_comments/css/ajaxcomments.css' %}" />
+    {% block insidecss %}
+        <link href={% static "Scratch/css/combo.select.css" %} rel='stylesheet' type='text/css' />
+    {% endblock %}
+    <style type="text/css">
+        .pic {
+            display: block;
+            width: 160px;
+            height: 160px;
+            border-radius: 10%;
+            overflow: hidden;
+            border: 3px solid #eee;
+        }
+        .pageturn{
+            clear:both;
+            height:30px;
+            margin:50px auto;
+            display: table;
+            text-align: center;
+        }
+        ul{
+            list-style: none;
+        }
+        .pageturn .pagelist{
+            display: table-cell;
+            vertical-align: middle;
+            overflow: hidden;
+        }
+        .pageturn .long{
+            width: 100px;
+        }
+        .pageturn li{
+            width: 30px;
+            height:30px;
+            line-height: 30px;
+            margin-left: 10px;
+            float: left;
+            text-align: center;
+        }
+        .pageturn .active a{
+            background: #717171;
+            color:#fff;
+            border-color: #eaeaea;
+        }
+        .pageturn a{
+            border:1px solid #eaeaea;
+            display: block;
+            height: 28px;
+        }
+    </style>
+{% endblock %}
+
+{% block mainbody %}
+{# 个人基本信息介绍：用户头像、用户名、用户创建时间、用户个人签名、发布的作品 #}
+    <div class="container">
+        <div id="information" class="row" >
+          <div class="col-lg-8" >
+              <div class="row">
+                  <div class="col-lg-3" id="touxiang">
+    {#                   <img src="/static/img/user_img.png" class="img"  style="height: 160px;width:160px" alt="image not found">#}
+                      <span id="avatardiv" class="pic">
+                          <img width="160" height="160" class="js-img-show" id = "avatarShow" src="{% avatar_url user %}"/>
+                      </span>
+                  </div>
+                  <div class="col-lg-3">
+                      <div class="row" >
+                          <h3> {{ user.username}} </h3>
+                      </div>
+                      <div class="row"  style="color:#808080">
+                        <small>加入时间：{{ user.created_at}}</small>
+                      </div>
+                      <br>
+                      <div class="row" style="color:#808080">
+    {#                        <small>麦宝真好玩!</small>#}
+                            <small>{{ user.self_introduction }}</small>
+                      </div>
+                  </div>
+                  <br>
+                  <br>
+                  {% if user.username == request.user.username %}
+                      <div class="row">
+                          <div class="col-lg-2 ">
+                              <img id="favorite" style="height: 14px;width:14px" src="{% static 'img/badge.png' %}"  onclick="handle_favorite()"/>
+                              <a  style="color:#808080" href="/my_badge/" >我的奖章</a>
+                          </div>
+                          <div class="col-lg-2 ">
+                              <img id="favorite" style="height: 14px;width:14px" src="{% static 'img/icon_star_alt.png' %}"  onclick="handle_favorite()"/>
+                              <a  style="color:#808080" href="/my_favorite/" >个人收藏</a>
+                          </div>
+                          <div class="col-lg-2">
+                              <img id="favorite" style="height: 14px;width:14px" src="{% static 'img/icon_cog.png' %}"  onclick="handle_favorite()"/>
+                              <a style="color:#808080" href="{% url 'usersetting' user %}" >个人设置</a>
+                          </div>
+                      </div>
+                  {% endif %}
+              </div>
+        </div>
+    </div>
+    {% if user.username == request.user.username %}
+        <div class="row" style="">
+        <div class="col-lg-3" style="margin-top: 10px">
+            <table clas="table" align="center" valign="center" style="border-spacing: 0px;width: 400px;">
+                <tr style="height: 40px">
+                    <td style="width: 100px;font-size: 16px">当前班级：</td>
+                    <td style="width: 300px;">
+                        <select id="my_class_formatClass" style="margin-top: 10px;float: left;" >
+                            {% if classes %}
+                                <option value="0">=请选择班级=</option>
+                                {% for class in classes %}
+                                    <option value="{{ class.pk }}">{{ class.name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="0">=暂时没有班级=</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            $("#my_class_formatClass").val($.cookie("class_id"));
+            $('#my_class_formatClass').comboSelect();
+            $('.list-boder').hover(function (event) {
+                //console.log($(this));
+                $(this).animate({bottom:"8px"},700);
+                $(this).addClass("shadow");
+            },function (event) {
+                 $(this).animate({bottom:"-8px"});
+                 $(this).removeClass("shadow");
+            });
+        });
+    </script>
+        {% block diffproduct %}
+            <ul id="myTab" class="nav nav-tabs" style="margin-top: 20px">
+                <li class="active">
+                    <a href="#publishDiv" data-toggle="tab">发布的作品</a>
+                </li>
+                <li>
+                    <a href="#comment" data-toggle="tab">留言板</a>
+                </li>
+            </ul>
+            <div id="myTabContent" class="tab-content" style="border:1px solid #eaeaea; border-top: hidden;">
+                <div class="tab-pane fade in active" id="publishDiv" style="padding: 10px;overflow: hidden">
+                    <div id="publishTitle" style="margin: 10px;">
+                        <div>
+                            <form method="get" action="" style="left: 30%;position:relative;">
+                                <div class="col-lg-4 input-group">
+                                    <input type="text" class="form-control" placeholder="Search for..." name="q" value="{{ q }}" >
+                                    {% if order and order != "-id" %}
+                                        <input type="hidden" name="order" value="{{ order }}">
+                                    {% endif %}
+                                    {% if page %}
+                                        <input type="hidden" name="page" value="{{ page_obj.number }}">
+                                    {% endif %}
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-default">Go!</button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-5 pull right" style="position: relative; left: 28%">
+                            <ul class="nav nav-pills">
+                                <li role="presentation" style="cursor: pointer;" {% if order == "name" %} class="active"{% endif %}>
+                                    <a href="?{% if order != "name" %}order=name{% endif %}{% if q %}&q={{ q }}{% endif %}{% if page %}&page={{ page }}{% endif %}">按照名称排序</a>
+                                </li>
+                                <li role="presentation" style="cursor: pointer;" {% if order == "-update_time" %} class="active"{% endif %}>
+                                    <a href="?{% if order != "-update_time" %}order=-update_time{% endif %}{% if q %}&q={{ q }}{% endif %}{% if page %}&page={{ page }}{% endif %}">按照最新排序</a>
+                                </li>
+                                <li role="presentation" style="cursor: pointer;" {% if order == "-hit" %}class="active" {% endif %} >
+                                    <a href="?{% if order != "-hit" %}&order=-hit{% endif %}{% if q %}&q={{ q }}{% endif %}{% if page %}page={{ page }}{% endif %}">按照名称排列</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row"></div>
+                    <div id="publish" style="margin-top: 20px">
+                        {# 存放作品的div #}
+                    </div>
+                    <div class="pageturn">
+                        <ul class="pagelist">
+                        {% if is_paginated %}
+                            {% if page_obj.has_previous %}
+                                <li class="long"><a href="?page={{ page_obj.previous_page_number}}{% if q %}&q={{ q }}{% endif %}{% if order and order != "-id" %}&order={{ order }}{% endif %}" class="prev">上一页</a></li>
+                            {% else %}
+                                <li class="long"><a href="javascript:void(0)" class="prev" style="text-decoration: none">上一页</a></li>
+                            {% endif %}
+                            {% for page in paginator.page_range %}
+                                {% if page %}
+                                    {% if page == page_obj.number %}
+                                        <li class="active"><a href="?page={{ page }}{% if q %}&q={{ q }}{% endif %}{% if order and order != "-id" %}&order={{ order }}{% endif %}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?page={{ page }}{% if q %}&q={{ q }}{% endif %}{% if order and order != "-id" %}&order={{ order }}{% endif %}" class="page">{{ page }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="none"><a href="">...</a> </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="long"><a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if order and order != "-id" %}&order={{ order }}{% endif %}">下一页</a></li>
+                            {% else %}
+                                <li class="long"><a href="javascript:void(0)" style="text-transform: none;">下一页</a></li>
+                            {% endif %}
+                        {% endif %}
+
+
+                        </ul>
+                    </div>
+
+                </div>
+                <div id="comment" class="tab-pane fade" style="padding: 10px;">
+                    {% get_comment_count for user as comment_count %}
+                    <strong>共有{{ comment_count }}条留言</strong>
+                    {% render_comment_list for user %}
+                    {% if request.user.is_authenticated %}
+                        {% render_comment_form for user %}
+                    {% else %}
+                        <p>请登录后评论</p>
+                    {% endif %}
+                </div>
+            </div>
+        <script>
+                $("#publish").html('{% for i in production %}\n'+
+                        '                    {% if i.is_active %}\n'+
+                            '                    {% if forloop.counter0|add:3|divisibleby:3 %}\n'+
+                                '                        <div class="row list-row" style="display:flex; justify-content:center">\n'+
+                                '                    {% endif %}\n'+
+                            '\n'+
+                            '                    {% if forloop.counter0|add:3|divisibleby:3 %}\n'+
+                                '                        <div class="col-lg-2   list-boder" style="display:inline-table; border:2px solid #eaeaea; padding:10px">\n'+
+                                '                    {% endif %}\n'+
+                            '                    {% if forloop.counter0|add:2|divisibleby:3 %}\n'+
+                                '                        <div class="col-lg-2  col-lg-offset-1 list-boder"  style="display:inline-table; border:2px solid #eaeaea; padding:10px">\n'+
+                                '                    {% endif %}\n'+
+                            '                    {% if forloop.counter0|add:1|divisibleby:3 %}\n'+
+                                '                        <div class="col-lg-2  col-lg-offset-1 list-boder"  style="display:inline-table; border:2px solid #eaeaea; padding:10px">\n'+
+                                '                    {% endif %}\n'+
+                            '\n'+
+                            '                    <div class="img">\n'+
+                            '                        <a href="/productdetail/{{ i.id }}" title="">\n'+
+                            '                            <img src="{{ i.image.url }}" style="height: 150px;width:250px" alt="image not found">\n'
+                            +
+                            '                        </a>\n'+
+                            '                    </div>\n'+
+                            '                    <div class="production">\n'+
+                            '                        作品名称： {{ i.name }}\n'+
+                            '                    </div>\n'+
+                            '                    <div class="author">\n'+
+                            '                        <a href="/userpage/{{ i.author }}" title="">\n'+
+                            '                            作者： {{ i.author }}\n'+
+                            '                        </a>\n'+
+                            '                        <img src=\'{% static "img/eye.png" %}\' />\n'+
+                            '                        {{ i.hit }}\n'+
+                            '                        <img src=\'{% static "img/like_true.png" %}\' />\n'+
+                            '                        {{ i.like }}\n'+
+                            '                    </div>\n'+
+                            '                    </div>\n'+
+                            '\n'+
+                            '{#                    </div>#}\n'+
+                            '                    {% if forloop.counter0|add:1|divisibleby:3 %}\n'+
+                                '                        </div>\n'+
+                                '                        <div class="row">\n'+
+                                '                            <br>\n'+
+                                '                            <br>\n'+
+                                '                        </div>\n'+
+                                '                    {% endif %}\n'+
+                            '                    {% endif %}\n'+
+                        '                {% endfor %}\n' +
+                    '                {% if not production|length|add:3|divisibleby:3 %}\n'+
+                        '                    </div>\n'+
+                        '                    <div class="row">\n'+
+                        '                        <br>\n'+
+                        '                        <br>\n'+
+                        '                    </div>\n'+
+                        '                {% endif %}\n');
+        </script>
+        {% endblock %}
+    </div>
+{% endblock %}

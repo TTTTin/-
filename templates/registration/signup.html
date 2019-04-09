@@ -1,0 +1,119 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>注册</title>
+
+    <link href={% static "css/bootstrap.min.css" %} rel="stylesheet">
+    <link href={% static "font-awesome/css/font-awesome.css" %} rel="stylesheet">
+
+    <link href={% static "css/animate.css" %} rel="stylesheet">
+    <link href={% static "css/style.css" %} rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen animated fadeInDown" style="width: 600px">
+        <div>
+            <div>
+
+                <!-- <h1 class="logo-name">M.B</h1> -->
+
+            </div>
+
+            <h2>注册</h2>
+                <form method="post" class="m-t">
+                    {% csrf_token %}
+                    <table class="table" align="center" valign="center">
+                        {% for field in form %}
+                            <tr style="height: 40px; font-size: 16px">
+                                <td style="width: 150px;padding-top: 15px" valign="center">{{ field.label_tag }}</td>
+                                <td style="width:400px;">{{ field }}</td>
+                                <td>
+                                    {% if field.help_text %}
+                                        <small style="color: grey">{{ field.help_text }}</small>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% for error in field.errors %}
+                                <tr style="font-size: 14px;border-top: hidden">
+                                    <td colspan="2">
+                                        <p style="color: red">{{ error }}</p>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                        <tr style="height:40px;font-size: 16px">
+                            <td><label style="color: #ADADAD;">所在学校：</label></td>
+                            <td>
+                                <select id="prov" onchange="showCity($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                    <option>=请选择省份=</option>
+                                </select>
+                                <select id="city" onchange="showCountry($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                    <option>=请选择城市=</option>
+                                </select>
+                                <select id="district" onchange="selecCountry($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                    <option>=请选择县区=</option>
+                                </select>
+                                <select id="format_school" name="format_school" style="height: 30px">
+                                    <option value="0">=请选择学校=</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+
+                <button type="submit" class="btn btn-primary block full-width m-b">注册</button>
+            </form>
+
+            <p class="m-t"> <small>BUPT 902 &copy; 2017</small> </p>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+
+    <script src="{% static "js/jquery-3.1.1.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'js/method01.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/city.js' %}"></script>
+    <script type="text/javascript">
+        function getFormatSchool(prov, city, country, format_school){
+            $.ajax({
+                url: '/format_school/',
+                type: 'get',
+                dataType: 'json',
+                data:{
+                    province:prov,
+                    city: city,
+                    district: country
+                },
+                success:function (response) {
+                    // console.log("response: " + response);
+                    for(var i=0; i<response.length; i++){
+                        var data = response[i];
+                        // console.log(data);
+                        var schoolOpt = document.createElement('option');
+                        schoolOpt.innerText = data.name;
+                        schoolOpt.value = data.id;
+                        format_school.append(schoolOpt);
+                    }
+                }
+            })
+        }
+        $(document).ready(function () {
+            showProv($("#prov"));
+
+        });
+    </script>
+
+</body>
+
+</html>
+
+
+

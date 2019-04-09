@@ -1,0 +1,240 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+{% block statics2 %}
+    <style>
+    .btn {
+    width: 80px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    background-color: #1ab394;
+    margin: 0 20px;
+
+}
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-8">
+            <h2>XX管理</h2>
+           <ol class="breadcrumb">
+                <li>
+                    XX管理
+                </li>
+                 <li class="active">
+                    <strong><a href="/t/class_management/">班级管理(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+     <div class="wrapper wrapper-content">
+         <div class="ibox-content m-b-sm border-bottom">
+             <form id="net"  method="get" >
+             <legend>搜索：</legend>
+             {% csrf_token %}
+             <!--学校选择-->
+             <select style="width: 18%" id="school" onchange="selecSchool(this)">
+                 <option>=请选择学校=</option>
+             </select>
+
+             <!--班级选择-->
+             <select style="width: 15%" id="class" onchange="selecClass(this)">
+                 <option>=请选择班级=</option>
+             </select>
+
+             <button id="sousuo" style="margin:auto auto auto 2%;color: #FFFFFF" type="button" class="btn met1">搜索</button>
+             <a class="btn" style="color: #FFFFFF" id="tecrechapr" href="/t/import_class/" > 新建班级</a>
+{#        <a class="btn" style="color: #FFFFFF" id="addstubtn" style="margin-left: 7%"> 增加学生</a>#}
+             <br/>
+             </form>
+         </div>
+    </div>
+
+{#    <div class="ibox-content m-b-sm border-bottom">#}
+{#        <div class="row wrapper border-bottom white-bg page-heading">#}
+{#            <div class="col-lg-12">#}
+{#                {% load render_table from django_tables2 %}#}
+{#                {% render_table table "table/table.html" %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+    {% if class_table %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                {% render_table class_table "table/table.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    {% endif %}
+
+{#    {% if is_paginated %}#}
+{#        <div class="pagination" style="margin:auto 25%;font-size: medium;">#}
+{#            <span class="page-links">#}
+{#                {% if page_obj.has_previous %}#}
+{#                    <a id="previous" href="#">上一页</a>#}
+{#                {% endif %}#}
+{#                <span  class="page-current">#}
+{#                    第<span id="current">{{ page_obj.number }}</span>页，共<span id="zong">{{ page_obj.paginator.num_pages }}</span>页#}
+{#                </span>#}
+{#                {% if page_obj.has_next %}#}
+{#                    <a id="next" href="#">下一页</a>#}
+{#                {% endif %}#}
+{#            </span>#}
+{#        </div>#}
+{#    {% endif %}#}
+
+
+{% endblock %}
+{% block script %}
+    <link href={% static "Scratch/css/select2.min.css" %} rel="stylesheet">
+    <script src={% static "Scratch/js/select2.full.min.js"%}></script>
+    <script type="text/javascript">
+        $(document).ready(function (){
+            //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "format_school" %}
+                $("th.format_school img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-format_school" %}
+                $("th.format_school img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "grade" %}
+                $("th.grade img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-grade" %}
+                $("th.grade img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "class_num" %}
+                $("th.class_num img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-class_num" %}
+                $("th.class_num img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "is_interest" %}
+                $("th.is_interest img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-is_interest" %}
+                $("th.is_interest img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+        })
+     function show(str) {
+        return document.getElementById(str);
+     }
+     var format_school = show('school');
+     var format_class = show('class');
+     var btn1 = document.getElementsByClassName('met1')[0];
+
+
+    $(document).ready(function () {
+        btn1.disabled=true;
+        $("#school").html("");
+        $("#school").append("<option>" + "=请选择学校=" + "</option>");
+        var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+        $.ajax({
+            url: '/t/format_class_management/',
+            type: 'POST',
+            traditional: false,
+            data: {
+                csrfmiddlewaretoken: csrftokens,
+                get_school: $("#school").val(),
+            },
+            success: function (school_list) {
+                var schools = $.parseJSON(school_list);
+                {#var schools = school_list;#}
+                for(var i=0; i<schools.length; i++){
+                    var data = schools[i];
+                    var schoolOpt = document.createElement(('option'));
+                    schoolOpt.innerText = data.name+"("+data.province+data.city+data.district+")";
+                    schoolOpt.value = data.id;
+                    format_school.append(schoolOpt)
+
+                }
+            }
+        })
+     })
+
+        $("#school").select2();
+        $("#class").select2();
+        $('#addstubtn').click(function () {
+            window.location.href="/t/add_student";
+            return false;
+        });
+         /*选择学校之后的处理函数*/
+         function selecSchool(obj) {
+             btn1.disabled=true;
+             $("#class").html("");
+             $("#class").append("<option>" + "=请选择班级=" + "</option>");
+             var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+             var school = $("#school").val();
+             console.log(school)
+             $.ajax({
+                 url: '/t/import_school_class/',
+                 type: 'POST',
+                 traditional: false,
+                 data: {
+                     csrfmiddlewaretoken: csrftokens,
+                     school: school,
+                 },
+                 success: function (class_list) {
+                     var classes = class_list;
+                     for(var i=0; i<classes.length; i++){
+                         var data = classes[i];
+                         var classOpt = document.createElement(('option'));
+                         if(data.is_interest==false){
+                             classOpt.innerText = data.name;
+                             classOpt.value = data.id;
+                             format_class.append(classOpt)
+                         }
+                         else {
+                             classOpt.innerText = data.name+"(兴趣班）";
+                             classOpt.value = data.id;
+                             format_class.append(classOpt)
+                         }
+                     }
+                 }
+             })
+         }
+
+         function selecClass(obj) {
+             btn1.disabled=false;
+         }
+
+        $("#sousuo").click(function () {
+            if ($("#school").val() == "=请选择学校=" || $("#class").val() == "=请选择班级=") {
+                alert("请先选择学校-班级信息！")
+            }
+            else {
+                var $sousuo = $("#class").val();
+                if ($sousuo == "" || $sousuo=="=请选择班级=") {
+                    window.alert("请选择搜索项..");
+                } else {
+                    window.location.href = "/t/get_class/"+ $sousuo;
+            }
+                {#$.ajax({#}
+                {#    url: '/t/get_class/',#}
+                {#    type: 'GET',#}
+                {#    data: {#}
+                {#        "class": $("#class").val(),#}
+                {#    },#}
+                {#    async: false,#}
+                {#    success: function (data) {#}
+                {#        console.log("success")#}
+                {#        $("#page").html(data);#}
+                {#    },#}
+                {#    error: function (error) {#}
+                {#        console.log(error);#}
+                {#    }#}
+                {# })#}
+            }
+        })
+
+   </script>
+{% endblock %}

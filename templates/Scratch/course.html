@@ -1,0 +1,37 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% block css %}
+    <link href={% static "Scratch/css/course.css" %} rel='stylesheet' type='text/css' />
+    <link href={% static "Scratch/css/combo.select.css" %} rel='stylesheet' type='text/css' />
+{% endblock %}
+{% block mainbody %}
+    {% if request.user.is_authenticated %}
+        <div class="row col-lg-offset-1" align="center" style="">
+            <div class="col-lg-3" style="margin-top: 10px">
+                <table clas="table" align="center" valign="center" style="border-spacing: 0px;width: 400px;">
+                    <tr style="height: 40px">
+                        <td style="width: 100px;font-size: 16px">当前班级：</td>
+                        <td style="width: 300px;">
+                            <select id="my_class_formatClass" style="margin-top: 10px;float: left;" >
+                                {% if classes %}
+                                    <option value="0">=请选择班级=</option>
+                                    {% for class in classes %}
+                                        <option value="{{ class.pk }}">{{ class.name }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="0">=暂时没有班级=</option>
+                                {% endif %}
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    <div id="list">
+    </div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src={% static "Scratch/js/course.js" %}></script>
+    <script src={% static "Scratch/js/jquery.combo.select.js" %}></script>
+{% endblock %}

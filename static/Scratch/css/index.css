@@ -1,0 +1,44 @@
+.nav-margin {
+	margin-top: 10px
+}
+.foot {
+	padding-top: 20px;
+}
+#sign-up-in {
+	border-left:1px solid #969696;
+	margin-top: 10px;
+}
+
+#sign-up-in  li {
+	padding-left:10px;
+}
+#mynav > .active > a  {background-color: mediumseagreen;}
+#mynav > .active > a:hover {background-color: mediumseagreen;}
+
+#lunbo {
+	margin-top: 30px;
+}
+
+#index-foot{
+	background-color: rgba(8,6,8,0.5);
+}
+
+#footera {
+	padding-top: 20px;
+	/*background-color: rgb(42, 39, 48);*/
+	margin-top: 30px;
+	color: black;
+}
+
+#aboutus-a{
+	color: black;
+}
+
+#lunbo {
+	padding-right: 0px;
+	padding-left:0px;
+}
+
+#fixbug {
+	margin-bottom: 100px;
+}

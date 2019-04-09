@@ -1,0 +1,114 @@
+python_1        | Internal Server Error: /OJ/submit/
+python_1        | Traceback (most recent call last):
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 439, in connect
+python_1        |     sock = self._connect()
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 494, in _connect
+python_1        |     raise err
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 482, in _connect
+python_1        |     sock.connect(socket_address)
+python_1        | OSError: [Errno 99] Cannot assign requested address
+python_1        | 
+python_1        | During handling of the above exception, another exception occurred:
+python_1        | 
+python_1        | Traceback (most recent call last):
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2165, in _execute
+python_1        |     return command(*args)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 563, in send_command
+python_1        |     self.send_packed_command(self.pack_command(*args))
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 538, in send_packed_command
+python_1        |     self.connect()
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 442, in connect
+python_1        |     raise ConnectionError(self._error_message(e))
+python_1        | redis.exceptions.ConnectionError: Error 99 connecting to localhost:6379. Cannot assign requested address.
+python_1        | 
+python_1        | During handling of the above exception, another exception occurred:
+python_1        | 
+python_1        | Traceback (most recent call last):
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 439, in connect
+python_1        |     sock = self._connect()
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 494, in _connect
+python_1        |     raise err
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 482, in _connect
+python_1        |     sock.connect(socket_address)
+python_1        | OSError: [Errno 99] Cannot assign requested address
+python_1        | 
+python_1        | During handling of the above exception, another exception occurred:
+python_1        | 
+python_1        | Traceback (most recent call last):
+python_1        |   File "/usr/local/lib/python3.6/site-packages/kombu/connection.py", line 414, in _reraise_as_library_errors
+python_1        |     yield
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/app/base.py", line 736, in send_task
+python_1        |     self.backend.on_task_call(P, task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 189, in on_task_call
+python_1        |     self.result_consumer.consume_from(task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 75, in consume_from
+python_1        |     return self.start(task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 57, in start
+python_1        |     self._consume_from(initial_task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 82, in _consume_from
+python_1        |     self._pubsub.subscribe(key)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2229, in subscribe
+python_1        |     ret_val = self.execute_command('SUBSCRIBE', *iterkeys(new_channels))
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2161, in execute_command
+python_1        |     self._execute(connection, connection.send_command, *args)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2172, in _execute
+python_1        |     connection.connect()
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 442, in connect
+python_1        |     raise ConnectionError(self._error_message(e))
+python_1        | redis.exceptions.ConnectionError: Error 99 connecting to localhost:6379. Cannot assign requested address.
+python_1        | 
+python_1        | During handling of the above exception, another exception occurred:
+python_1        | 
+python_1        | Traceback (most recent call last):
+python_1        |   File "/usr/local/lib/python3.6/site-packages/django/core/handlers/exception.py", line 41, in inner
+python_1        |     response = get_response(request)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/django/core/handlers/base.py", line 187, in _get_response
+python_1        |     response = self.process_exception_by_middleware(e, request)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/django/core/handlers/base.py", line 185, in _get_response
+python_1        |     response = wrapped_callback(request, *callback_args, **callback_kwargs)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/django/views/decorators/csrf.py", line 58, in wrapped_view
+python_1        |     return view_func(*args, **kwargs)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/django/views/generic/base.py", line 68, in view
+python_1        |     return self.dispatch(request, *args, **kwargs)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/rest_framework/views.py", line 489, in dispatch
+python_1        |     response = self.handle_exception(exc)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/rest_framework/views.py", line 449, in handle_exception
+python_1        |     self.raise_uncaught_exception(exc)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/rest_framework/views.py", line 486, in dispatch
+python_1        |     response = handler(request, *args, **kwargs)
+python_1        |   File "/home/django/API/OJ/ajax_views.py", line 30, in post
+python_1        |     task = judge.delay(submission.id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/app/task.py", line 413, in delay
+python_1        |     return self.apply_async(args, kwargs)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/app/task.py", line 536, in apply_async
+python_1        |     **options
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/app/base.py", line 737, in send_task
+python_1        |     amqp.send_task_message(P, name, message, **options)
+python_1        |   File "/usr/local/lib/python3.6/contextlib.py", line 99, in __exit__
+python_1        |     self.gen.throw(type, value, traceback)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/kombu/connection.py", line 419, in _reraise_as_library_errors
+python_1        |     sys.exc_info()[2])
+python_1        |   File "/usr/local/lib/python3.6/site-packages/vine/five.py", line 178, in reraise
+python_1        |     raise value.with_traceback(tb)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/kombu/connection.py", line 414, in _reraise_as_library_errors
+python_1        |     yield
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/app/base.py", line 736, in send_task
+python_1        |     self.backend.on_task_call(P, task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 189, in on_task_call
+python_1        |     self.result_consumer.consume_from(task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 75, in consume_from
+python_1        |     return self.start(task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 57, in start
+python_1        |     self._consume_from(initial_task_id)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/celery/backends/redis.py", line 82, in _consume_from
+python_1        |     self._pubsub.subscribe(key)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2229, in subscribe
+python_1        |     ret_val = self.execute_command('SUBSCRIBE', *iterkeys(new_channels))
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2161, in execute_command
+python_1        |     self._execute(connection, connection.send_command, *args)
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/client.py", line 2172, in _execute
+python_1        |     connection.connect()
+python_1        |   File "/usr/local/lib/python3.6/site-packages/redis/connection.py", line 442, in connect
+python_1        |     raise ConnectionError(self._error_message(e))
+python_1        | kombu.exceptions.OperationalError: Error 99 connecting to localhost:6379. Cannot assign requested address.
+

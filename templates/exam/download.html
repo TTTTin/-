@@ -1,0 +1,235 @@
+{% extends 'exam/index.html' %}
+{% load render_table from django_tables2 %}
+{% block content %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>作品下载</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a>作品评估</a>
+                        </li>
+                        <li class="active">
+                            <strong>作品下载</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+        <div class="wrapper wrapper-content">
+            <div class="ibox-content m-b-sm border-bottom">
+                <form id="net"  method="get" >
+                {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="control-label">学校</label>
+                                <select class="form-control"   onpropertychange="()" id="schoolname" tabindex="2" name="school" data-placeholder="学校">
+                                    <option value="">选择学校</option>
+                                    {% for school in schools %}
+                                        <option value={{ school.school_name }}>{{ school.school_name }}</option>#}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="control-label">班级</label>
+                                <select class="form-control"  id="classname" name="class">
+                                    <!--需要在选择学校之后关联得到班级列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                                    <option value="">选择班级</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="control-label">参赛选手</label>
+                                <select class="form-control" id="studentname" name="student">
+                                    <!--需要在选择学校和班级之后关联得到学生列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                                        <option value="">选择选手</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label class="control-label">作品名称</label>
+                                <input type="text" id="workname" ignore="ignore" name="workname" placeholder="作品名称" class="form-control">
+                                <!--value="${pageModel.workName}"-->
+                            </div>
+                        </div>
+
+                        <div class="col-sm-1">
+                            <div class="form-group">
+                                <label class="control-label"> </label>
+                                <div class="input-group-btn">
+                                    <input class="btn btn-lg btn-primary" type="submit" onclick="return sub()" value="查询">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            {% if production_table %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                {% render_table production_table "table/table.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endif %}
+      </div>
+        {% endblock %}
+{% block script %}
+<script type="text/javascript">
+
+    $("#schoolname").change(function () {
+        var schoolid=$("#schoolname").val();
+        $.getJSON(encodeURI("/ajax/eget_class?school="+schoolid),function(data){
+            console.log(data);
+            var content='';
+            content+='<option value=>'+' '+'</option>'
+            $.each(data,function (i,item) {
+                content+='<option value='+item.pk+'>'+item.fields.class_name+'</option>'
+            });
+            $("#classname").html('');
+            $('#classname').append(content)
+            $("#studentname").html('');
+        });
+    });
+    $("#classname").change(function () {
+        var classid=$("#classname").val();
+        $.getJSON(encodeURI("/ajax/eget_student?class="+classid),function(data){
+            var content='';
+            content+='<option value=>'+' '+'</option>'
+            $.each(data,function (i,item) {
+                content+='<option value='+item.pk+'>'+item.fields.name+'</option>'
+            });
+            $("#studentname").html('');
+            $("#studentname").append(content);
+        });
+    });
+
+     function sub() {
+        document.cookie="schoolname="+$("#schoolname").val();
+        document.cookie="stuname="+ $("#studentname").val();
+        document.cookie="classname="+$("#classname").val();
+        document.cookie="workname="+$("#workname").val();
+            $.ajax({
+                type:"GET",
+                url:"/exam/download/",
+                data:$("#net").serialize(),
+                async: false,
+            error: function(request) {
+                alert("Connection error:"+request.error);
+            },
+            success: function(data) {
+                $("#page").html(data);
+            }
+            });
+            return false;
+    }
+         function SortCall(obj) {
+{#            var str1=obj.innerHTML;#}
+{#            var start=str1.indexOf("href");#}
+{#            var stop=str1.indexOf(">");#}
+            var str2=obj.childNodes[0].search;
+            console.log(str2);
+            $.ajax({
+                    type:"GET",
+                    url:"/exam/download/"+str2,
+                    //data:$("#net").serialize(),
+                    async: false,
+                error: function(request) {
+                    alert("Connection error:"+request.error);
+                },
+                success: function(data) {
+{#                    tdata=data;#}
+                    $("#page").html(data);
+                }
+                });
+            //alert(str2);
+          //console.log(obj.childNodes[0]);
+            return false;
+        }
+
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% if no_access %}
+                alert('{{no_access}}');
+                setTimeout(window.location.href = '/exam/index', 3);
+            {% endif %}
+            var schoolname=getCookie("schoolname"),
+                classname=getCookie("classname"),
+                stuname=getCookie("stuname"),
+                workname=getCookie("workname");
+            if(schoolname!=null){
+                $('#schoolname').val(schoolname);
+                $('#workname').val(workname);
+{#                console.log($('#schoolname').html());#}
+                $.getJSON(encodeURI("/ajax/eget_class?school=" + schoolname), function (data) {
+                var content = '';
+                var schoolnum=0;
+{#                显示的为空还是名字，进行判断开始#}
+                $.each(data, function (i, item) {
+                    if (item.pk == classname) {
+                        schoolnum+=1;
+                        content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                    }
+                });
+                if(schoolnum==0){
+                    content += '<option value=""></option>';
+                }
+                {#                显示的为空还是名字，进行判断结束#}
+                $.each(data, function (i, item) {
+                    if (item.pk != classname)
+                        content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                });
+                if(schoolnum!=0){
+                    content += '<option value=""></option>';
+                }
+                $("#classname").html('');
+                $('#classname').html(content);
+                $("#studentname").html('');
+                var classid = classname;
+                $.getJSON(encodeURI("/ajax/eget_student?class=" + classid), function (data) {
+                    var content = '';
+                    var classnum=0;
+                    $.each(data, function (i, item) {
+                        if (item.pk == stuname) {
+                            classnum+=1;
+                            content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                        }
+                    });
+                    if(classnum==0){
+                        content += '<option value=""></option>';
+                    }
+                    $.each(data, function (i, item) {
+                        if (item.pk != stuname) {
+                            content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                        }
+                    });
+                    if(classnum!=0){
+                         content += '<option value=""></option>';
+                    }
+                    $("#studentname").html('');
+                    $("#studentname").html(content);
+                });
+            });
+            }
+        });
+   </script>
+{% endblock %}
+
+
+
+

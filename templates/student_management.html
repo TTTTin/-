@@ -1,0 +1,233 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+{% block statics2 %}
+    <style>
+        .flexpos {
+            width: 50%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 1%;
+        }
+
+        .flexpos a {
+            margin-right: 5%;
+        }
+
+        li {
+            list-style: none;
+        }
+        .checkbox{
+            margin: 0 !important;
+            display: table-cell !important;
+        }
+        .checkbox input[type=checkbox]{
+            margin-left: 10px!important;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>班级管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    班级管理
+                </li>
+                <li>
+                    <a href="/t/class_management/">班级管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <a><strong>{{ class_name }}</strong></a>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="flexpos">
+            {% csrf_token %}
+            <input type="text" id="sousuo" placeholder="请输入学生真实姓名.." style="margin-left: 7%;width: 300px;">
+            <button class="btn btn-primary" onclick="return false;" id="sousuobtn" style="margin-right: 7%">搜索</button>
+            <a class="btn btn-primary" href="/t/class_management_add/{{ class_id }}/" > 添加学生</a>
+{#            <input type="text" id="update" placeholder="请输入新的班级名称" style="margin-left: 7%;width: 300px;">#}
+{#            <button class="btn btn-primary" onclick="return false;" id="updatebtn">班级重命名</button>#}
+
+{#            <input type="text" id="competition_title" placeholder="请输入竞赛名称" style="margin-left: 7%;width: 300px;">#}
+{#            <button class="btn btn-primary" onclick="return false;" id="competition">选中学生报名竞赛</button>#}
+            <button class="btn btn-primary" onclick="return false;" id="resetstu" style="margin-left: 13%; margin-right: 2%">重置选中学生密码</button>
+
+            <button class="btn btn-primary btn-flex" id="selectbtn" style="margin-left: 5%; margin-right: 7%">全选</button>
+            <button class="btn btn-primary btn-flex" id="notselectbtn">全不选</button>
+
+
+        </div>
+        {% if student_table %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                {% render_table student_table "table/table.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endif %}
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        function deletestu(pk) {
+            console.log(window.location.href)
+            var classid = window.location.href.split('/')[5];
+            window.location.href = "/t/delete_class_student/" + classid + "/" + pk + '/';
+            {#window.location=document.referrer;#}
+            return false;
+        }
+
+        function updatestu(pk) {
+            console.log(window.location.href)
+            var classid = window.location.href.split('/')[5];
+            window.location.href = "/t/update_student/" + classid + "/" + pk + '/';
+            {#window.location=document.referrer;#}
+            return false;
+        }
+
+        window.onload = function () {
+             //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "username" %}
+                $("th.username img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-username" %}
+                $("th.username img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "sex" %}
+                $("th.sex img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-sex" %}
+                $("th.sex img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+
+        $('.breadcrumb li.active').click(function () {
+            var classid = window.location.href.split('/')[5];
+            window.location.href = "/t/class_management/" + classid;
+         })
+
+
+        {#$('#updatebtn').click(function () {#}
+        {#    var $update = $('#update').val();#}
+        {#    if ($update == "") {#}
+        {#        window.alert("请输入新的班级名称");#}
+        {#    } else {#}
+        {#        var classid = window.location.href.split('/')[5];#}
+        {#        window.location.href = "/t/update_class/?class_id=" + classid + "&target=" + $update;#}
+        {#    }#}
+        {# });#}
+        $('#sousuobtn').click(function () {
+            var $sousuo = $.trim($("#sousuo").val());
+            if ($sousuo == "") {
+                window.alert("请输入搜索项..");
+            } else {
+                var classid = window.location.href.split('/')[5];
+                window.location.href = "/t/get_student/" + classid + "/" + $sousuo;
+            }
+        });
+        $('#resetstu').click(function () {
+                var dropIds = new Array();
+            $.each($('input:checkbox:checked'), function () {
+
+                dropIds.push($(this).val());
+            });
+            var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+            console.log(csrftokens)
+            $.ajax({
+                    url: '/t/resetpsw/',
+                    type: 'POST',
+                    traditional :false,
+                    data: {username: dropIds,csrfmiddlewaretoken:csrftokens},
+                    success:function(callback){
+                        var callback_dict = $.parseJSON(callback);
+                        if (callback_dict.status==1002){
+                            alert("修改密码成功");
+                            window.location.reload();
+                        }else if(callback_dict.status == 1001){
+                            alert("修改密码失败，请使用其他方式修改或联系管理员");
+                            window.location.reload();
+                }
+            }
+
+                })
+        });
+
+        {#$('#competition').click(function () {#}
+        {#    var $competition_title = $('#competition_title').val();#}
+        {#    if ($competition_title == "") {#}
+        {#        window.alert("请输入竞赛名称");#}
+        {#    }#}
+        {#    else {#}
+        {#        var dropIds = new Array();#}
+        {#        $.each($('input:checkbox:checked'), function () {#}
+        {#            dropIds.push($(this).val());#}
+        {#            console.log(dropIds)#}
+        {#        });#}
+        {#        var csrftokens = $("input[name='csrfmiddlewaretoken']").val()#}
+        {#        console.log(csrftokens)#}
+        {#        $.ajax({#}
+        {#            url: '/t/competition_sign/',#}
+        {#            type: 'POST',#}
+        {#            traditional: false,#}
+        {#            data: {#}
+        {#                username: JSON.stringify(dropIds),#}
+        {#                csrfmiddlewaretoken: csrftokens,#}
+        {#                competition_title: $competition_title#}
+        {#            },#}
+        {#            success: function (callback) {#}
+        {#                var callback_dict = $.parseJSON(callback);#}
+        {#                if (callback_dict.status == 1002) {#}
+        {#                    alert("报名竞赛成功！");#}
+        {#                    window.location.reload();#}
+        {#                } else if (callback_dict.status == 1001) {#}
+        {#                    alert("报名竞赛失败，请使用其他方式修改或联系管理员！");#}
+        {#                    window.location.reload();#}
+        {#                } else if (callback_dict.status == 1004) {#}
+        {#                    alert("选择中存在已报名的用户！");#}
+        {#                } else if (callback_dict.status == 1003) {#}
+        {#                    alert("不存在该比赛！");#}
+        {#                } else if (callback_dict.status == 1005) {#}
+        {#                    alert("请先选择学生！");#}
+        {#                }#}
+        {#            }#}
+        {##}
+        {#        })#}
+        {#    }#}
+        {##}
+        {# });#}
+        }
+
+         $('#selectbtn').click(function () {
+            var box=$('input[type="checkbox"]');
+            for (var i=0;i<box.length;i++){
+                box[i].checked=true;
+            }
+        });
+        $('#notselectbtn').click(function () {
+            var box=$('input[type="checkbox"]');
+            for (var i=0;i<box.length;i++){
+                box[i].checked=false;
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script type="text/javascript">
+        function encodeUtf8(text) {
+            const code = encodeURIComponent(text);
+            const bytes = [];
+            for (var i = 0; i < code.length; i++) {
+                const c = code.charAt(i);
+                if (c === '%') {
+                    const hex = code.charAt(i + 1) + code.charAt(i + 2);
+                    const hexVal = parseInt(hex, 16);
+                    bytes.push(hexVal);
+                    i += 2;
+                } else bytes.push(c.charCodeAt(0));
+            }
+            return bytes;
+        }
+        function decodeUtf8(bytes) {
+            var encoded = "";
+            for (var i = 0; i < bytes.length; i++) {
+                encoded += '%' + bytes[i].toString(16);
+            }
+            return decodeURIComponent(encoded);
+        }
+
+
+        var UTFTranslate = {
+            Change:function(pValue){
+            return pValue.replace(/[^\u0000-\u00FF]/g,function($0){return escape($0).replace(/(%u)(\w{4})/gi,"&#x$2;")});
+            },
+            ReChange:function(pValue){
+            return unescape(pValue.replace(/&#x/g,'%u').replace(/\\u/g,'%u').replace(/;/g,''));
+            }
+            };
+
+        let temp = UTFTranslate.Change('scratch项目.sb3');
+
+        console.log(decodeURI('Scratch%E9%A1%B9%E7%9B%AE123'));
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block statics2 %}
+    <style>
+        label {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row wrapper border-bottom white-bg page-heading" xmlns="http://www.w3.org/1999/html">
+        <div class="col-lg-8">
+            <h2>XX管理</h2>
+           <ol class="breadcrumb">
+                <li>
+                    <a href="/t/class_management">班级管理(可跳转返回上一页)</a>
+                </li>
+                 <li class="active">
+                    <strong><a href="/t/import_class/">注册班级(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content">
+     <div class="ibox-content">
+{#        <fieldset>#}
+        <div id="net"  method="get" >
+            {% csrf_token %}
+        <legend>省-市-区-学校选择：</legend>
+        <!--省份选择-->
+        <select id="prov" onchange="showCity(this)">
+            <option>=请选择省份=</option>
+        </select>
+
+        <!--城市选择-->
+        <select id="city" onchange="showCountry(this)">
+            <option>=请选择城市=</option>
+        </select>
+
+        <!--县区选择-->
+        <select id="country" onchange="selecCountry(this)">
+            <option>=请选择区县=</option>
+        </select>
+
+        <!--学校选择-->
+        <select id="school" onchange="selecSchool(this)">
+            <option>=请选择学校=</option>
+        </select>
+        <br/>
+        </div>
+{#        </fieldset>#}
+       <div class="ibox-content">
+           <legend style="margin-top: 3%">批量注册：</legend>
+           {% csrf_token %}
+           <label for="addr-show02">班级负责人：
+               <select style="width: 200px" id="chief">
+                   <option>=请选择(姓名-用户名)=</option>
+               </select>
+           </label>
+           <br/>
+           <label for="addr-show">年级：
+               <select id="grade">
+                   <option>=请选择年级=</option>
+               </select>
+           </label>
+           <br/>
+           <label for="addr-show04">班级：
+               <select id="class_num">
+                   <option>=请选择班级=</option>
+               </select>
+           </label>
+           <br/>
+           <label for="addr-show03">属于兴趣班：
+               <input id="is_interest" style="width: 1.5em; height: 1.5em" type="checkbox"/>
+           </label>
+           <br/>
+           <button id="submit" style="margin:1% auto auto auto;color: #FFFFFF" type="button" class="btn met1">确定</button>
+           <br/>
+       </div>
+        </form>
+    </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script src={% static "Scratch/js/city.js"%}></script>
+    <link href={% static "Scratch/css/style.css"%} rel="stylesheet">
+    <script src={% static "Scratch/js/select2.full.min.js"%}></script>
+{#    <script src={% static "admin/js/vendor/jquery/jquery.min.js"%}></script>#}
+    <script src={% static "Scratch/js/bootstrap.min.js"%}></script>
+    <link href={% static "Scratch/css/select2.min.css" %} rel="stylesheet">
+    <script>
+    /*根据id获取对象*/
+
+    function show(str) {
+        return document.getElementById(str);
+     }
+
+    var school = show('addr-show');
+    var btn = document.getElementsByClassName('met1')[0];
+    var prov = show('prov');
+    var city = show('city');
+    var country = show('country');
+    var chief1 = show('chief');
+
+    for(var i=1; i<=6; i++){
+        $("#grade").append("<option value="+i+">" +i+ "年级" + "</option>")
+    }
+    for(var i=1; i<=10; i++){
+        $("#class_num").append("<option value="+i+">" +i+ "班" + "</option>")
+    }
+
+
+    /*用于保存当前所选的省市区*/
+    var current = {
+        prov: '',
+        city: '',
+        country: ''
+     };
+
+    /*自动加载省份列表*/
+     $(document).ready(function () {
+         var is_school = "{{ is_school }}";
+         if(is_school=="false"){
+             alert("该教师没有所属学校，无法新建班级！");
+         }
+         else {
+             var position = "{{ position }}";
+             if(position=="管理员")
+             {
+                 btn.disabled = true;
+                 var len = provice.length;
+                 for (var i = 0; i < len; i++) {
+                     var provOpt = document.createElement('option');
+                     provOpt.innerText = provice[i]['name'];
+                     provOpt.value = i;
+                     prov.appendChild(provOpt);
+                 }
+             }
+             else{
+                 $("#prov").append("<option selected=\"selected\" value={{ province }}>" + "{{ province }}" + "</option>");
+                 $('#prov').attr("disabled","disabled");
+                 $("#city").append("<option selected=\"selected\" value={{ city }}>" + "{{ city }}" + "</option>");
+                 $('#city').attr("disabled","disabled");
+                 $("#country").append("<option selected=\"selected\" value={{ country }}>" + "{{ country }}" + "</option>");
+                 $('#country').attr("disabled","disabled");
+                 $("#school").append("<option selected=\"selected\" value={{ school }}>" + "{{ school }}" + "</option>");
+                 $('#school').attr("disabled","disabled");
+                 var is_chief = "{{ is_chief }}";
+                 if(is_chief=="false"){
+                     $("#chief").append("<option selected=\"selected\" value={{ chief_username }}>" + "{{ chief_name }}({{ chief_username }})" + "</option>");
+                     $('#chief').attr("disabled","disabled");
+                 }
+                 else {
+                     $("#chief").html("");
+                     $("#chief").append("<option>" + "=请选择(姓名-用户名)=" + "</option>");
+                     var csrftokens = $("input[name='csrfmiddlewaretoken']").val();
+                     $.ajax({
+                         url: '/t/import_class_teacher/',
+                         type: 'POST',
+                         traditional: false,
+                         data: {
+                             csrfmiddlewaretoken: csrftokens,
+                             province: $("#prov").val(),
+                             city: $("#city").val(),
+                             country: $("#country").val(),
+                             school: $("#school").val(),
+
+                         },
+                         success: function (teachers_list) {
+                             {#var teachers = $.parseJSON(teachers_list);#}
+                             var teachers = teachers_list;
+                             console.log(teachers)
+                             for(var i=0; i<teachers.length; i++) {
+                                 var data = teachers[i];
+                                 var chiefOpt = document.createElement(('option'));
+                                 chiefOpt.innerText = data.name+"("+data.username+")";
+                                 chiefOpt.value = data.username;
+                                 chief1.append(chiefOpt)
+                             }
+                         }
+                     })
+                 }
+             }
+         }
+      });
+
+    /*根据所选的省份来显示城市列表*/
+    function showCity(obj) {
+        $("#city").html("");
+        $("#city").append("<option>" + "=请选择城市=" + "</option>");
+        $("#country").html("");
+        $("#country").append("<option>" + "=请选择区县=" + "</option>");
+        $("#school").html("");
+        $("#school").append("<option>" + "=请选择学校=" + "</option>");
+        var val = obj.options[obj.selectedIndex].value;
+        if (val != current.prov) {
+            current.prov = val;
+            btn.disabled = true;
+        }
+        if (val != "=请选择省份=") {
+            city.length = 1;
+            var cityLen = provice[val]["city"].length;
+            for (var j = 0; j < cityLen; j++) {
+                var cityOpt = document.createElement('option');
+                cityOpt.innerText = provice[val]["city"][j].name;
+                cityOpt.value = j;
+                city.appendChild(cityOpt);
+            }
+        }
+     }
+
+    /*根据所选的城市来显示县区列表*/
+    function showCountry(obj) {
+        $("#country").html("");
+        $("#country").append("<option>" + "=请选择区县=" + "</option>");
+        $("#school").html("");
+        $("#school").append("<option>" + "=请选择学校=" + "</option>");
+        var val = obj.options[obj.selectedIndex].value;
+        current.city = val;
+        if (val != "=请选择城市=") {
+            country.length = 1; //清空之前的内容只留第一个默认选项
+            var countryLen = provice[current.prov]["city"][val].districtAndCounty.length;
+            if(countryLen == 0){
+                return;
+            }
+            for (var n = 0; n < countryLen; n++) {
+                var countryOpt = document.createElement('option');
+                countryOpt.innerText = provice[current.prov]["city"][val].districtAndCounty[n];
+                countryOpt.value = n;
+                country.appendChild(countryOpt);
+            }
+        }
+     }
+
+    /*选择县区之后的处理函数*/
+    function selecCountry(obj) {
+        current.country = obj.options[obj.selectedIndex].value;
+        $("#school").html("");
+        $("#school").append("<option>" + "=请选择学校=" + "</option>");
+        var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+        $.ajax({
+            url: '/t/import_user_school/',
+            type: 'POST',
+            traditional: false,
+            data: {
+                csrfmiddlewaretoken: csrftokens,
+                province: provice[current.prov].name,
+                city: provice[current.prov]["city"][current.city].name,
+                country: provice[current.prov]["city"][current.city].districtAndCounty[current.country],
+            },
+            success: function (school_list) {
+                var schools = $.parseJSON(school_list);
+                for (var i in schools) {
+                    if(i!='') {
+                        $("#school").append("<option value=" + schools[i] + ">" + schools[i] + "</option>");
+                    }
+                 }
+            }
+        })
+     }
+
+     /*选择学校之后的处理函数*/
+    function selecSchool(obj) {
+        btn.disabled = false;
+        $("#chief").html("");
+        $("#chief").append("<option>" + "=请选择(姓名-用户名)=" + "</option>");
+        var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+        $.ajax({
+            url: '/t/import_class_teacher/',
+            type: 'POST',
+            traditional: false,
+            data: {
+                csrfmiddlewaretoken: csrftokens,
+                province: provice[current.prov].name,
+                city: provice[current.prov]["city"][current.city].name,
+                country: provice[current.prov]["city"][current.city].districtAndCounty[current.country],
+                school: $("#school").val(),
+
+            },
+            success: function (teachers_list) {
+                    var teachers = teachers_list;
+                    for(var i=0; i<teachers.length; i++) {
+                        var data = teachers[i];
+                        var chiefOpt = document.createElement(('option'));
+                        chiefOpt.innerText = data.name+"("+data.username+")";
+                        chiefOpt.value = data.username;
+                        chief1.append(chiefOpt)
+                    }
+                }
+        })
+     }
+
+    /*点击确定按钮显示用户所选的地址*/
+    $("#submit").click(function () {
+        var grade= $("#grade").val()
+        var class_num= $("#class_num").val()
+        var school= $("#school").val()
+        var chief_= $('#chief').val()
+        var is_interest = new Boolean();
+        if($('#is_interest').is(':checked')) {
+            is_interest = true
+        }
+        else {
+            is_interest = false
+        }
+        if(grade=="请选择年级" || chief_=="=请选择(姓名-用户名)=" || class_num=="请选择班级"){
+            alert("请完善必要信息！")
+        }
+        else{
+            if($("#prov").val()=="=请选择省份=" || $("#city").val()=="=请选择城市=" || $("#country").val()=="=请选择县区=" || school=="请选择学校"){
+                alert("省市区-学校信息不完整！")
+            }
+            else{
+                var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+                var position = "{{ position }}"
+                if(position=="管理员"){
+                    var province1 = provice[current.prov].name;
+                    var city1 = provice[current.prov]["city"][current.city].name;
+                    var country1 = provice[current.prov]["city"][current.city].districtAndCounty[current.country];
+                }
+                else {
+                    var province1 = $("#prov").val();
+                    var city1 = $("#city").val();
+                    var country1 = $("#country").val();
+                }
+                $.ajax({
+                    url: '/t/import_class/',
+                    type: 'POST',
+                    traditional: false,
+                    data: {
+                        csrfmiddlewaretoken: csrftokens,
+                        province: province1,
+                        city: city1,
+                        country: country1,
+                        school: school,
+                        chief: chief_,
+                        grade: grade,
+                        class_num: class_num,
+                        is_interest: is_interest,
+                    },
+                    success: function (callback) {
+                        console.log("success")
+                        var callback_dict = $.parseJSON(callback);
+                        if (callback_dict.status == 1001) {
+                            alert("该班级已注册！！");
+                         } else if (callback_dict.status == 1002) {
+                            alert("注册申请成功，请等待学校负责人或管理员审核！");
+                            document.location.reload();
+                        } else if (callback_dict.status == 1003) {
+                            alert("注册失败，负责人不存在！");
+                        } else if(callback_dict.status == 1004){
+                            alert("注册失败，该班级正在审核中！");
+                        }
+
+                    }
+                })
+            }
+        }
+    })
+
+    $('#prov').select2();
+    $('#city').select2();
+    $('#country').select2();
+    $('#chief').select2();
+    $('#school').select2();
+    $('#grade').select2();
+    $('#class_num').select2();
+    </script>
+{% endblock %}

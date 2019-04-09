@@ -1,0 +1,150 @@
+.tab-view{
+    overflow: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-top:32px;
+    border: 1px solid white;
+    border-bottom-color: #9d9d9d;
+}
+a.tab-item.icon-btn.active{
+    color: #222;
+    border:1px solid #9d9d9d;
+    border-bottom-color: #ddd;
+    margin-bottom: -3px;
+    background-color: white;
+    padding-bottom:17px;
+    pointer-events:none;
+}
+a.tab-item.icon-btn{
+    color: #666;
+    border: 0;
+    border-bottom-color: #9d9d9d;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    /*margin-left:0px;*/
+    /*margin-right: -4px;*/
+    /*margin-bottom:-3px;*/
+    font-size:16px;
+    padding:15px 16px 15px 16px;
+}
+a.icon-btn.active{
+    color: #222;
+    outline: 0;
+    background-image: none;
+}
+a.icon-btn{
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    border:1px solid #ddd;
+    white-space: nowrap;
+    line-height:20px;
+    border-radius: 5px;
+    color: #222;
+    text-decoration: none;
+    font-size: 14px;
+    background-color: transparent;
+    padding:8px 16px 8px 16px;
+}
+a.icon-btn:hover{
+    background-color: #e1e1e1;
+}
+.problem-description-left{
+    position: relative;
+    margin: 20px 20px 20px 20px;
+    font-size: 16px;
+    line-height:24px;
+    float: left;
+    width: 65%;
+}
+.problem-description-right{
+    float:right;
+    width: 25%;
+}
+#editor {
+    border:1px solid #9d9d9d;
+    width:100%;
+    height: 50%;
+}
+pre{
+    white-space: pre-wrap;
+word-wrap: break-word;
+}
+.example{
+    border:1px solid #9d9d9d;
+    background-color: #f3f3f3;
+    padding:10px;
+}
+.side-bar{
+    margin-left: -1px;
+    padding-left:0;
+    width:25%;
+    font-size: 16px;
+    border-left: 1px solid #ecf0f1;
+    border-bottom: 1px solid #ecf0f1;
+}
+ul.side-bar-list{
+    padding:0;
+    margin-bottom: 0;
+    list-style-type: none;
+}
+.side-bar ul.side-bar-list li:nth-of-type(odd){
+    background: #F5F5F5;
+}
+.side-bar ul.side-bar-list li{
+    padding:10px;
+}
+.label-Easy{
+    /*background: #5cb85c;*/
+}
+.round{
+    font-size: 14px;
+    border-radius: 1020px;
+}
+.side-bar .difficulty-label{
+    margin-top: 2px;
+}
+.problem_hint_container{
+    font-size: 20px;
+    /*color: green;*/
+    text-align: center;
+    /*border-bottom: 1px solid #9d9d9d;*/
+    padding:20px;
+    align-content: center;
+}
+.problem-content{
+    margin-bottom: 20px;
+}
+.btn-round{
+    border-radius: 1020px;
+}
+.btn-primary{
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+#submit{
+    margin-right: 10px;
+}
+.submit.btn{
+    padding:6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    border:1px solid transparent;
+    margin-top: 10px;
+    /*margin-right: 200px;*/
+}
+.action.submitResult{
+    margin-top: 10px;
+    margin-left:10px;
+}
+.submissionContent{
+    margin:20px;
+}

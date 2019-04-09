@@ -1,0 +1,624 @@
+{% load staticfiles %}
+{% load notifications_tags %}
+{% csrf_token %}
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>零拓Scratch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="baidu-site-verification" content="XsgS3G7ZVJ"/>
+    <meta name="keywords" content=""/>
+    <meta name="description"
+          content="零拓Scratch是零拓科技的Scratch创作型社区。基于麻省理工媒体实验室终身幼儿园组的图形化在线编程>工具Scratch 2.0，为所有喜欢Scratch创作的朋友，提供一个自由创作、发表、交流作品的平台。"/>
+    <meta name="keywords"
+          content="零拓科技,少儿编程,儿童编程,少儿应用,Scratch,创客,STEAM,小学信息技术,编程,机器人,可视化编程,图形化编程,未来教育,>乐高,素质教育,游戏制作,动画制作,创造力,逻辑思维,小游戏,K12,中小学生"/>
+    <link href={% static "Scratch/css/bootstrap.css" %} rel='stylesheet' type='text/css'/>
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+    <script src={% static "Scratch/js/jquery-1.11.1.min.js" %}></script>
+    <script>if (window.module) module = window.module;</script>
+<script>window.CKEDITOR_BASEPATH = 'http://scratch-upload.oss-cn-hangzhou.aliyuncs.com/static/ckeditor/ckeditor/';</script>
+    <script src={% static "Scratch/js/bootstrap.min.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+{#    <script src={% static "Scratch/js/addresslist.js" %} charset="UTF-8"></script>#}
+    <script src={% static "Scratch/js/footerMenu.js" %} charset="UTF-8"></script>
+    <link href={% static "Scratch/css/index.css" %} rel='stylesheet' type='text/css'/>
+    <style type="text/css">
+        #moreName_content .active{
+            background: #717171;
+            color: #fff;
+        }
+    </style>
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row" id="nav-bacol">
+        <div class="col-lg-offset-1 col-lg-2">
+            <a href="http://www.tuopinpin.com">
+                <img src="{% static "Scratch/img/logo.png" %}">
+            </a>
+        </div>
+        <div class="nav-margin navbar-default col-lg-5">
+            <ul class="nav nav-pills" id="mynav">
+                <li id="index" role="presentation"><a href="/">首页</a></li>
+                <li role="presentation"><a href="/lesson/">课程学习</a></li>
+{#                <li role="presentation"><a href="http://scratch.tuopinpin.com/scratch.html">在线创作</a></li>#}
+{#                <li role="presentation"><a href="/scratch2/scratch.html">在线创作</a></li>#}
+                <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">创作 <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li role="presentation"><a href="/scratch2/scratch.html">在线创作</a></li>
+
+                        <li role="separator" class="divider"></li>
+                        <li role="presentation"><a href="http://python.tuopinpin.com/scratch.html">Python创作</a></li>
+{##}
+{#                        <li role="separator" class="divider"></li>#}
+{#                        <li><a href="/competition">竞赛</a></li>#}
+
+                      </ul>
+                </li>
+                <li id="teacher_li" role="presentation" style="display:none"><a href="/t/">教师入口</a></li>
+{#                 <li id="exam_li" id="exam" role="presentation" style="display:none"><a href="/exam/?next=/exam/index">比赛</a></li>#}
+                <li role="presentation" id="download"><a href="/download/">资源下载</a></li>
+                                 <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">发现 <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li><a href="/productlist">作品</a></li>
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/gallerylist">专题</a></li>
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/competition">竞赛</a></li>
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/OJ/problems">OJ</a></li>
+
+                        <li role="separator" class="divider"></li>
+                        <li><a onclick="
+                            function getCookie(name) {
+                              var arr;
+                              var reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
+                              if (arr = document.cookie.match(reg)){
+                                return arr[2];
+                              }
+                              else
+                                return null;
+                            }
+                            if(getCookie('username') === null){
+                                alert('请登录');
+                            }else{
+                                window.open('http://' + window.location.host.toString() + '/team_match/production/scratch/build/index.html?createType=gobang');
+                            }
+                        " style="cursor:pointer">五子棋对战作品创作</a> </li>
+
+                        <li role="separator" class="divider"></li>
+
+                        <li><a onclick="
+                            function getCookie(name) {
+                              var arr;
+                              var reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
+                              if (arr = document.cookie.match(reg)){
+                                return arr[2];
+                              }
+                              else
+                                return null;
+                            }
+                            if(getCookie('username') === null){
+                                alert('请登录');
+                            }else{
+                                window.open('http://' + window.location.host.toString() + '/team_match/production/scratch/build/index.html?createType=snake');
+                            }
+                        " style="cursor:pointer">贪吃蛇对战作品创作</a> </li>
+
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'team_match:team_match_production' 'self' %}">我的竞赛作品</a> </li>
+
+                         <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'team_match:team_match_production' 'others' %}">他人竞赛作品</a> </li>
+
+                          <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'team_match:team_match_index' %}">Match</a> </li>
+                      </ul>
+                </li>
+
+                <li role="presentation" id="qa"><a href="/qa">问答系统</a></li>
+
+          </ul>
+        </div>
+        {% if user.is_authenticated %}
+            <div class="nav-margin col-lg-1">
+                {% notifications_unread as unread_count %}
+                {% if unread_count %}
+                    <a href="/inbox"><img src="{% static "img/notifications_have.png" %}" />{{ unread_count }}</a>
+                {% else %}
+                    <a href="/inbox"><img src="{% static "img/notifications_none.png" %}" /></a>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="col-lg-2" id="sign-up-in">
+            <ul class="nav nav-pills" id="login">
+                <li role="presentation">
+                    <button id="sign-in-button" type="button" class="btn" data-toggle="modal" data-target="#modename">
+                        登录
+                    </button>
+                </li>
+                <li role="presentation">
+                    <button type="button" class="btn" data-toggle="modal" data-target="#firstModal">
+                        注册
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="firstModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title center-block" id="myModalLabel" align="center">
+                        请选择您的职位
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills">
+                        <li role="presentation">
+                            <button type="button" class="btn" id="teacher">
+                                教师注册
+                            </button>
+                        </li>
+                        <li role="presentation">
+                            <button id="student" type="button" class="btn" data-toggle="modal" data-target="#studentModal">
+                                学生注册
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="modename" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title center-block" id="sinLabel" align="center">
+                        请选择登录方式
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills">
+                        <li role="presentation">
+                            <button type="button" class="btn" id="usernamein" data-toggle="modal" data-target="#signInModal">
+                                用户名登录
+                            </button>
+                        </li>
+                        <li role="presentation">
+                            <button id="truenamein" type="button" class="btn" data-toggle="modal" data-target="#trueNameModal">
+                                真实姓名登录
+                            </button>
+                        </li>
+{#                        <li role="presentation">#}
+{#                            <button type="button" class="btn" data-toggle="modal"><a href="/t/index">#}
+{#                                教师登录</a>#}
+{#                            </button>#}
+{#                        </li>#}
+{#                        <li role="presentation">#}
+{#                                <button id="fpwd" type="button" class="btn" data-toggle="modal" data-target="#forgetpsw">#}
+{#                                    忘记密码（教师）#}
+{#                                </button>#}
+{#                        </li>#}
+                    </ul>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="studentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title center-block" id="myModalLabel" align="center">
+                        注册
+                    </h4>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table" align="center" valign="center" style="border-spacing:0px;">
+                        <tr style="height: 40px; border-top: hidden">
+                            <td style="width:50px; margin-right:0%">昵称：</td>
+                            <td style="width:100px"><input id="username"/></td>
+                            <td class="usernameError" style="color: red;width:120px"></td>
+                        </tr>
+
+                        <tr style="height: 40px;">
+                            <td>密码：</td>
+                            <td><input id="password" type="password" placeholder="长度至少6位"/></td>
+                            <td class="passwordError" style="color: red"></td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td>确认密码：</td>
+                            <td><input id="rePassword" type="password" placeholder="长度至少6位"/></td>
+                            <td class="passwordMis" style="color: red"></td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td>真实姓名：</td>
+                            <td><input id="trueName"></td>
+                            <td class="trueNameError" style="color: red"></td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td>性别：</td>
+                            <td id="sex">
+                                <input type="radio" name="sex" value="男"/>&nbsp;男&nbsp;&nbsp;
+                                <input type="radio" name="sex" value="女"/>&nbsp;女&nbsp;&nbsp;
+                            </td>
+                            <td class="sexError" style="color: red"></td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td>生日:</td>
+                            <td>
+
+                                <select node-type="birthday_year" name="birthday_y" id="birthday_y" style="height: 30px">
+                                    <option value=""></option>
+                                </select>&nbsp;年&nbsp;
+
+{#                                <label class="checkbox-inline">#}
+                                    <select node-type="birthday_month" name="birthday_m" id="birthday_m" style="height: 30px">
+                                        <option value=""></option>
+                                    </select>&nbsp;月&nbsp;
+{#                                </label>#}
+{#                                <label class="checkbox-inline">#}
+                                    <select node-type="birthday_month" name="birthday_d" id="birthday_d" style="height: 30px">
+                                        <option value=""></option>
+                                    </select>&nbsp;日&nbsp;
+{#                                </label>#}
+                                <input type="hidden" name="birth" id="birth" value="2017/6/1">
+                                <label class='checkbox-inline text-warning hidden' id="birth_error_info"><i
+                                        class='fa fa-warning'></i></label>
+                            </td>
+                            <td class="birthdayError" style="color: red"></td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td rowspan="2">所在地：</td>
+                            <td nowrap="nowrap" colspan="2">
+                                <select class="cmbProvince" id="cmbProvince"  name="cmbProvince" onchange="showCmbCity($('#cmbProvince'), $('#cmbCity'), $('#cmbArea'))" style="height:30px;">
+                                    <option>=请选择省份=</option>
+                                </select>
+                                <select class="cmbCity" id="cmbCity"  name="cmbCity" onchange="showCmbCountry($('#cmbProvince'), $('#cmbCity'), $('#cmbArea'))" style="height: 30px;">
+                                    <option>=请选择城市=</option>
+                                </select>
+                                <select class="cmbArea" id="cmbArea"  name="cmbArea" onchange="selecCmbCountry($('#cmbProvince'), $('#cmbCity'), $('#cmbArea'))" style="height: 30px;">
+                                    <option>=请选择县区=</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td id="cmbError" style="color:red; border-top: hidden"></td>
+                        </tr>
+                        <tr style="height:40px;">
+                            <td rowspan="2">学校：</td>
+                            <td colspan="2">
+                                <select id="prov" onchange="showCity($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                    <option>=请选择省份=</option>
+                                </select>
+                                <select id="city" onchange="showCountry($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                    <option>=请选择城市=</option>
+                                </select>
+                                <select id="district" onchange="selecCountry($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                    <option>=请选择县区=</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="height: 40px;">
+{#                            <td>学校：</td>#}
+                            <td colspan="2" style="border-top: hidden">
+                                <!--<input id="school">-->
+                                <select id="format_school" style="height: 30px">
+                                    <option>=请选择学校=</option>
+                                </select>
+{#                                <select id="grade">#}
+{#                                    <option name="firstGrade">一年级</option>#}
+{#                                    <option name="secondGrade">二年级</option>#}
+{#                                    <option name="thirdGrade">三年级</option>#}
+{#                                    <option name="forthGrade">四年级</option>#}
+{#                                    <option name="fifthGrade">五年级</option>#}
+{#                                    <option name="sixthGrade">六年级</option>#}
+{#                                    <option name="forthGrade">初一</option>#}
+{#                                    <option name="fifthGrade">初二</option>#}
+{#                                    <option name="sixthGrade">初三</option>#}
+{#                                </select>#}
+{#                                <select id="student_class">#}
+{#                                </select>#}
+{#                                <input id="student_id" placeholder="学号" size=7>#}
+                            </td>
+                            <td class="idError" style="color: red; border-top: hidden"></td>
+                        </tr>
+{#                        <tr style="height: 40px;">#}
+{#                            <td>课外学校:</td>#}
+{#                            <td>#}
+{#                                <select id="school_second"></select>#}
+{#                                <select id="student_class_second"></select>#}
+{#                            </td>#}
+{#                        </tr>#}
+
+                        <tr style="height: 40px;">
+                            <td>监护人手机号:</td>
+                            <td>
+                                <input id="phonenumber" placeholder="请输入11位手机号码">
+                            </td>
+                            <td class="phone_numberError" style="color: red"></td>
+                        </tr>
+                        <tr style="height: 40px;">
+                            <td>学籍号：</td>
+                            <td>
+                                <input id="enroll_number_note" placeholder="请输入16位学籍号">
+                            </td>
+                            <td id="EnrollNumberNoteError" style="color: red;"></td>
+                        </tr>
+{#                        <tr>#}
+{#                            <td>#}
+{#                                <div><br></div>#}
+{#                            </td>#}
+{#                        </tr>#}
+{#                        <tr style="height: 40px;">#}
+{#                            <td></td>#}
+{#                            <td><input type="button" class='btn btn-success registerButton' value="确定" onclick="registerCheck()"></td>#}
+{#                        </tr>#}
+                    </table>
+                    <!--</div>-->
+                    <!--</div>-->
+                </div>
+                <div class="modal-footer">
+{#                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>#}
+                    <button type='button' class="btn btn-success registerButton center-block" value='确定' onclick="registerCheck()">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="signInModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title center-block" id="myModalLabel" align="center">
+                        用户名登录
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table" align="center" valign="center" style="border-spacing:0px 10px;">
+                        <tr>
+                            <td>用户名：</td>
+                            <td><input id="signin_username"/></td>
+                            <td class="usernameError" style="color: red"></td>
+                        </tr>
+
+                        <tr>
+                            <td>密码：</td>
+                            <td><input id="signin_password" type="password"/></td>
+                            <td class="passwordError" style="color: red"></td>
+                        </tr>
+
+                        <tr id="choose_class">
+                            <td>选择班级:</td>
+                            <td>
+                                <select id="classes_list" style="height: 30px;">
+                                    <option value="0">=请选择班级=</option>
+                                </select>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td><button class="btn btn-success" id="signin_submit">登录</button></td>
+                            <td id="loginError">用户名或密码不正确！</td>
+                        </tr>
+                    </table>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+<div class="modal fade" id="forgetpsw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title center-block" id="myModalLabel" align="center">
+                        重置密码
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table" align="center" valign="center" style="border-spacing:0px 10px;">
+                        <tr>
+                            <td><a href="/t/passwordreset/recover">请点击该链接进行重置</a></td>
+                        </tr>
+                    </table>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="trueNameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title center-block" id="myModalLabel" align="center">
+                        真实姓名登录
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table" align="center" valign="center" style="border-spacing:0px 10px;">
+                        <tr>
+                            <td>用户真实姓名：</td>
+                            <td><input id="signin_truename"/></td>
+                            <td class="usernameError" style="color: red"></td>
+                        </tr>
+
+                        <tr>
+                            <td>密码：</td>
+                            <td><input id="signin_truenamepwd" type="password"/></td>
+                            <td id="signin_truenamepwd_error" class="passwordError" style="color: red"></td>
+                        </tr>
+
+                        <tr id="choose_truenameschool">
+                            <td>选择学校:</td>
+                            <td>
+                                <select id="schools_list" style="height: 30px;">
+                                    <option value="0">=请选择学校=</option>
+                                </select>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        <tr id="choose_truenameclass">
+                            <td>选择班级:</td>
+                            <td>
+                                <select id="classes_truenamelist" style="height:30px;">
+                                    <option value="0">=请选择班级=</option>
+                                </select>
+                            </td>
+                            <td id="classTrueNameError" style="color:red"></td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td><button class="btn btn-success" id="signin_truenamesubmit">登录</button></td>
+                            <td id="truenameloginError" style="color: red;">用户名或密码不正确！</td>
+                        </tr>
+                    </table>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div class="modal fade" id="moreNameModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title center-block" id="moreNameTitle" align="center">发现同名用户</h4>
+                </div>
+                <div class="modal-body center-block" align="center" >
+                    <strong id="moreNameBodyTitle" class="center-block" style="font-size: 16px">请选择你的用户</strong>
+                    <div id="moreName_content">
+                        <div id="moreName_div" class="moreName_div" style="border: 2px solid #eaeaea; font-size: 16px; padding: 10px; margin-top: 5px;cursor:pointer;display: none">
+                            <span>用户名：</span><span id="moreName_username"></span>
+                            <br>
+                            <span>生&nbsp;&nbsp;日：</span><span id="moreName_birthday"></span>
+                        </div>
+                    </div>
+                    <i id="moreNameError" style="color: red;"></i>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success center-block"  id="moreNameSubmit">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block mainbody %}
+        <!-- 轮播 -->
+        <div class="row col-lg-10 col-lg-offset-1" id="lunbo">
+            <div id="myCarousel" class="carousel slide">
+                <!-- 轮播（Carousel）指标 -->
+                <ol class="carousel-indicators" id="carousel">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                    <li data-target="#myCarousel" data-slide-to="2"></li>
+                </ol>
+                <!-- 轮播（Carousel）项目 -->
+                <div class="carousel-inner" id="picture">
+                    <div class="item active">
+                        <a href="/gallerydetail/c8d29756-ce4d-4e72-900d-cee34b3b6925/">
+                            <img src="{% static "Scratch/img/first.png" %}"/>
+                        </a>
+                    </div>
+                    <div class="item">
+                        <img src="{% static "Scratch/img/second.jpg" %}"/>
+                    </div>
+                    <div class="item">
+                        <img src="{% static "Scratch/img/third.jpg" %}"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 轮播结束 -->
+
+    {% endblock %}
+    <div id="fixbug"></div>
+
+    <div class="row  col-lg-12   navbar-fixed-bottom " id="footera">
+            <div class="col-lg-offset-4 col-lg-3">
+                <p style="display:block">Copyright © 902 2017. All rights reserved</p>
+            </div>
+            <div class="col-lg-3">
+                <a id="aboutus-a" href="/aboutus/" style="display:block">关于我们</a>
+            </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src={% static "Scratch/js/index.js" %}></script>
+<script src={% static "Scratch/js/register.js" %}></script>
+<script src={% static "Scratch/js/date.js" %}></script>
+{% block script %}
+    <script type="text/javascript" src={% static "Scratch/js/index_mainbody.js" %}></script>
+    <script type="text/javascript" src="{% static 'js/city.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/method01.js' %}"></script>
+{% endblock %}
+    <script language="javascript">
+$(document).ready(function () {
+    {% if user.is_authenticated %}
+                {% notifications_unread as unread_count %}
+                {% if unread_count %}
+                    playSound();
+                {% endif %}
+        {% endif %}
+});
+function playSound()
+    {
+      var borswer = window.navigator.userAgent.toLowerCase();
+      if ( borswer.indexOf( "ie" ) >= 0 )
+      {
+        //IE内核浏览器
+        var strEmbed = '<embed name="embedPlay" src={% static "Scratch/sound/void.wav" %} autostart="true" hidden="true" loop="false"></embed>';
+        if ( $("body" ).find( "embed" ).length <= 0 )
+          $( "body" ).append( strEmbed );
+        var embed = document.embedPlay;
+
+        //浏览器不支持 audion，则使用 embed 播放
+        embed.volume = 100;
+        //embed.play();这个不需要
+      } else
+      {
+        //非IE内核浏览器
+        var strAudio = "<audio id='audioPlay' src={% static "Scratch/sound/void.wav" %} hidden='true'>";
+        if ( $( "body" ).find( "audio" ).length <= 0 )
+          $( "body" ).append( strAudio );
+        var audio = document.getElementById( "audioPlay" );
+
+        //浏览器支持 audion
+        audio.play();
+      }
+    }
+</script>
+</html>

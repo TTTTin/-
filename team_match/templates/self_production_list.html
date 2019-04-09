@@ -1,0 +1,167 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% load competition_extra %}
+{% load matchArrange_extra %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+    <style>
+        .a-title{
+            color: #E74C3C;
+            text-decoration: underline;
+        }
+    </style>
+    <script type="text/javascript">
+        var productionID = null;
+        function lookOverProduction(productionID) {
+            url = "http://" + window.location.host.toString() + "/team_match/production/scratch/build/index.html";
+            window.open(url + "?id=" + productionID, '_blank')
+        }
+        function battleWithAiRequest(productionID, firstGo, kind_of_battle) {
+            $.ajax({
+                url : "{% url 'team_match:team_match_battle_with_ai' %}",
+                type : 'POST',
+                data : {
+                    'productionID' : productionID,
+                    'firstGo' : firstGo,
+                    'gameType': kind_of_battle
+                },
+                dataType : 'json',
+                success : function (data) {
+                    console.log(data);
+                    if(data.start){
+                        setCookie(data.opCode, 'notAI');
+                        url = "http://" + window.location.host.toString() + "/team_match/production/scratch/build/index.html";
+                        window.open(url + "?id=" + productionID + "&opCodeAndMess=" + data.opCode + firstGo.toString(), '_blank')
+                    }else{
+                        window.alert("please wait a moment and then try it again...");
+                    }
+                },
+                error : function () {
+                    alert("server error...");
+                }
+            });
+        }
+        function deleteProduction(productionID) {
+            $.ajax({
+                url : "{% url 'team_match:team_match_delete_production' %}",
+                type : 'POST',
+                data : {
+                    'productionID' : productionID,
+                    'username' : getCookie('username')
+                },
+                dataType : 'json',
+                success : function (data) {
+                    alert(data['mess']);
+                    window.location.reload();
+                },
+                error : function () {
+                    alert("server error...");
+                }
+            });
+        }
+        function getCookie(cname)
+        {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++)
+            {
+                var c = ca[i].trim();
+                if (c.indexOf(name)===0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+        function setCookie(name,value) {
+            var minute = 10;
+            var exp = new Date();
+            exp.setTime(exp.getTime() + minute*60*1000);
+            document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString() + ";path=/";
+        }
+    </script>
+{% endblock %}
+
+
+
+{% block mainbody %}
+<div>
+    <div>
+        <br><br>
+    </div>
+
+    <div id="type-list" class="col-lg-offset-1 col-lg-10">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <th width="60%" style="vertical-align: middle !important;text-align: center;">作品名称</th>
+                <th width="20%" style="vertical-align: middle !important;text-align: center;">作品类型</th>
+                <th width="10%" style="vertical-align: middle !important;text-align: center;">操作</th>
+                <th width="10%" style="vertical-align: middle !important;text-align: center;">人机对战</th>
+            </tr>
+            {% for production_for_battle in production_list %}
+                <tr class="{{ forloop.counter | get_class }}">
+
+                    <td style="vertical-align: middle !important;text-align: center;">{{ production_for_battle.production.name }}</td>
+                    {% if production_for_battle.kind_of_battle == 1 %}
+                         <td style="vertical-align: middle !important;text-align: center;">五子棋</td>
+                    {% elif production_for_battle.kind_of_battle == 2 %}
+                         <td style="vertical-align: middle !important;text-align: center;">贪吃蛇</td>
+                    {% else %}
+                        <td style="vertical-align: middle !important;text-align: center;">其它</td>
+                    {% endif %}
+                    <td style="vertical-align: middle !important;text-align: center;">
+                        <a onclick="lookOverProduction('{{ production_for_battle.production.id }}');" style="cursor:pointer">查看/修改</a>
+                        <a onclick="deleteProduction('{{ production_for_battle.production.id }}');" style="cursor:pointer">删除</a>
+                    </td>
+                    <td style="vertical-align: middle !important;text-align: center;">
+                        <a onclick="battleWithAiRequest('{{ production_for_battle.production.id }}', 1, '{{ production_for_battle.kind_of_battle }}');" style="cursor:pointer">我方先手</a>&nbsp;&nbsp;&nbsp;
+                        <a onclick="battleWithAiRequest('{{ production_for_battle.production.id }}', 2, '{{ production_for_battle.kind_of_battle }}');" style="cursor:pointer">对方先手</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        <div class="pagination" style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% endif %}
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.next_page_number }}">下一页</a>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+
+{% endblock %}

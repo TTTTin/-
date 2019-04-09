@@ -1,0 +1,70 @@
+{% extends 'index.html' %}
+{% block content %}
+{#    <style type="text/css">#}
+{#        .sb2{#}
+{#            text-align: center;#}
+{#        }#}
+{#    </style>#}
+
+
+
+         <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2 >数据汇总</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a>数据分析</a>
+                        </li>
+                        <li class="active">
+                            <strong>数据列表</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+     </div>
+
+
+
+
+
+
+    <div id="type-list" class="col-lg-offset-1 col-lg-10">
+        <table class="table table-hover">
+{#        <caption>悬停表格布局</caption>#}
+        <thead>
+            <tr>
+                <th>活动名称</th>
+                <th>数据截止时间</th>
+                <th>图表说明</th>
+                <th>查看详情</th>
+            </tr>
+        </thead>
+
+        <tbody>
+             {% for i in test %}
+            <tr>
+                <td>{{ i.name }}</td>
+                <td>{{ i.create_time }}</td>
+                <td>{{i.description }}</td>
+                <td><a href="/t/dataVisualization/{{ i.id }}">点此查看</a></td>
+
+            </tr>
+             {% endfor %}
+{#            <tr>#}
+{#                <td>Sachin</td>#}
+{#                <td>Mumbai</td>#}
+{#                <td>400003</td>#}
+{#            </tr>#}
+{#            <tr>#}
+{#                <td>Uma</td>#}
+{#                <td>Pune</td>#}
+{#                <td>411027</td>#}
+{#            </tr>#}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

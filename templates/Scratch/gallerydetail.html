@@ -1,0 +1,359 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% block css %}
+    <link href={% static "Scratch/css/gallerydetail.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/productdetail.css" %} rel='stylesheet' type='text/css'/>
+
+{% endblock %}
+{% block script %}
+
+    <script type="text/javascript" src="{% static 'js/select2.min.js' %}"></script>
+    <script>
+
+        $(document).ready(function () {
+            {#            $("#createGallery")#}
+            var role = $.cookie("role");
+            if (role == 'teacher') {
+                $('#submit_btn').css("display","none");
+            }
+            var $tougao=$('#tougao');
+            console.log($tougao.val());
+            if($tougao.val()==''){
+                $('#tougaobox').addClass("tougao");
+            }
+{#            var starttime={{start_time}};#}
+            console.log({{ start_result }});
+            console.log({{ stop_result }});
+            if({{ start_result }}==false){
+{#                alert('ss')#}
+                $('#submit_btn').css('display','none');
+                $('#tougaobox').append('<span id="tougao" style="font-size:16px; color: #000000; font-weight:bold;font-family:KaiTi;letter-spacing: 0.2rem">专题尚未开始!</span>')
+{#                $('#tougaobox').addClass('warn');#}
+            }
+             if({{ stop_result }}==false){
+{#                alert('ss')#}
+                $('#submit_btn').css('display','none');
+                $('#tougaobox').append('<span id="tougao" style="font-size:16px; color: #000000; font-weight:bold;font-family:KaiTi;letter-spacing: 0.2rem">专题已结束!</span>')
+                $('#tougaobox').addClass('warn');
+            }
+
+        })
+        function handle_favorite() {
+            //$.get('/website/ajax/favorite_production/' + "{{ galleryObject.id }}" + '/');
+            $.ajax({
+                url: '/website/ajax/favorite_gallery/' + "{{ galleryObject.id }}" + '/',
+                success: function () {
+                    if (document.getElementById("favorite_false").style.display == "none") {
+                        document.getElementById("favorite_false").style.display = "block";
+                        document.getElementById("favorite_true").style.display = "none";
+                        ///alert(count)
+                        $("#favorite_false > p").html("收藏：<span>" + (count - 1) + "</span>");
+                        count = count - 1;
+
+                    } else {
+                        document.getElementById("favorite_false").style.display = "none";
+                        document.getElementById("favorite_true").style.display = "block";
+                        $("#favorite_true > p").html("收藏：<span>" + (count + 1) + "</span>");
+                        count = count + 1;
+                    }
+                }
+            });
+        }
+
+        function handle_like() {
+            if (document.getElementById("like_false").style.display == "none") {
+                return;
+            }
+            $.ajax({
+                url: '/website/ajax/like_gallery/' + '{{ galleryObject.id }}' + '/',
+                success: function () {
+                    if (document.getElementById("like_false").style.display == "none") {
+                        document.getElementById("like_false").style.display = "block";
+                        document.getElementById("like_true").style.display = "none";
+                        ///alert(count)
+                        //$("#favorite_false > p").html("收藏：<span>" + (count - 1) + "</span>");
+                        countlike = countlike - 1;
+
+                    } else {
+                        document.getElementById("like_false").style.display = "none";
+                        document.getElementById("like_true").style.display = "block";
+                        //$("#favorite_true > p").html("收藏：<span>" + (count + 1) + "</span>");
+                        countlike = countlike + 1;
+                    }
+
+                    $("#zancount").html("点赞：" + countlike);
+                }
+            });
+        }
+
+        function hoverShowDiv() {
+            var x = event.clientX;
+            y = event.clientY;
+            document.getElementById("divHover").style.display = "block";
+
+            document.getElementById("divHover").y = document.getElementById("phone").y - 500;
+            document.getElementById("divHover").x = x - 500;
+            console.log(document.getElementById("phone").y);
+            console.log(document.getElementById("divHover").y);
+        }
+
+        function hoverHiddendiv() {
+            document.getElementById("divHover").style.display = "none";
+        }
+
+    </script>
+{% endblock %}
+{% block mainbody %}
+
+    <div class=" col-lg-12 gallery_background">
+        <section id="page-breadcrumb">
+            <div class="vertical-center sun">
+                <div class="col-lg-offset-2">
+                    <div class="row">
+                        <br>
+                        <div class="col-lg-12">
+                            <br>
+                            <div class="img col-lg-2">
+                                {#                            <img src="{{ galleryObject.image.url }}" style="height: 200px;width:300px" alt="image not found">#}
+                                <img src='{{ galleryObject.image.url }}' class='gallery_img' alt='image not found'>
+                            </div>
+
+                            <div class="col-lg-10 content" style="padding-left: 0.2%">
+                                <h3>{{ galleryObject.name }}</h3>
+
+                                <div class="text">创建者：{{ galleryObject.author }}</div>
+                                <div class="text">创建于：{{ galleryObject.create_time }}</div>
+                                <br>
+                                 <div class="text gallery_desription">{{ galleryObject.description }}</div>
+                                <div class="col-lg-6 right ">
+                                {% if user.is_authenticated %}
+{#                                    <div class="col-lg-4">#}
+                                        <div id="favorite_true" class="gallery_right">
+                                            <img src="{% static 'img/favorite_true.png' %}" style="cursor: pointer;"
+                                                 onclick="handle_favorite()"/>
+                                            <p>收藏：<span>{% count_gallery_favorite galleryObject %}</span></p>
+                                        </div>
+                                        <div id="favorite_false" class="gallery_right">
+                                            <img src="{% static 'img/favorite_false.png' %}" style="cursor: pointer;"
+                                                 onclick="handle_favorite()"/>
+                                            <p>收藏：<span>{% count_gallery_favorite galleryObject %}</span></p>
+                                        </div>
+                                        <script>
+                                            var count = 0;
+                                            {% get_if_gallery_favorite galleryObject as if_gallery_favorite %}
+                                            {% if if_gallery_favorite %}
+                                                document.getElementById("favorite_false").style.display = "none";
+                                                count = Number($("#favorite_true > p > span").text());
+                                            {% else %}
+                                                document.getElementById("favorite_true").style.display = "none";
+                                                count = Number($("#favorite_false > p > span").text());
+                                            {% endif %}
+                                        </script>
+{#                                    </div>#}
+                                {% endif %}
+
+
+
+                                <div class="gallery_right">
+                                    <div id="like_true" >
+                                        <img src="{% static 'img/like_true.png' %}"   onclick="handle_like()"/>
+                                        <br>
+                                        <div id="zancount">点赞：{{ galleryObject.like }}</div>
+                                    </div>
+                                    <div id="like_false">
+                                        <img src="{% static 'img/like_false.png' %}" style="cursor: pointer;" onclick="handle_like()"/>
+                                        <br>
+                                        <div id="zancount">点赞：{{ galleryObject.like }}</div>
+                                    </div>
+                                    <script>
+                                        var countlike = Number({{ galleryObject.like }});
+                                        {% get_if_gallery_like galleryObject as if_gallery_like %}
+                                        {% if if_gallery_like %}
+                                            document.getElementById("like_false").style.display = "none";
+                                        {% else %}
+                                            document.getElementById("like_true").style.display = "none";
+                                        {% endif %}
+                                    </script>
+                                </div>
+
+
+                                {#                            <div id="like_true" class="col-lg-2">#}
+                                {#                                    <img src="{% static 'img/favorite_true.png' %}" />#}
+                                {#                                    <div>收藏:{{galleryObject.like }}</div>#}
+                                {#                            </div>#}
+                                {##}
+                                <div class="gallery_right">
+                                    <div id="view_true" >
+                                        <img src="{% static 'img/view.png' %}" style="height: 30px;width:30px"/>
+                                        <br>
+                                        <div>浏览:{{ galleryObject.hit }}</div>
+                                    </div>
+                                </div>
+                                <div class="gallery_right " id="tougaobox">
+{#                                {% if {{ start_result }}=='true' %}#}
+{#                                {% endif %}#}
+                                    {% if user.is_authenticated %}
+                                        <a href="/website_submitProductiontToGallery/{{ user }}/{{ galleryObject.id }}/"
+                                           title="">
+                                            <button type="button" id="submit_btn" class="btn btn-success" style="font-size: 17px;font-family: KaiTi;font-weight: bold">
+{#                                                    style="height: 50px;width:80px">#}
+                                                投稿
+                                            </button>
+                                        </a>
+                                    {% else %}
+                                        <span id="tougao" style="font-size:18px; color: #000000; font-weight:bold;font-family:KaiTi;letter-spacing: 0.2rem">投稿需登录哟!</span>
+{#text-shadow: 2px 2px 2px #FFF000;#}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% if galleryObject.name == "义乌市首届Scratch编程周" and page_obj.number == 1 %}
+
+        <div  class="col-lg-12">
+            <iframe src="http://datav.aliyun.com/share/07ef37b235d9763bd364f344912d1a05" frameborder="0" scrolling="auto" width="100%" height="100%" allowfullscreen></iframe>
+        </div>
+      {% endif %}
+
+    </div>
+
+
+
+    <div class="row" id="search-sort">
+        {#        <form method="get" action="">#}
+        {#            <div class="col-lg-3 col-lg-offset-2">#}
+        {#                <div class="input-group">#}
+        {#                    <input type="text" class="form-control" placeholder="Search for..." name="q">#}
+        {#                    <span class="input-group-btn">#}
+        {#                        <button class="btn btn-default" type="submit">Go!</button>#}
+        {#                    </span>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </form>#}
+
+        {#        <div class="col-lg-5 pull-right">#}
+        {#            <ul class="nav nav-pills">#}
+        {#                <li role="presentation"><a style="cursor: pointer" onclick=order_by("name")>按照名称排序</a></li>#}
+        {#                <li role="presentation"><a style="cursor: pointer" onclick=order_by("-update_time")>按照最新排序</a></li>#}
+        {#                <li role="presentation"><a style="cursor: pointer" onclick=order_by("-hit")>按照点击排序</a></li>#}
+        {#            </ul>#}
+        {#        </div>#}
+    </div>
+    {#    <div id="list">#}
+
+    <div class="row" id="type-nav">
+        {#        <div class="btn-group col-lg-offset-2" role="group" aria-label="..." id="change-type">#}
+        {#            <a href="/productlist/" type="button" class="btn btn-default">全部</a>#}
+        {#            <a href="/productlist/?type=youxi" type="button" class="btn btn-default">游戏</a>#}
+        {#            <a href="/productlist/?type=yinyue" type="button" class="btn btn-default">音乐</a>#}
+        {#            <a href="/productlist/?type=gushi" type="button" class="btn btn-default">故事</a>#}
+        {#            <a href="/productlist/?type=donghua" type="button" class="btn btn-default">动画</a>#}
+        {#            <a href="/productlist/?type=yishu" type="button" class="btn btn-default">艺术</a>#}
+        {#            <a href="/productlist/?type=moni" type="button" class="btn btn-default">模拟</a>#}
+    </div>
+    </div>
+    <div id="type-list">
+    {% for i in test %}
+        {% if forloop.counter0|add:3|divisibleby:3 %}
+            <div class="row list-row">
+        {% endif %}
+
+        {% if forloop.counter0|add:3|divisibleby:3 %}
+            <div class="col-lg-2 col-lg-offset-2 list-boder">
+        {% endif %}
+        {% if forloop.counter0|add:2|divisibleby:3 %}
+            <div class="col-lg-2  col-lg-offset-1 list-boder">
+        {% endif %}
+    {% if forloop.counter0|add:1|divisibleby:3 %}
+        <div class="col-lg-2  col-lg-offset-1 list-boder">
+    {% endif %}
+
+    <div class="img">
+        <a href="/productdetail/{{ i.id }}" title="" class="img">
+            <img src="{{ i.image.url }}" style="height: 200px;width:100%" alt="image not found">
+        </a>
+        {#            <a href="javascript:void(0);" onclick="getdetail('{{ i.author}}','{{ i.id }}')" title="" class="img">#}
+        {#                <img src="{{ i.image.url }}" style="height: 200px;width:300px" alt="image not found">#}
+        {#            </a>#}
+    </div>
+    <div class="production">
+        作品名称： {{ i.name }}
+    </div>
+    <div class="author">
+        <a href="/userpage/{{ i.author }}" title="">
+            作者： {{ i.author }}
+        </a>
+        <img src="{% static "img/eye.png" %}"/>
+        {{ i.hit }}
+        <img src="{% static "img/like_true.png" %}"/>
+        {{ i.like }}
+    </div>
+    </div>
+    {% if forloop.counter0|add:1|divisibleby:3 %}
+        </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+    {% if is_paginated %}
+        <div class="pagination" style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% else %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% endif %}
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% else %}
+                        <a href="/gallerydetail/{{ galleryObject.id }}/?page={{ page_obj.next_page_number }}">下一页</a>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{#{% block script %}#}
+{#    <script src={% static "Scratch/js/productlist.js" %}></script>#}
+{#    <script>#}
+{#        function getUrlParam(name) {#}
+{#            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象#}
+{#            var r = window.location.search.substr(1).match(reg); //匹配目标参数#}
+{#            if (r != null) return unescape(r[2]);#}
+{#            return null; //返回参数值#}
+{#        }#}
+{##}
+{#        function order_by(order) {#}
+{#            var q_param = getUrlParam('q');#}
+{#            if (q_param) {#}
+{#                window.location.href = '?q=' + q_param + '&order=' + order;#}
+{#            } else {#}
+{#                window.location.href = '?order=' + order;#}
+{#            }#}
+{#        }#}
+{#    </script>#}
+{#{% endblock %}#}

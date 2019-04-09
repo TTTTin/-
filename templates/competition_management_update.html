@@ -1,0 +1,139 @@
+{% extends 'index.html' %}
+{% block statics2 %}
+{% load staticfiles %}
+    <style>
+
+         #save{
+            display: block;
+            margin:0 30%;
+             width: 6%;
+        }
+
+        img{
+            height: auto !important; max-width: 100%;
+        }
+        #id_content{
+            margin-left: 4rem!important;
+        }
+        p:nth-last-of-type(1) br +text{
+            text-indent:8rem;
+        }
+         #id_creator{
+             width: 15%;
+         }
+    #id_rater{
+        width:20%;
+    }
+    #id_advisers{
+        width:20%;
+    }
+    p {
+    text-indent: 0em;
+    line-height: 1.5em;
+}
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/t/competition_management_admin/">竞赛管理</a>
+                </li>
+{#                <li>#}
+{#                    <a ">题目管理(可跳转)</a>#}
+{#                </li>#}
+                <li class="active">
+                    <strong>查看竞赛</strong>
+                </li>
+            </ol>
+        </div>
+
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {{ form.as_p }}
+            {{ form.media }}
+        <input id="save" class="btn btn-primary " type="submit" value="保存" />
+        </form>
+    </div>
+{% endblock %}
+{% block script %}
+{#    <script src={% static "Scratch/js/jquery.js"%}></script>#}
+    <script src={% static "Scratch/js/jquery.datetimepicker.full.js"%}></script>
+    <link href={% static "Scratch/css/jquery.datetimepicker.css" %} rel="stylesheet">
+    <script src={% static "Scratch/js/select2.full.min.js"%}></script>
+    <link href={% static "Scratch/css/select2.min.css" %} rel="stylesheet">
+    <script type="text/javascript">
+
+        $.datetimepicker.setLocale('ch');
+        $('#id_start_time').datetimepicker({
+            dayOfWeekStart : 1,
+{#            startDate:	'2018/04/01'#}
+        });
+{#        {% comment %}{% endcomment %}$('#id_start_time').datetimepicker({value:'2018/01/01 00:00',step:10});#}
+        $('#id_stop_time').datetimepicker({
+            dayOfWeekStart : 1,
+{#            startDate:	'2018/04/01'#}
+        });
+
+        $(document).ready(function () {
+            $('#id_creator').select2({
+                placeholder: "选择管理员"
+            });
+            $('#id_rater').select2({
+                multiple:true,
+                placeholder: "选择评委（可多选）"
+                }
+            )
+            $('#id_advisers').select2({
+                multiple:true,
+                placeholder: "选择教研员(可多选)"
+            })
+        })
+{#        $('#id_stop_time').datetimepicker({value:'2018/01/01 00:00',step:10});#}
+
+
+    </script>
+{#    <script type="text/javascript">#}
+{#        $("#id_start_time").attr('type','datetime-local');#}
+{#        $("#id_stop_time").attr('type','datetime-local');#}
+{#    </script>#}
+{#    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>#}
+{#    <script src={% static "Scratch/js/jquery-ui-timepicker-addon.js"%}></script>#}
+{#    <script type="text/javascript" src="{% static "Scratch/js/jquery-ui-timepicker-zh-CN.js" %}"></script>#}
+{#    <script>#}
+{#        $(function() {#}
+{#            $('#id_start_time').prop("readonly", true).datetimepicker({#}
+{#                        timeText: '时间',#}
+{#                        hourText: '小时',#}
+{#                        minuteText: '分钟',#}
+{#                        secondText: '秒',#}
+{#                        currentText: '现在',#}
+{#                        closeText: '完成',#}
+{#                        showSecond: true, //显示秒#}
+{#                        dateFormat: "yy-mm-dd",#}
+{#                        timeFormat: 'HH:mm:ss' //格式化时间#}
+{#                    });#}
+{#             $('#id_stop_time').prop("readonly", true).datetimepicker({#}
+{#                        timeText: '时间',#}
+{#                        hourText: '小时',#}
+{#                        minuteText: '分钟',#}
+{#                        secondText: '秒',#}
+{#                        currentText: '现在',#}
+{#                        closeText: '完成',#}
+{#                        showSecond: true, //显示秒#}
+{#                        dateFormat: "yy-mm-dd",#}
+{#                        timeFormat: 'HH:mm:ss' //格式化时间#}
+{#                    });#}
+{#        });#}
+{#    </script>#}
+
+{% endblock %}

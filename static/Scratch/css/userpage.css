@@ -1,0 +1,38 @@
+#action ,
+#page-breadcrumb{
+  position: relative;
+}
+
+#page-breadcrumb {
+  /*background-image: url(../images/home/tour-bg.png);*/
+  background-color: #fbfafa;
+  background-repeat: repeat-x;
+  height: 130px;
+  background-position: center;
+  display: table;
+  position: static;
+  width: 100%;
+}
+
+#mmycolor{
+  background-color: #dedef8;
+}
+
+.col-md-1{
+  background-color: #dedef8;box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+}
+#information {
+  margin-top: 30px;
+}
+
+#commit {
+  margin-top: 30px;
+}
+
+#touxiang {
+  padding: 0px;
+}
+
+.margintop{
+  margin-top: 20px;
+}

@@ -1,0 +1,131 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block statics2 %}
+{% load render_table from django_tables2 %}
+    <link href={% static "css/plugins/iCheck/custom.css" %} rel="stylesheet">
+    <style>
+        .flexpos{
+            width: 50%;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .flexpos a{
+            margin-right: 5%;
+        }
+        li{
+            list-style: none;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>题目管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>题目管理</a>
+                </li>
+                <li class="active">
+                    <strong><a href="/OJ/problem_management/">题目管理(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+
+    <div class="wrapper wrapper-content">
+        <div class="col-lg-12">
+            <div class="flexpos" >
+                <input type="text" id="sousuo" placeholder="请输入题目名称" style="margin-left: 7%;"><a class="btn btn-primary" href="#" id="sousuobtn">搜索</a>
+                <a class="btn btn-primary" href="/OJ/problem_management/new/"> 新建题目</a>
+            </div>
+
+       <div class="ibox-content m-b-sm border-bottom">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-12">
+                {% load render_table from django_tables2 %}
+                {% render_table table "table/table.html" %}
+            </div>
+        </div>
+        </div>
+
+            {% if is_paginated %}
+            <div class="pagination" style="margin:auto 25%;font-size: medium;">
+                <span class="page-links">
+                    {% if page_obj.has_previous %}
+
+                        <a id="previous" href="#">上一页</a>
+                    {% endif %}
+                    <span  class="page-current">
+                        第<span id="current">{{ page_obj.number }}</span>页，共<span id="zong">{{ page_obj.paginator.num_pages }}</span>页
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a id="next" href="#">下一页</a>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    <script src={% static "js/plugins/iCheck/icheck.min.js"%}></script>
+    <script type="text/javascript">
+          window.onload=function () {
+        if (document.getElementById('getPage')){
+             document.getElementById('getPage').onclick=function () {
+                var page=Number($("#pagenum").val());
+                console.log(page);
+                var pos=window.location.href.indexOf("?");
+                var hrf="";
+                if(pos==-1){
+                    hrf=window.location.href.slice(0);
+                }else{
+                    hrf =window.location.href.slice(0,pos);
+                }
+                var sortpos=window.location.search.indexOf("sort=");
+                var sortendpos=window.location.search.indexOf("&",sortpos);
+                console.log(sortpos);
+                console.log(window.location.search.slice(sortpos+5));
+                if(sortpos>-1){
+                    if(sortendpos>-1){
+                        window.location.href=hrf+"?page="+page+"&sort="+window.location.search.slice(sortpos+5,sortendpos);
+                    }else {
+                        window.location.href = hrf + "?page=" + page + "&sort=" + window.location.search.slice(sortpos + 5);
+                    }
+                }else {
+                     window.location.href=hrf+"?page="+page;
+                }
+
+             }
+        }
+
+
+
+    };
+
+
+        $('#sousuobtn').click(function () {
+            var $sousuo=$('#sousuo').val();
+            console.log($sousuo);
+             $.ajax({
+                type:"GET",
+                url:"/OJ/get_problem/",
+                data:{
+                    "target":$sousuo
+                },
+                async: false,
+            error: function(error) {
+                console.log(error);
+            },
+            success: function(data) {
+                $("#page").html(data);
+            }
+            });
+        });
+
+</script>
+
+{% endblock %}

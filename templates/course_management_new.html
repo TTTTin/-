@@ -1,0 +1,62 @@
+{% extends 'index.html' %}
+{% block script %}
+{% endblock %}
+{% block statics2 %}
+    <style>
+         #save{
+            display: block;
+            margin:0 30%;
+             width: 6%;
+        }
+        #cke_id_introduction,#cke_id_task{
+            display: block;
+            margin: 2% 5%;
+            width: 90%;
+        }
+        label{
+            display: inline;
+        }
+        #id_short_introduction{
+            display: block;
+            margin:2% 3%;
+            width: 59%;
+{#            margin: 2% 5%;#}
+{#            width: 80%;#}
+        }
+        img{
+            height: auto !important; max-width: 100%;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>课程管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>课程管理</a>
+                </li>
+                <li>
+                    <a href="/t/course_management/">课程管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>新建课程</strong>
+                </li>
+            </ol>
+        </div>
+
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <form action="" method="post" >{% csrf_token %}
+            {{ form.as_p }}
+            {{ form.media }}
+
+        <input id="save" class="btn btn-primary " type="submit" value="保存" />
+        </form>
+    </div>
+{% endblock %}

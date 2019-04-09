@@ -1,0 +1,303 @@
+{% extends 'exam/index.html' %}
+{% load render_table from django_tables2 %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>作品打分</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a>作品评估</a>
+            </li>
+            <li class="active">
+                <strong>作品打分</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <div class="ibox-content m-b-sm border-bottom">
+        <form method="get" id="net">
+            {% csrf_token %}
+            <div class="row">
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">学校</label>
+                        <select class="form-control" id="schoolname" tabindex="2" name="school" data-placeholder="学校">
+                            <option value="">选择学校</option>
+                            {% for school in schools %}
+                                <option value={{ school.school_name }}>{{ school.school_name }}</option>#}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">班级</label>
+                        <select class="form-control" id="classname" name="class">
+                            <!--需要在选择学校之后关联得到班级列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                            <option value="">选择班级</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">参赛选手</label>
+                        <select class="form-control" id="studentname" name="student">
+                            <!--需要在选择学校和班级之后关联得到学生列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                            <option value="">选择选手</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">作品名称</label>
+                        <input id="workname" type="text" ignore="ignore" name="workname" placeholder="作品名称"
+                               class="form-control">
+                        <!--value="${pageModel.workName}"-->
+                    </div>
+                </div>
+
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        <label class="control-label"> </label>
+                        <div class="input-group-btn">
+                            <button class="btn btn-lg btn-primary" onclick="return sub2();">查询</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    {% if production_table %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        {% render_table production_table "table/table.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    $(".previous").on("click", function () {
+
+        var str1 = $('.previous').find('a').attr("href");
+        $.ajax({
+            type: "GET",
+            url: encodeURI("/exam/grade/" + str1),
+            //data:$("#net").serialize(),
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+        return false;
+    });
+    $(".next").on("click", function () {
+
+        //console.log($('.next').find('a').attr("href"));
+        var str1 = $('.next').find('a').attr("href");
+        {#                console.log(str1);#}
+        $.ajax({
+            type: "GET",
+            url: encodeURI("/exam/grade/" + str1),
+            //data:$("#net").serialize(),
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+        return false;
+    });
+    $("#schoolname").change(function () {
+        var schoolid = $("#schoolname").val();
+        {#            console.log(schoolid);#}
+        $.getJSON(encodeURI("/ajax/eget_class?school=" + schoolid), function (data) {
+            var content = '';
+            content += '<option value=>' + ' ' + '</option>'
+            $.each(data, function (i, item) {
+
+                content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+            });
+            $("#classname").html('');
+            $('#classname').append(content)
+            $("#studentname").html('');
+        });
+    });
+    $("#classname").change(function () {
+        var classid = $("#classname").val();
+        $.getJSON(encodeURI("/ajax/eget_student?class=" + classid), function (data) {
+            var content = '';
+            {#                console.log(data);#}
+            content += '<option value=>' + ' ' + '</option>'
+            $.each(data, function (i, item) {
+                content += '<option value=' + item.pk + '>' + item.fields.name + '</option>'
+            });
+            $("#studentname").html('');
+            $("#studentname").append(content);
+            {#                alert('出事的');#}
+        });
+    });
+    function sub2() {
+        document.cookie="schoolname="+$("#schoolname").val();
+        document.cookie="stuname="+ $("#studentname").val();
+        document.cookie="classname="+$("#classname").val();
+        document.cookie="workname="+$("#workname").val();
+        $.ajax({
+            type: "GET",
+            url: "/exam/grade/",
+            data: $("#net").serialize(),
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+
+
+        return false;
+    }
+    function SortCall(obj) {
+        var str3 = obj.childNodes[0];
+        $.ajax({
+            type: "GET",
+            url: encodeURI("/exam/grade/" + str3),
+            //data:$("#net").serialize(),
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+        return false;
+    }
+
+    function ViewCall(obj) {
+        //console.dir(obj);
+{#        schoolname = $("#schoolname").val();#}
+{#        stuname = $("#studentname").val();#}
+{#        workname = $("#workname").val();#}
+{#        classname = $("#classname").val();#}
+{#        console.log('1'+$("#classname").val())#}
+{#        console.log('1'+$("#schoolname").val())#}
+{#        console.log('1'+$("#stuname").val())#}
+{#        console.log('1'+$("#worksname").val()) #}
+{#        console.log('1'+classname)#}
+{#        console.log('1'+schoolname)#}
+{#        console.log('1'+stuname)#}
+{#        console.log('1'+workname)#}
+        var str1 = obj.pathname;
+        console.log(str1);
+        window.location.href=encodeURI((str1)+'/');
+{#        $.ajax({#}
+{#            type: "GET",#}
+{#            url: encodeURI(str1 + '/'),#}
+{#            //data:$("#net").serialize(),#}
+{#            async: false,#}
+{#            error: function (request) {#}
+{#                alert("Connection error:" + request.error);#}
+{#            },#}
+{#            success: function (data) {#}
+{#                tdata = data;#}
+{#                $("#page").html(data);#}
+{#            }#}
+{#        });#}
+{#        return false;#}
+    }
+    $(document).ready(function () {
+        {% if no_access %}
+            alert('{{no_access}}');
+            setTimeout(window.location.href = '/exam/index', 3);
+        {% endif %}
+        var schoolname=getCookie("schoolname"),
+                classname=getCookie("classname"),
+                stuname=getCookie("stuname"),
+                workname=getCookie("workname");
+        if(schoolname!=null) {
+            $('#schoolname').val(schoolname);
+            $('#workname').val(workname);
+            $.getJSON(encodeURI("/ajax/eget_class?school=" + schoolname), function (data) {
+                var content = '';
+                var schoolnum = 0;
+                $.each(data, function (i, item) {
+                    if (item.pk == classname) {
+                        schoolnum += 1;
+                        content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                    }
+                });
+                if (schoolnum == 0) {
+                    content += '<option value=""></option>';
+                }
+                $.each(data, function (i, item) {
+                    if (item.pk != classname)
+                        content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                });
+                if (schoolnum != 0) {
+                    content += '<option value=""></option>';
+                }
+                $("#classname").html('');
+                $('#classname').append(content);
+                $("#studentname").html('');
+                var classid = classname;
+                $.getJSON(encodeURI("/ajax/eget_student?class=" + classid), function (data) {
+                    var content = '';
+                    {#                console.log(data);#}
+                    var classnum = 0;
+                    $.each(data, function (i, item) {
+                        {#                        console.log(item.fields.name);#}
+                        {#                        console.log(stuname);#}
+                        if (item.pk == stuname) {
+                            classnum += 1;
+                            content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                        }
+                    });
+                    if (classnum == 0) {
+                        content += '<option value=""></option>';
+                    }
+                    $.each(data, function (i, item) {
+                        if (item.pk != stuname) {
+                            content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                            // alert('')
+
+                        }
+                    });
+                    if (classnum != 0) {
+                        content += '<option value=""></option>';
+                    }
+                    $("#studentname").html('');
+                    $("#studentname").append(content);
+                    // console.log($("#studentname").val());
+                });
+
+            });
+        }
+
+    });
+</script>
+{% endblock %}
+

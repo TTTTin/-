@@ -1,0 +1,53 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block css %}
+{% load competition_extra %}
+{% endblock %}
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script>
+        $(document).ready(function () {
+            {% for i in questions %}
+                console.log('{{ i.production }}');
+{#        {% get_competition_attend i as is_attend %}#}
+{#                console.log('{{ is_attend }}');#}
+{#        {% if is_attend %}#}
+{#        console.log("attend");#}
+{#        {% endif %}#}
+        {% endfor %}
+        })
+    </script>
+{#    <script type="text/javascript" src="{% static 'js/select2.min.js' %}"></script>#}
+{% endblock %}
+{% block mainbody %}
+    <br><br>
+<div id="type-list" class="col-lg-offset-1 col-lg-10">
+        <table class="table table-condensed table-hover">
+        <tr>
+            <td>题目</td>
+            <td>投稿状态</td>
+        </tr>
+            {% for i in questions %}
+                    <tr>
+                        <td>{{ i.question }}</td>
+{#                        <td>{{ i.production.name }}</td>#}
+                        <td>
+                            {% get_productionname i as pname %}
+                            {% if pname %}
+                                已提交过题目
+{#                                <a href="/productdetail/{{ pname.id }}">#}
+{#                                    <img src="{{ i.production.image.url }}" style="height: 150px;width:250px" alt="image not found">#}
+{#                                </a>#}
+                            {% else %}
+                                <a href="/submit_competition/?competition={{ i.competition.title }}&question={{ i.question }}">提交题目</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+

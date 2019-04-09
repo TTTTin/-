@@ -1,0 +1,369 @@
+{% load staticfiles %}
+{% load notifications_tags %}
+{% load teacher_extra %}
+{% block statics %}
+{% endblock %}
+
+<link href={% static "css/bootstrap.min.css" %} rel="stylesheet">
+<link href={% static "font-awesome/css/font-awesome.css" %} rel="stylesheet">
+<link href={% static "css/animate.css" %} rel="stylesheet">
+<link href={% static "css/style.css" %} rel="stylesheet">
+<link href={% static "css/bootstrap-table.css" %} rel="stylesheet">
+<script>window.CKEDITOR_BASEPATH = 'http://scratch-upload.oss-cn-hangzhou.aliyuncs.com/static/ckeditor/ckeditor/';</script>
+{% block statics2 %}
+{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+</head>
+<body id="page">
+    <nav class="navbar-default navbar-static-side" role="navigation" >
+    <div class="sidebar-collapse">
+        <ul class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                    <div class=" profile-element">
+                        <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold " style="font-size: 18px;color:white">欢迎<span id="tename">{% get_name %}</span>老师</strong>
+                        </span></span>
+                    </div>
+            </li>
+        {% if 'download_production' in permissions or 'grade_production' in permissions or 'upload_test_production' in permissions %}
+            <li id="aboutwork">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">作业评估</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    {% if 'download_production' in permissions %}
+                        <li><a href="/t/download/">作业列表</a></li>
+                    {% endif %}
+{#                    {% if 'grade_production' in permissions %}#}
+{#                        <li><a href="/t/grade/">作业打分</a></li>#}
+{#                    {% endif %}#}
+{#                    <li><a href="/t/list/">作业查看</a></li>#}
+                    {% if 'upload_test_production' in permissions %}
+                        <li><a href="/t/test/">上传测试</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if 'analysis_production' in permissions or 'analysis_class' in permissions %}
+            <li id="analywork">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">作业分析</span> <span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                {% if 'analysis_production' in permissions %}
+                    <li><a href="/t/blank/">按作品</a></li>
+                {% endif %}
+                {% if 'analysis_class' in permissions %}
+                    <li><a href="/t/blank/">按班级</a></li>
+                {% endif %}
+            </ul>
+            </li>
+        {% endif %}
+
+        {% if 'analysis_data' in permissions %}
+            <li id="analydata">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">数据分析</span> <span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level collapse">
+                {% if 'analysis_data' in permissions %}
+                    <li><a href="/t/dataVisualizationList/">数据列表</a></li>
+                {% endif %}
+
+            </ul>
+            </li>
+        {% endif %}
+
+        {% if "CT_define" in permissions or "CT_explain" in permissions %}
+            <li id="aboutCT">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">CT培训</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse">
+                    {% if "CT_define" in permissions %}
+                        <li><a href="/t/aboutct/">CT概念</a></li>
+                    {% endif %}
+                    {% if "CT_explain" in permissions %}
+                        <li><a href="/t/ctei/">CT评估说明</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if 'download_scratch_desktop' in permissions or 'download_data' in permissions %}
+            <li id="downloadScratch">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">资源下载</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                {% if 'download_scratch_desktop' in permissions %}
+                    <li><a href="/t/download_scratch/">桌面版scratch下载</a></li>
+                {% endif %}
+                {% if 'download_data' in permissions %}
+                    <li><a href="/t/download_resource/">资料下载</a></li>
+                {% endif %}
+            </ul>
+            </li>
+        {% endif %}
+
+        {% if 'class_manage' in permissions or 'batch_signup' in permissions %}
+            <li id="classManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">班级管理</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                {% if 'class_manage' in permissions %}
+{#                    <li><a href="/t/class_management/">班级管理</a></li>#}
+                {% endif %}
+                {% if 'batch_signup' in permissions %}
+                    <li><a href="/t/class_management/">班级管理</a></li>
+{#                    <li><a href="/t/import_student/">批量注册</a></li>#}
+                    <li><a href="/t/import_school/">学校注册</a></li>
+                    <li><a href="/t/import_user/">学生注册</a></li>
+{#                    <li><a href="/t/import_class/">班级注册</a></li>#}
+                    <li><a href="/t/new_import_teacher/">教师注册</a></li>
+                    <li><a href="/t/apply_management/">申请列表</a></li>
+                {% endif %}
+            </ul>
+            </li>
+        {% endif %}
+
+        {% if 'course_manage' in permissions %}
+            <li id="courseManagement"><a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">课程管理</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse"><li><a href="/t/course_management/">课程管理</a></li>
+            </ul>
+            </li>
+
+{#            <li>#}
+{#                <li id="problemManagement">#}
+{#            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">题目管理</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">#}
+{#            <li><a href="/t/problem_management/">题目管理</a></li>#}
+{#        </ul>#}
+{##}
+{#        </li>#}
+{#            </li>#}
+        {% endif %}
+
+
+        {% if 'competition_manage' in permissions %}
+             </li>
+            <li id="competitionManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">竞赛打分</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                <li><a href="/t/competition_management/">竞赛列表</a></li>
+                </ul>
+            </li>
+
+        {% endif %}
+
+        {% if 'competition_user_manage' in permissions %}
+             </li>
+             <li id="competitionManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">竞赛管理</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                <li><a href="/t/competition_management_adviser/">修改打分</a></li>
+                </ul>
+            </li>
+            <li id="competitionManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">竞赛报名</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                <li><a href="/t/import_competition_user/">批量报名</a></li>
+{#                 <li><a href="/t/teacher_management/">教师管理</a></li>#}
+                </ul>
+            </li>
+{#            <li id="competitionManagement">#}
+{#                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">教师注册</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">#}
+{#                <li><a href="/t/import_teacher/">批量注册</a></li>#}
+{#                </ul>#}
+{#            </li>#}
+
+        {% endif %}
+
+        {% if 'admin_manage' in permissions %}
+            <li id="管理员">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">管理员</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                <li><a href="/t/permission_manage/">更改教师职位</a></li>
+                <li><a href="/t/add_positions/">增加职位</a></li>
+                <li><a href="/t/check_positions/">查看职位</a></li>
+            </ul>
+            </li>
+
+
+            <li id="competitionManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">竞赛管理</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+                    <li><a href="/t/competition_management_admin/">竞赛管理</a></li>
+            </ul>
+            </li>
+            <li id="studentManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">学生管理</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+{#                {% if 'class_manage' in permissions %}#}
+                <li><a href="/t/student_list/">学生管理</a></li>
+{#                {% endif %}#}
+{#                {% if 'batch_signup' in permissions %}#}
+{#                    <li><a href="/t/import_student/">批量注册</a></li>#}
+{#                {% endif %}#}
+            </ul>
+            </li>
+        {% endif %}
+
+         {% if 'problem_manage' in permissions %}
+             <li id="problemManagement">
+                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">OJ系统</span> <span class="fa arrow"></span></a><ul class="nav nav-second-level collapse">
+
+                <li><a href="/OJ/problem_management/">题目管理</a></li>
+
+            </ul>
+            </li>
+        {% endif %}
+
+
+        </ul>
+    </div>
+    </nav>
+     <div id="wrapper">
+         <div id="sidebar"></div>
+         <div id="page-wrapper" class="gray-bg panel-body" >
+             <div  id="top" class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <a href="#">
+                                 <i class="fa ">欢迎来到管理系统！</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'teachersetting' request.user %}">
+                                <i class="fa fa-sign-out" >个人管理</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/t/aboutus/">
+                                <i class="fa fa-sign-out" >关于我们</i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/">
+                                <i class="fa fa-sign-out"></i> 回到首页
+                            </a>
+                        </li>
+
+            <li>
+            {% if user.is_authenticated %}
+                {% notifications_unread as unread_count %}
+                {% if unread_count %}
+                    <a href="/inbox"><img src="{% static "img/notifications_have.png" %}" />{{ unread_count }}</a>
+                {% else %}
+                    <a href="/inbox"><img src="{% static "img/notifications_none.png" %}" /></a>
+                {% endif %}
+            </li>>
+        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+             {% block nav_bar %}
+             {% endblock %}
+             {% block content %}
+             {% endblock %}
+         </div>
+     </div>
+
+    <script src={% static "js/jquery-3.1.1.min.js" %}></script>
+    <script src={% static "js/bootstrap.min.js" %}></script>
+    <script src={% static "js/bootstrap-table.js" %}></script>
+    <script src={% static "js/plugins/metisMenu/jquery.metisMenu.js" %}></script>
+    <script src={% static "js/plugins/slimscroll/jquery.slimscroll.min.js" %}></script>
+    <!-- Custom and plugin javascript -->
+    <script src={% static "js/inspinia.js" %}></script>
+    <script src={% static "js/plugins/pace/pace.min.js" %}></script>
+
+    <script type="text/javascript">
+        var schoolname='';
+        var classname='';
+        var stuname='';
+        var workname='';
+        var urlself=location.href;
+        if(urlself.indexOf('aboutct')>=0 || urlself.indexOf('ctei')>=0){
+            var div1 = document.getElementById('aboutCT');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('download/')>=0 || urlself.indexOf('grade')>=0||urlself.indexOf('list')>=0 || urlself.indexOf('test')>=0|| urlself.indexOf('production')>=0){
+            var div1 = document.getElementById('aboutwork');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf("blank") >= 0){
+            var div1 = document.getElementById("analywork");
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf("dataVisualizationList") >= 0){
+            var div1 = document.getElementById("analydata");
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('class_management')>=0 || urlself.indexOf('import_student')>=0 || urlself.indexOf('import_user')>=0 || urlself.indexOf('import_school')>=0 || urlself.indexOf('import_class')>=0 || urlself.indexOf('new_import_teacher')>=0 || urlself.indexOf("apply_management")>=0){
+            var div1 = document.getElementById('classManagement');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('course_management')>=0 || urlself.indexOf('chapter_management')>=0){
+            var div1 = document.getElementById('courseManagement');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('download_scratch/')>=0 || urlself.indexOf('download_resource/')>=0){
+            var div1 = document.getElementById('downloadScratch');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('compro/')>=0 || urlself.indexOf('compro_management/')>=0 || urlself.indexOf('competition_management/')>=0 || urlself.indexOf('competition_management_admin')>=0 || urlself.indexOf('competition_management_adviser')>=0 || urlself.indexOf('import_competition_user')>=0){
+            var div1 = document.getElementById('competitionManagement');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('permission_manage/')>=0||urlself.indexOf('add_positions/')>=0 || urlself.indexOf('check_positions/')>=0){
+            var div1 = document.getElementById('管理员');
+            div1.setAttribute("class", "active");
+        }
+        else if(urlself.indexOf('student_list')>=0){
+            var div1 = document.getElementById('studentManagement');
+            div1.setAttribute("class", "active");
+        }
+
+        function getCookie(name){
+            var nmindex=document.cookie.indexOf(name);
+            if(nmindex>=0){
+                var valstart=document.cookie.indexOf('=',nmindex);
+                var valend=document.cookie.indexOf(';',nmindex);
+                var len=valend-valstart-1;
+                return document.cookie.substr(valstart+1,len);
+
+            }
+            return null;
+         }
+
+    </script>
+
+    {% block script %}
+    {% endblock %}
+</body>
+<script language="javascript">
+$(document).ready(function () {
+    {% if no_access %}
+        alert("{{ no_access }}");
+        setTimeout(window.location.href="{{ render_url }}", 3);
+    {% endif %}
+    {% if user.is_authenticated %}
+                {% notifications_unread as unread_count %}
+                {% if unread_count %}
+                    playSound();
+                {% endif %}
+        {% endif %}
+});
+function playSound()
+    {
+      var borswer = window.navigator.userAgent.toLowerCase();
+      if ( borswer.indexOf( "ie" ) >= 0 )
+      {
+        //IE内核浏览器
+        var strEmbed = '<embed name="embedPlay" src={% static "Scratch/sound/void.wav" %} autostart="true" hidden="true" loop="false"></embed>';
+        if ( $("body" ).find( "embed" ).length <= 0 )
+          $( "body" ).append( strEmbed );
+        var embed = document.embedPlay;
+
+        //浏览器不支持 audion，则使用 embed 播放
+        embed.volume = 100;
+        //embed.play();这个不需要
+      } else
+      {
+        //非IE内核浏览器
+        var strAudio = "<audio id='audioPlay' src={% static "Scratch/sound/void.wav" %} hidden='true'>";
+        if ( $( "body" ).find( "audio" ).length <= 0 )
+          $( "body" ).append( strAudio );
+        var audio = document.getElementById( "audioPlay" );
+
+        //浏览器支持 audion
+        audio.play();
+      }
+    }
+</script>
+</html>

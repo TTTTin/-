@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>课程管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    课程管理
+                </li>
+                <li>
+                    <a href="/t/course_management/">课程管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <a href="/t/chapter_management/{{ object.lesson.lesson_id }}/?sort=order">第{{ object.lesson.lesson_id }}课的章节管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>删除章节</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <form class="text-center" action="" method="post" style="margin-top: 10%;" xmlns="http://www.w3.org/1999/html">{% csrf_token %}
+        <h1 style="line-height: 3.5rem;">您确定要删除名称:"<strong>{{ object.name }}</strong>"的章节吗?</h1>
+        <input class="btn btn-primary" type="submit" value="确定删除" style="font-size: 2.9rem;margin-top: 5%" />
+    </form>
+{% endblock %}
+

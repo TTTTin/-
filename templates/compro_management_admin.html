@@ -1,0 +1,421 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block statics2 %}
+    <style>
+        .flexpos {
+            width: 50%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 1%;
+        }
+
+        .flexpos a {
+            margin-right: 5%;
+        }
+
+        li {
+            list-style: none;
+        }
+        .checkbox{
+            margin: 0 !important;
+            display: table-cell !important;
+        }
+        .checkbox input[type=checkbox]{
+            margin-left: 10px!important;
+        }
+    </style>
+{% endblock %}
+{% load render_table from django_tables2 %}
+
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    竞赛管理
+                </li>
+                <li class="active">
+                    <a href="/t/competition_management_admin/">竞赛管理(可跳转)</a>
+                </li>
+                 <li class="active">
+                    <strong><a href="/t/compro_management_admin/{{ pk }}/">竞赛管理(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+            <div class="ibox-content m-b-sm border-bottom" style="overflow: hidden">
+                {% csrf_token %}
+                        <div class="col-sm-2">
+                            <div>
+                                <label class="control-label">评委</label>
+                                <select class="form-control" id="select1" name="school" >
+                                    {% for rater in raters.all %}
+                                        <option value={{ rater.username }}>{{ rater.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                <div class="col-sm-2" style="width: 8%;">
+                    <div class="flexpos">
+                        <button style="margin-top: 80%" class="btn btn-primary" id="add">添加</button>
+
+                    </div>
+                </div>
+
+                {% csrf_token %}
+                        <div class="col-sm-2" style="margin-left: 0px;">
+                            <div class="form-group" >
+                                <label class="control-label">已选评委</label>
+                                <select class="form-control" id="select2" multiple="multiple" data-placeholder="评委">
+                                </select>
+                            </div>
+                        </div>
+
+
+                <div class="col-sm-2">
+                    <div class="flexpos">
+                        <button style="margin-top: 30%;height: 4%" class="btn btn-primary" id="clear">清空</button>
+                        <button style="margin-left: 25%;margin-top: 30%;height: 4%" class="btn btn-primary" onclick="return false;" id="torater">确定分配作品给评委</button>
+                        <input  type="text" id="sousuo" placeholder="请输入作品编号.." style="margin-left: 15%;margin-top: 30%">
+                        <button style="height: 5%;margin-top: 30%;height: 4%" class="btn btn-primary" onclick="return false;" id="sousuobtn">搜索</button>
+                        <button style="margin-left: 25%;margin-top: 30%;height: 4%" class="btn btn-primary btn-flex" id="selectbtn">全选</button>
+                        <button style="margin-left: 25%;margin-top: 30%;height: 4%" class="btn btn-primary btn-flex" id="notselectbtn">全不选</button>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+
+    <div id="reset" style="margin-top: 0%">
+       <div class="ibox-content m-b-sm border-bottom">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-12">
+                {% load render_table from django_tables2 %}
+                {% render_table table "table/table.html" %}
+            </div>
+        </div>
+        </div>
+    </div>
+
+{#            {% if is_paginated %}#}
+{#            <div class="pagination" style="margin:auto 25%;font-size: medium;">#}
+{#                <span class="page-links">#}
+{#                    {% if page_obj.has_previous %}#}
+{##}
+{#                        <a id="previous" href="#">上一页</a>#}
+{#                    {% endif %}#}
+{#                    <span  class="page-current">#}
+{#                        第<span id="current">{{ page_obj.number }}</span>页，共<span id="zong">{{ page_obj.paginator.num_pages }}</span>页#}
+{#                    </span>#}
+{#                    {% if page_obj.has_next %}#}
+{#                        <a id="next" href="#">下一页</a>#}
+{#                    {% endif %}#}
+{#                </span>#}
+{#            </div>#}
+{#            {% endif %}#}
+
+
+{% endblock %}
+{% block script %}
+    <script src={% static "js/jquery.cookie.js"%}></script>
+    <script src={% static "Scratch/js/select2.full.min.js"%}></script>
+    <link href={% static "Scratch/css/select2.min.css" %} rel="stylesheet">
+    <script type="text/javascript">
+
+    function decode(str) {
+        var _str=str.join(',');
+        return _str;
+    }
+    function encode(str) {
+        var _arr=str.split(',');
+        return _arr;
+    }
+    $('#select1').select2({
+        {#placeholder: "选择评委.."#}
+        placeholder: "选择评委..",
+        allowClear: true
+    });
+    {#var mycookie=JSON.parse(cookie);#}
+     var array=new Array();
+     window.onload=function () {
+         $("#select2").html("")
+         console.log($.cookie('the_cookie'));
+         var cookie = encode($.cookie('the_cookie'));
+         console.log(cookie);
+         console.log(cookie + "存储")
+         console.log(cookie.length + "长度")
+            {#if(cookie.length!=0){#}
+            {#    for(i in cookie)#}
+            {#        $("#select1").find("option[value = '"+cookie[i]+"']").attr("selected",true);#}
+            {#    }#}
+            {# }#}
+
+         if (cookie.length != 0) {
+             for (var i in cookie) {
+                 console.log(cookie[i]);
+                 if(cookie[i]!='') {
+                     $("#select2").append("<option value=" + cookie[i] + ">" + cookie[i] + "</option>");
+                 }
+             }
+
+         }
+
+         else {
+             $("#select2").html("");
+         }
+         {#if (document.getElementById('getPage')) {#}
+         {#    document.getElementById('getPage').onclick = function () {#}
+         {#        var page = Number($("#pagenum").val());#}
+         {#        console.log(page);#}
+         {#        var pos = window.location.href.indexOf("?");#}
+         {#        var hrf = "";#}
+         {#        if (pos == -1) {#}
+         {#            hrf = window.location.href.slice(0);#}
+         {#        } else {#}
+         {#            hrf = window.location.href.slice(0, pos);#}
+         {#        }#}
+         {#        var sortpos = window.location.search.indexOf("sort=");#}
+         {#        var sortendpos = window.location.search.indexOf("&", sortpos);#}
+         {#        console.log(sortpos);#}
+         {#        console.log(window.location.search.slice(sortpos + 5));#}
+         {#        if (sortpos > -1) {#}
+         {#            if (sortendpos > -1) {#}
+         {#                window.location.href = hrf + "?page=" + page + "&sort=" + window.location.search.slice(sortpos + 5, sortendpos);#}
+         {#            } else {#}
+         {#                window.location.href = hrf + "?page=" + page + "&sort=" + window.location.search.slice(sortpos + 5);#}
+         {#            }#}
+         {#        } else {#}
+         {#            window.location.href = hrf + "?page=" + page;#}
+         {#        }#}
+         {##}
+         {#    }#}
+         {# }#}
+            $('#sousuobtn').click(function () {
+                var $sousuo=$.trim($("#sousuo").val());
+                $.ajax({
+                    type:"GET",
+                    url:"/t/get_compro_management_admin/{{ pk }}/",
+                    data:{
+                        "target":$sousuo
+                    },
+                    async: false,
+                    error: function(error) {
+                        console.log(error);
+                        },
+                    success: function(data) {
+                        $("#page").html(data);
+                        var cookie = encode($.cookie('the_cookie'));
+                        console.log(cookie + "存储")
+                        console.log(cookie.length + "长度")
+                        if (cookie.length != 0) {
+                            for (var i in cookie) {
+                                if(cookie[i]!='') {
+                                    $("#select2").append("<option value=" + cookie[i] + ">" + cookie[i] + "</option>");
+                                }
+                            }
+                         }
+                        else {
+                            $("#select2").html("");
+                         }
+                    }
+                });
+            });
+        }
+            function SortCall(obj) {
+                var str1 = obj.innerHTML;
+                var start = str1.indexOf("href");
+                var stop = str1.indexOf(">");
+                var str2 = obj.childNodes[0].search;
+                console.log(str2);
+                $.ajax({
+                    type: "GET",
+                    url: "/t/compro_management_admin/" + str2,
+                    async: false,
+                    error: function (request) {
+                        alert("Connection error:" + request.error);
+                        },
+                    success: function (data) {
+                        data = data;
+                        $("#page").html(data);
+                    }
+                });
+                return false;
+            }
+            $(document).ready(function () {
+
+                //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "id" %}
+                $("th.id img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-id" %}
+                $("th.id img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "question" %}
+                $("th.question img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-question" %}
+                $("th.question img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "competition" %}
+                $("th.competition img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-competition" %}
+                $("th.competition img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "production" %}
+                $("th.production img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-production" %}
+                $("th.production img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "create_time" %}
+                $("th.create_time img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-create_time" %}
+                $("th.create_time img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "limit_score" %}
+                $("th.limit_score img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-limit_score" %}
+                $("th.limit_score img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+
+                {% if no_access %}
+                    alert('{{no_access}}');
+                    setTimeout(window.location.href = '/t/', 3);
+                {% endif %}
+
+
+
+            });
+            $('#selectbtn').click(function () {
+                console.log($('input[type="checkbox"]'));
+                var box=$('input[type="checkbox"]');
+                for (var i=0;i<box.length;i++){
+                    box[i].checked=true;
+                }
+            });
+            $('#notselectbtn').click(function () {
+                var box=$('input[type="checkbox"]');
+                for (var i=0;i<box.length;i++){
+                    box[i].checked=false;
+                }
+            });
+            $("#add").click(function () {
+                var options1=$("#select1 option:selected");
+                var options2=$("#select1 option:selected").val();
+                var array1=new Array();
+                var _array=new Array();
+                if($("#select2").html()!=""){
+                    $("#select2 option").each(function() {
+                        var options_ = $(this).val();
+                        if (options_ != '') {
+                            array1.push(options_);
+                        }
+                    });
+                    var result= $.inArray(options2, array1);
+                    if(result==-1){
+                        options1.clone().appendTo("#select2");
+                    }
+                    else {
+                        alert("该评委已选，请重新选择！")
+                    }
+                }
+                else {
+                    options1.clone().appendTo("#select2");
+                }
+
+                $("#select2 option").each(function () {
+                    console.log("3")
+                    var options_ = $(this).val();
+                    if(options_!=''){
+                        _array.push(options_);
+                    }
+                    console.log(_array+"add")
+                    if(_array!=array){
+                        $.cookie('the_cookie',decode(_array),{path: 'http://127.0.0.1:8000/t/compro_management_admin/' });
+                    }
+                })
+
+             });
+            $("#clear").click(function () {
+                $("#select2").html("")
+                var _array=new Array();
+                $("#select2 option").each(function() {
+                    var options = $(this).val();
+                    if(options!=''){
+                        _array.push(options);
+                    }
+                });
+                console.log(_array+"clear")
+                if(_array!=array){
+                    $.cookie('the_cookie',decode(_array),{ expires: 7 ,path: 'http://127.0.0.1:8000/t/compro_management_admin/' });
+                }
+             });
+            $('#torater').click(function () {
+                array.length=0;
+                $("#select2 option").each(function() {
+                    var options = $(this).val();
+                    if(options!=''){
+                        array.push(options);
+                    }
+                 });
+
+                {#var array=$("#select1").val();#}
+                console.log(array+"分配")
+                {#$.cookie('the_cookie',decode(array),{ expires: 7 ,path: 'http://127.0.0.1:8000/t/compro_management_admin/' });#}
+
+                {#var oldarray=JSON.stringify(array);#}
+                if (array == "") {
+                    window.alert("请选择评委！");
+                }
+                else {
+                    var dropIds = new Array();
+                    $.each($('input:checkbox:checked'), function () {
+                        dropIds.push($(this).val());
+                        console.log(dropIds)
+                    });
+                    var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+                    console.log(csrftokens)
+                    $.ajax({
+                        url: '/t/production_rater/',
+                        type: 'POST',
+                        traditional: false,
+                        data: {
+                            production: JSON.stringify(dropIds),
+                            csrfmiddlewaretoken: csrftokens,
+                            options: JSON.stringify(array)
+                        },
+                        success: function (callback) {
+                            var callback_dict = $.parseJSON(callback);
+
+                            if (callback_dict.status == 1001) {
+                                alert("请先选择作品！");
+                            } else if (callback_dict.status == 1003) {
+                                alert("作品分配失败，请使用其他方式修改或联系管理员！");
+
+                            } else if (callback_dict.status == 1002) {
+                                alert("请先选择评委！");
+                            } else if (callback_dict.status == 1004) {
+                                alert("分配成功！");
+
+                            } else if (callback_dict.status == 1005) {
+                                alert("选择中存在已分配的作品！")
+
+                            }
+                        }
+
+                    })
+                }
+            });
+    </script>
+    {% endblock %}}

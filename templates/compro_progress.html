@@ -1,0 +1,118 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/t/competition_management_adviser/">竞赛管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong> <a href="/t/compro_progress/{{ pk }}/">进度查看(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="flexpos">
+            <input type="text" id="sousuo" placeholder="请输入评委.." style="margin-left: 7%;width: 300px;">
+            <button class="btn btn-primary" onclick="return false;" id="sousuobtn">搜索</button>
+        </div>
+
+
+       <div class="ibox-content m-b-sm border-bottom">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-12">
+                {% load render_table from django_tables2 %}
+                {% render_table table "table/table.html" %}
+            </div>
+        </div>
+        </div>
+    </div>
+{#            <ul id="list" style="font-size: medium;">#}
+{#                {% for lesson in lessons %}#}
+{#                    <li>#}
+{#                        <p>#}
+{#                            <div class="ibox-content">#}
+{#                                <div class="row"><div class="col-md-4"><fieldset>#}
+{#                                         <div class="i-checks" style="width: 1000px"><label><span class="tag"><input class="tag" type="radio" value={{ lesson.lesson_id }} name="a"></span> <span class="tag1"  id="chapter_id">编号：{{ lesson.lesson_id }}</span><span class="tag2">章节名称：{{ lesson.name }}</span><span class="tag5">内容简介：{{ lesson.short_introduction }}</span></label>#}
+{#                                         </div>#}
+{#                                    </fieldset></div>#}
+{##}
+{#                                </div>#}
+{#                            </div>#}
+{##}
+{#                        </p>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+
+ window.onload = function () {
+     //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "rater" %}
+                $("th.rater img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-rater" %}
+                $("th.rater img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "question" %}
+                $("th.question img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-question" %}
+                $("th.question img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "avg_score" %}
+                $("th.avg_score img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-avg_score" %}
+                $("th.avg_score img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "all_production" %}
+                $("th.all_production img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-all_production" %}
+                $("th.all_production img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "score_production" %}
+                $("th.score_production img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-score_production" %}
+                $("th.score_production img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+ }
+        $('#sousuobtn').click(function () {
+            var $sousuo=$.trim($("#sousuo").val());
+            if ($sousuo == "") {
+                window.alert("请输入搜索项..");
+            } else {
+                window.location.href = "/t/get_compro_progress/{{ pk }}/" + $sousuo;
+            }
+            {#var $sousuo=$.trim($("#sousuo").val());#}
+            {#console.log($sousuo)#}
+            {# $.ajax({#}
+            {#    type:"GET",#}
+            {#    url:"/t/get_compro_progress/{{ pk }}/",#}
+            {#    data:{#}
+            {#        "target":$sousuo#}
+            {#    },#}
+            {#    async: false,#}
+            {#error: function(error) {#}
+            {#    console.log(error);#}
+            {# },#}
+            {#success: function(data) {#}
+            {#    $("#page").html(data);#}
+            {# }#}
+            {# });#}
+         });
+
+   </script>
+{% endblock %}

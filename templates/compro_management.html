@@ -1,0 +1,153 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="/t/competition_management/">竞赛管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong><a href="/t/compro_management/{{ pk }}/">作品管理(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <div class="col-lg-12">
+            <div class="flexpos">
+                <input type="text" id="sousuo" placeholder="请输入作品编号.." style="margin-left: 7%;height: 4%;width: 20%">
+                <button style="height: 4%;width: 5%" class="btn btn-primary" onclick="return false;" id="sousuobtn">搜索</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox-content m-b-sm border-bottom">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-12">
+                {% load render_table from django_tables2 %}
+                {% render_table table "table/table.html" %}
+            </div>
+        </div>
+    </div>
+{#            <ul id="list" style="font-size: medium;">#}
+{#                {% for lesson in lessons %}#}
+{#                    <li>#}
+{#                        <p>#}
+{#                            <div class="ibox-content">#}
+{#                                <div class="row"><div class="col-md-4"><fieldset>#}
+{#                                         <div class="i-checks" style="width: 1000px"><label><span class="tag"><input class="tag" type="radio" value={{ lesson.lesson_id }} name="a"></span> <span class="tag1"  id="chapter_id">编号：{{ lesson.lesson_id }}</span><span class="tag2">章节名称：{{ lesson.name }}</span><span class="tag5">内容简介：{{ lesson.short_introduction }}</span></label>#}
+{#                                         </div>#}
+{#                                    </fieldset></div>#}
+{##}
+{#                                </div>#}
+{#                            </div>#}
+{##}
+{#                        </p>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+        $('#sousuobtn').click(function () {
+            {#var $sousuo=$.trim($("#sousuo").val());#}
+            {#if ($sousuo == "") {#}
+            {#    window.alert("请输入搜索项..");#}
+            {# } else {#}
+            {#    window.location.href = "/t/get_compro_management/{{ pk }}/" + $sousuo;#}
+            {# }#}
+
+            var $sousuo=$.trim($("#sousuo").val());
+            console.log($sousuo)
+             $.ajax({
+                type:"GET",
+                url:"/t/get_compro_management/{{ pk }}/",
+                data:{
+                    "target":$sousuo,
+                },
+                async: false,
+            error: function(error) {
+                console.log(error);
+             },
+            success: function(data) {
+                $("#page").html(data);
+             }
+             });
+        });
+
+         function SortCall(obj) {
+            var str1=obj.innerHTML;
+            var start=str1.indexOf("href");
+            var stop=str1.indexOf(">");
+            var str2=obj.childNodes[0].search;
+            console.log(str2);
+            $.ajax({
+                    type:"GET",
+                    url:"/t/compro_management/"+str2,
+                    //data:$("#net").serialize(),
+                    async: false,
+                error: function(request) {
+                    alert("Connection error:"+request.error);
+                },
+                success: function(data) {
+                    data=data;
+                    $("#page").html(data);
+                }
+                });
+            return false;
+        }
+
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% if no_access %}
+                alert('{{no_access}}');
+                setTimeout(window.location.href = '/t/', 3);
+            {% endif %}
+
+        //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "question" %}
+                $("th.question img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-question" %}
+                $("th.question img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "id" %}
+                $("th.id img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-id" %}
+                $("th.id img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "production" %}
+                $("th.production img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-production" %}
+                $("th.production img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "create_time" %}
+                $("th.create_time img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-create_time" %}
+                $("th.create_time img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "ct_score" %}
+                $("th.ct_score img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-ct_score" %}
+                $("th.ct_score img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "score" %}
+                $("th.score img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-score" %}
+                $("th.score img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+        });
+   </script>
+{% endblock %}

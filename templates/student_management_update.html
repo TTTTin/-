@@ -1,0 +1,73 @@
+{% extends 'index.html' %}
+{% block statics2 %}
+    <style rel="stylesheet" >
+        input{
+            display: block;
+            margin-left: 8rem;
+        }
+
+        input[type="submit"]{
+            margin-left: 10rem;
+        }
+        input[type="password"]{
+            width: 25%;
+        }
+        #id_birthday_year{
+            margin-left: 0.7rem;
+        }
+    </style>
+{% endblock %}
+
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>班级管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>班级管理</a>
+                </li>
+                <li>
+                    <a href="/t/class_management/">班级管理</a>
+                </li>
+                 <li class="active">
+                   <a id="hrefclass" href="#">学生班级(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>修改信息</strong>
+                </li>
+            </ol>
+        </div>
+
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="wrapper wrapper-content">
+
+        <div class="ibox-content m-b-sm border-bottom">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-12">
+                <form action="" method="post">{% csrf_token %}
+                    {{ form.media }}
+                    {{ form.as_p }}
+                    <input type="submit" value="保存" />
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+    <script>
+        $('input[type="submit"]').addClass("btn btn-primary");
+        $('#hrefclass').attr("href",document.referrer);
+{#        var classname=document.referrer.substring(document.referrer.lastIndexOf('class_management')+17,document.referrer.lastIndexOf('/'));#}
+{#        $('#hrefclass').html(classname+'(可跳转)');#}
+
+    </script>
+{% endblock %}

@@ -1,0 +1,437 @@
+{% extends 'exam/index.html' %}
+{% load staticfiles %}
+{% block content %}
+{#{% if teacher_score %}#}
+{#    <div class="row wrapper border-bottom white-bg page-heading">#}
+{#        <div class="col-lg-10">#}
+{#            <h2>作业查看</h2>#}
+{#            <ol class="breadcrumb">#}
+{#                <li>#}
+{#                    <a>作业评估</a>#}
+{#                </li>#}
+{#                <li>#}
+{#                    <a href="/exam/list" >作业查看</a>#}
+{#                </li>#}
+{#                <li class="active">#}
+{#                    <strong>查看</strong>#}
+{#                </li>#}
+{#            </ol>#}
+{#        </div>#}
+{#        <div class="col-lg-2">#}
+{##}
+{#        </div>#}
+{#    </div>#}
+{##}
+{#{% else %}#}
+
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>作品批改</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>作品评估</a>
+                </li>
+                <li>
+                    <a href="/exam/grade">作品打分</a>
+                </li>
+                <li class="active">
+                    <strong>打分</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{#{% endif %}#}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>系统总评</h5>
+                </div>
+                <div class="ibox-content">
+                    {% if total_score %}
+                        <h4 id="score" class="panel-title dark-text"><i
+                                class="fa fa-star"></i><strong>成绩是:</strong>{{ total_score }}/21</h4>
+                    {% else %}
+                        <h4 id="score" class="panel-title dark-text"><i
+                                class="fa fa-star"></i><strong>由于一些原因，无法获得总成绩</strong></h4>
+                    {% endif %}
+
+                    {% if total_score <= 7 %}
+                        <h3 class="text-left dark-text">你的水平是<strong>基础! </strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% elif total_score <= 14 %}
+                        <h3 class="text-left dark-text">你的水平是<strong>成长中! </strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% elif total_score <= 21 %}
+                        <h3 class="text-left dark-text">你的水平是<strong>大师!</strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% else %}
+                        <h3 class="text-left dark-text"><strong>您的水平高深莫测!</strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% endif %}
+                </div>
+
+                <div class="ibox-content">
+
+                    <table data-toggle="table"
+                           data-height="300">
+
+                        <thead>
+                        <tr>
+                            <th>建议</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% if production_hints %}
+                            {% for hint in production_hints %}
+                                <tr>
+                                    <td>{{ hint.hint }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td>作品很棒,没有建议</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>细则评分</h5>
+                </div>
+                <div class="ibox-content">
+
+                    {% for key, value in antlr_score.items %}
+                        <h5>{{ value.name }}</h5>
+
+                        <div class="progress progress-striped active">
+                            <div style="width: {{ value.percentage }}" aria-valuemax="100" aria-valuemin="0"
+                                 role="progressbar" class="{{ value.class_name }}">
+                                <span>{{ value.score }}/3</span>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% if teacher_score %}
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>评委打分</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <fieldset class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">评委评分</label>
+                                <div class="col-lg-10"><p class="form-control-static">{{ teacher_score.score }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">评价</label>
+                                <div class="col-sm-10">
+                                    <textarea name="enterpriseInfo" class="form-control" datatype="*"
+                                              readonly="readonly">{{ teacher_score.comment }}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 text-right">
+
+                                <button class="btn btn-lg btn-primary text-right" id="BTN1" onclick="return false">
+                                    在线查看
+                                </button>
+                                <a id="a1" href="http://116.62.165.104/scratch/?url=http://116.62.165.104{{ url }}"
+                                   target="view_window" class="btn btn-lg btn-primary text-right" style="display:none">
+                                </a>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>评委打分</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form id="postform" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <fieldset class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">分数</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" name="new_score"
+                                               class="form-control" placeholder="请打分" autocomplete="off" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">评价</label>
+                                    <div class="col-sm-10">
+                                        <textarea name="new_comment" class="form-control" placeholder="输入评价"
+                                                  datatype="*" required></textarea>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div class="col-sm-12 text-right">
+
+                                <button class="btn btn-lg btn-primary" type="submit" onclick="return sub5();">
+                                    提交
+                                </button>
+                                <button class="btn btn-lg btn-primary text-right" id="BTN2" onclick="return false">
+                                    在线查看
+                                </button>
+
+                                <a id="a2" href="http://116.62.165.104/scratch/?url=http://116.62.165.104{{ url }}"
+                                   target="view_window" class="btn btn-lg btn-primary text-right" style="display:none">
+                                    在线查看
+                                </a>
+                            </div>
+                            <div class="clearfix"></div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+
+</div>
+{% endblock %}
+{% block script %}
+<!-- Jasny -->
+<script src={% static "js/plugins/jasny/jasny-bootstrap.min.js" %}></script>
+
+<!-- DROPZONE -->
+<script src={% static "js/plugins/dropzone/dropzone.js" %}></script>
+
+<!-- CodeMirror -->
+<script src={% static "js/plugins/codemirror/codemirror.js" %}></script>
+<script src={% static "js/plugins/codemirror/mode/xml/xml.js" %}></script>
+
+
+<script type="text/javascript">
+    $(function () {
+        {% if no_access %}
+            alert('{{no_access}}');
+            setTimeout(window.location.href = '/', 3);
+        {% endif %}
+    });
+
+    function loadgrade() {
+        $("#page").load("/exam/grade/", function (response, status) {
+            if (status == "success") {
+                var schoolid=getCookie("schoolname")
+                var schoolid = schoolname;
+{#                    $("#schoolname").val();#}
+                $.getJSON(encodeURI("/ajax/eget_class?school=" + schoolid), function (data) {
+                            var content = '';
+                            $.each(data, function (i, item) {
+                                if (item.pk == classname) {
+                                    content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                                }
+                            });
+                            $.each(data, function (i, item) {
+                                if (item.pk != classname)
+                                    content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                            });
+                            $("#classname").html('');
+                            $('#classname').append(content);
+                            $("#studentname").html('');
+                            var classid = classname;
+                            $.getJSON(encodeURI("/ajax/eget_student?class=" + classid), function (data) {
+                                var content = '';
+                                {#                console.log(data);#}
+                                $.each(data, function (i, item) {
+                                    {#                        console.log(item.fields.name);#}
+                                    {#                        console.log(stuname);#}
+                                    if (item.pk == stuname) {
+                                        content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                                    }
+                                });
+                                $.each(data, function (i, item) {
+                                    if (item.pk != stuname) {
+                                        content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                                        // alert('')
+
+                                    }
+                                });
+                                $("#studentname").html('');
+                                $("#studentname").append(content);
+                                $("#workname").val(workname);
+
+                                $.ajax({
+                    type: "GET",
+                    url: "/exam/grade/",
+                    data: $("#net").serialize(),
+                    async: false,
+                    error: function (request) {
+                        alert("Connection error:" + request.error);
+                    },
+                    success: function (data) {
+                        //console.log(data);
+                        {#                    tdata=data;#}
+                        $("#page").html(data);
+                        $('#workname').val(workname);
+                        $('#schoolname').val(schoolname);
+                        //  console.log(classname);
+                        var schoolid = $("#schoolname").val();
+                        {#            console.log(schoolid);#}
+                        $.getJSON(encodeURI("/ajax/eget_class?school=" + schoolid), function (data) {
+                            var content = '';
+                            var scnum=0;
+                            $.each(data, function (i, item) {
+                                if (item.pk == classname) {
+                                    scnum+=1;
+                                    content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                                }
+                            });
+                            if(scnum==0){
+                                content += '<option value=""></option>';
+                            }
+                            $.each(data, function (i, item) {
+                                if (item.pk != classname)
+                                    content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                            });
+                            if(scnum!=0){
+                                content += '<option value=""></option>';
+                            }
+                            $("#classname").html('');
+                            $('#classname').append(content);
+                            $("#studentname").html('');
+                            var classid = classname;
+                            $.getJSON(encodeURI("/ajax/eget_student?class=" + classid), function (data) {
+                                var content = '';
+                                var num=0;
+                                {#                console.log(data);#}
+                                $.each(data, function (i, item) {
+                                    {#                        console.log(item.fields.name);#}
+                                    {#                        console.log(stuname);#}
+
+                                    if (item.pk == stuname) {
+                                        num+=1;
+                                        content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                                    }
+
+                                });
+                                if(num==0){
+                                        content += '<option value=""></option>';
+                                }
+                                $.each(data, function (i, item) {
+                                    if (item.pk != stuname) {
+                                        content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                                        // alert('')
+
+                                    }
+                                });
+                                if(num!=0){
+                                        content += '<option value=""></option>';
+                                }
+                                $("#studentname").html('');
+                                $("#studentname").append(content);
+                                //console.log($("#studentname").val());
+                            });
+                        });
+                    }
+                });
+                                //console.log($("#studentname").val());
+                            });
+                        });
+{#                console.log($(response).find(("#schoolname")))#}
+{#                console.log($(response).find(("#workname")))#}
+{#                console.log($(response).find(("#studentname")))#}
+{#                console.log($(response).find(("#classname")))#}
+{#                console.log($("#schoolname"))#}
+{#                console.log($("#workname")[0])#}
+{#                console.log($("#studentname")[0])#}
+{#                console.log($("#classname")[0])#}
+                // $("#schoolname").val(schoolname);
+                {#                $("#studentname").val(stuname);#}
+                {#                $("#workname").val(workname);#}
+                {#                $("#classname").val(classname);#}
+{#                console.log($("#classname").val())#}
+{#                console.log($("#classname").val())#}
+{#                console.log($("#stuname").val())#}
+{#                console.log($("#net")[0])#}
+
+                return false;
+            }
+        });
+    };
+
+
+    function sub5() {
+        var str2=window.location.href;
+        console.log(str2);
+        $.ajax({
+            type: "POST",
+            url: str2 ,
+            data: $("#postform").serialize(),
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                console.log(data);
+                tdata = data;
+                $("#page").html(data);
+                window.location.href="/exam/grade";
+{#                loadgrade();#}
+            }
+        });
+
+        return false;
+
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    $("#BTN1").click(function () {
+        $.get("http://127.0.0.1:8888/downloadScratch?url=http://116.62.165.104{{ url }}", function (result) {
+            //do nothing
+        }).fail(function () {
+            document.getElementById("a1").click();
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#BTN2").click(function () {
+        $.get("http://127.0.0.1:8888/downloadScratch?url=http://116.62.165.104{{ url }}", function (result) {
+            //do nothing
+        }).fail(function () {
+            document.getElementById("a2").click();
+        });
+    });
+</script>
+{% endblock %}

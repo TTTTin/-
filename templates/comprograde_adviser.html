@@ -1,0 +1,443 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block content %}
+{% if teacher_score %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>作品查看</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>作品评估</a>
+                </li>
+                <li>
+                    <a onclick="history.back();">作品查看</a>
+                </li>
+                <li class="active">
+                    <strong>查看</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+
+{% else %}
+
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>作品批改</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>作品评估</a>
+                </li>
+                <li>
+                    作品打分
+                </li>
+                <li class="active">
+                    <strong>打分</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{% endif %}
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>作品：“{{ productionname }}”  系统总评</h5>
+                </div>
+                <div class="ibox-content">
+                    {% if total_score %}
+                        <h4 id="score" class="panel-title dark-text"><i
+                                class="fa fa-star"></i><strong>成绩是:</strong>{{ total_score }}/21</h4>
+                    {% else %}
+                        <h4 id="score" class="panel-title dark-text"><i
+                                class="fa fa-star"></i><strong>由于一些原因，无法获得总成绩</strong></h4>
+                    {% endif %}
+
+                    {% if total_score <= 7 %}
+                        <h3 class="text-left dark-text">你的水平是<strong>基础! </strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% elif total_score <= 14 %}
+                        <h3 class="text-left dark-text">你的水平是<strong>成长中! </strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% elif total_score <= 21 %}
+                        <h3 class="text-left dark-text">你的水平是<strong>大师!</strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% else %}
+                        <h3 class="text-left dark-text"><strong>您的水平高深莫测!</strong></h3>
+                        {#                            <p class="text-left dark-text"><br></p>#}
+                    {% endif %}
+                </div>
+
+                <div class="ibox-content">
+
+                    <table data-toggle="table"
+                           data-height="300">
+
+                        <thead>
+                        <tr>
+                            <th>建议</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% if production_hints %}
+                            {% for hint in production_hints %}
+                                <tr>
+                                    <td>{{ hint.hint }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td>作品很棒,没有建议</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>细则评分</h5>
+                </div>
+                <div class="ibox-content">
+
+                    {% for key, value in antlr_score.items %}
+                        <h5>{{ value.name }}</h5>
+
+                        <div class="progress progress-striped active">
+                            <div style="width: {{ value.percentage }}" aria-valuemax="100" aria-valuemin="0"
+                                 role="progressbar" class="{{ value.class_name }}">
+                                <span>{{ value.score }}/3</span>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <div class="" style="width: 50%;float: left;">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>作品描述</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <fieldset class="form-horizontal">
+                            <div class="form-group">
+                                 {% if description %}
+                                <div class="col-lg-12"><p class="form-control-static">{{ description }}</p>
+                                </div>
+                                {% else %}
+                                       <div class="col-lg-12"><p class="form-control-static">暂无作品描述</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+    <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>操作说明</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <fieldset class="form-horizontal">
+                            <div class="form-group">
+                                    {% if operation_instructions %}
+                                <div class="col-lg-12"><p class="form-control-static">{{ operation_instructions }}</p>
+                                </div>
+                                {% else %}
+                                       <div class="col-lg-12"><p class="form-control-static">暂无操作说明</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="">
+{#        <div id="main" class="col-lg-6" style="height:300px;"></div>#}
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>教师打分(满分为：{{ limit_small_score }})</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div id="postform">
+                            {% csrf_token %}
+                            <fieldset class="form-horizontal">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="col-sm-1 control-label">完整性</label>
+                                        <div class="col-lg-2">
+                                            <input type="number" name="integrity_score" value="{% for key,value in teacher_score.small_score.items%}{% if key == "完整性" %}{{ value }}{% endif %}{% endfor %}" class="score1 form-control"  autocomplete="off" required>
+                                        </div>
+                                        <label class="col-sm-1 control-label">技术性</label>
+                                        <div class="col-lg-2">
+                                            <input type="number" name="technical_score" value="{% for key,value in teacher_score.small_score.items%}{% if key == "技术性" %}{{ value }}{% endif %}{% endfor %}" class="score2 form-control"  autocomplete="off" required>
+                                        </div>
+
+                                        <label class="col-sm-1 control-label">艺术性</label>
+                                        <div class="col-lg-2">
+                                            <input type="number" name="artistry_score" value="{% for key,value in teacher_score.small_score.items%}{% if key == "艺术性" %}{{ value }}{% endif %}{% endfor %}" class="score3 form-control"  autocomplete="off" required>
+                                        </div>
+
+                                        <label class="col-sm-1 control-label">创造性</label>
+                                        <div class="col-lg-2">
+                                            <input type="number" name="creativity_score" value="{% for key,value in teacher_score.small_score.items%}{% if key == "创造性" %}{{ value }}{% endif %}{% endfor %}" class="score4 form-control"  autocomplete="off" required></div>
+                                    </div>
+                                 </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">总分</label>
+                                        <div class="col-lg-10">
+                                            <p class="form-control-static">{{ teacher_score.score }}</p>
+{#                                            <input type="number" name="total_score" class="score5 form-control" value="{{ teacher_score.score }}" autocomplete="off" required>#}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">评价</label>
+                                    <div class="col-sm-10">
+                                        <textarea name="new_comment" class="comment form-control" placeholder="输入评价"
+                                                  datatype="*" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 text-right">
+                                    <button class="btn btn-lg btn-primary" onclick="sub5();">
+                                    提交
+                                    </button>
+                                    <button class="btn btn-lg btn-primary text-right" id="BTN1" onclick="return false">
+                                    在线查看
+                                    </button>
+                                    <a id="a1" href="http://127.0.0.1:8010/scratch2/scratch.html?url=/util/download_production/{{ production_id }}"
+{#                                    <a id="a1" href="http://scratch.tuopinpin.com/scratch.html?url=/util/download_production/{{ production_id }}"#}
+                                   target="view_window" class="btn btn-lg btn-primary text-right" style="display:none">
+
+                                    </a>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+</div>
+{% endblock %}
+{% block script %}
+<!-- Jasny -->
+<script src={% static "js/plugins/jasny/jasny-bootstrap.min.js" %}></script>
+
+<!-- DROPZONE -->
+<script src={% static "js/plugins/dropzone/dropzone.js" %}></script>
+
+<!-- CodeMirror -->
+<script src={% static "js/plugins/codemirror/codemirror.js" %}></script>
+<script src={% static "js/plugins/codemirror/mode/xml/xml.js" %}></script>
+{#    <script src={% static "js/echarts.js" %}></script>#}
+    <script type="text/javascript">
+
+        {#var list=[];#}
+        {##}
+        {#// 基于准备好的dom，初始化echarts实例#}
+        {#var myChart = echarts.init(document.getElementById('main'));#}
+        {##}
+        {#// 指定图表的配置项和数据#}
+        {#var option = {#}
+        {#    title: {#}
+        {#        text: '作品统计图'#}
+        {#    },#}
+        {#    tooltip: {},#}
+        {#    legend: {#}
+        {#        data:['各模块数目']#}
+        {#    },#}
+        {#    xAxis: {#}
+        {#        data: ["动作","外观","声音","画笔","数据","事件","控制","侦测","运算","拓展","角色","背景"]#}
+        {#    },#}
+        {#    yAxis: {},#}
+        {#    series: [{#}
+        {#        name: '模块数目',#}
+        {#        type: 'bar',#}
+        {#        data: [{{profiles.motion_num}}, {{profiles.looklike_num}}, {{profiles.sounds_num}}, {{profiles.draw_num}}, {{profiles.data_num}}, {{profiles.event_num}},{{profiles.control_num}},{{profiles.sensor_num}},{{profiles.operate_num}},{{profiles.more_num}},{{profiles.sprite_num}},{{profiles.backdrop_num}}]#}
+        {#    }]#}
+        {# };#}
+        {##}
+        {#// 使用刚指定的配置项和数据显示图表。#}
+        {#myChart.setOption(option);#}
+    </script>
+
+<script type="text/javascript">
+    $(function () {
+        {% if no_access %}
+            alert('{{no_access}}');
+            setTimeout(window.location.href = '/', 3);
+        {% endif %}
+    });
+
+function sub5() {
+
+
+        var integrity_score=document.querySelector("input.score1").value;
+        var technical_score=document.querySelector("input.score2").value;
+        var artistry_score=document.querySelector("input.score3").value;
+        var creativity_score=document.querySelector("input.score4").value;
+        var new_comment=document.querySelector(".comment").value;
+
+
+        if(integrity_score != "" && technical_score != "" && artistry_score != "" && creativity_score != "") {
+
+            {% for key,value in limit_small_score.items %}
+                var key = "{{ key }}";
+                var value = "{{ value }}";
+                if (key == "完整性") {
+                    if (parseInt(integrity_score) > parseInt(value)) {
+                        alert("完整性满分为{{ value }},请不要超出限制！");
+                        $(".score1").val("");
+                        integrity_score="";
+                        return false;
+                    }
+                    if(parseInt(integrity_score)<0){
+                        alert("完整性得分不能为负，请重新打分");
+                        $(".score1").val("");
+                        integrity_score="";
+                        return false;
+                    }
+                }
+                else if (key == "技术性") {
+                    if (parseInt(technical_score) > parseInt(value)) {
+                        alert("技术性满分为{{ value }},请不要超出限制！");
+                        $(".score2").val("");
+                        technical_score="";
+                        return false;
+                    }
+                    if(parseInt(technical_score)<0){
+                        alert("技术性得分不能为负，请重新打分");
+                        $(".score2").val("");
+                        technical_score="";
+                        return false;
+                    }
+                }
+                else if (key == "艺术性") {
+                    if (parseInt(artistry_score) > parseInt(value)) {
+                        alert("艺术性满分为{{ value }},请不要超出限制！");
+                        $(".score3").val("");
+                        artistry_score="";
+                        return false;
+                    }
+                    if(parseInt(artistry_score)<0){
+                        alert("艺术性得分不能为负，请重新打分");
+                        $(".score3").val("");
+                        artistry_score="";
+                        return false;
+                    }
+                }
+                else if (key == "创造性") {
+                    if (parseInt(creativity_score) > parseInt(value)) {
+                        alert("创造性满分为{{ value }},请不要超出限制！");
+                        $(".score4").val("");
+                        creativity_score="";
+                        return false;
+                    }
+                    if(parseInt(creativity_score)<0){
+                        alert("创造性得分不能为负，请重新打分");
+                        $(".score4").val("");
+                        creativity_score="";
+                        return false;
+                    }
+
+                }
+
+            {% endfor %}
+            {#location.href = document.referrer;#}
+            {#window.location.href = "http://www.baidu.com/";#}
+            console.log(integrity_score);
+            if(integrity_score != "" && technical_score != "" && artistry_score != "" && creativity_score != ""){
+                console.log(technical_score);
+                console.log($("#postform").serialize());
+                var str2=window.location.href;
+                var csrftokens = $("input[name='csrfmiddlewaretoken']").val()
+
+                $.ajax({
+                    type: "POST",
+                    url: str2,
+                    traditional :false,
+                    data: {
+                        csrfmiddlewaretoken:csrftokens,
+                        integrity_score:integrity_score,
+                        technical_score:technical_score,
+                        artistry_score:artistry_score,
+                        creativity_score:creativity_score,
+                        new_comment:new_comment
+                        },
+                    error: function (request) {
+                        console.log(request);
+                        alert("Connection error:" + request.error);
+                    },
+                    success: function (data) {
+                        {#console.log(data);#}
+                        console.log("s");
+                        console.log(document.referrer);
+                        location.href = document.referrer;
+                        console.log("sdd");
+
+                        {#window.location.href = "/t/compro_management/{{ pk }}/?page={{ page }}"#}
+                    }
+                 });
+             }
+
+        }
+        else{
+            alert("请填写分数！");
+        }
+
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    $("#BTN1").click(function () {
+        $.get("http://127.0.0.1:8888/downloadScratch?url={{ url }}", function (result) {
+            //do nothing
+        }).fail(function () {
+            document.getElementById("a1").click();
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#BTN2").click(function () {
+        $.get("http://127.0.0.1:8888/downloadScratch?url={{ url }}", function (result) {
+            //do nothing
+        }).fail(function () {
+            document.getElementById("a2").click();
+        });
+    });
+</script>
+{% endblock %}

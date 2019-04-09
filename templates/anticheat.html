@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" name="full-screen" content="yes">
+    <title>Title</title>
+    <link href="../static/css/sweetalert.css" rel="stylesheet">
+
+
+</head>
+<body>
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script src="../static/js/sweetalert.min.js"></script>
+<script type="text/javascript">
+       // 屏蔽右击
+       document.body.oncontextmenu = document.body.ondragstart = document.body.onselectstart = document.body.onbeforecopy = function () {
+           return false;
+       };
+       //屏蔽复制粘贴
+       document.body.oncopy = document.body.oncut = function () {
+           return false;
+       };
+       var blurNum = 1;
+       $(window).on('blur ', function () {
+           swal({
+               title: "考试中切换窗口违规" + blurNum + "次！",
+               text: "1秒后自动关闭。",
+               timer: 3000,
+               showConfirmButton: false
+           });
+           blurNum++;
+           console.log(blurNum);
+       });
+
+       $(window).on('beforeunload', function () {
+           $(this).off('blur resize');
+           return '离开此页面将退出考试!';
+       });
+</script>
+</body>
+</html>

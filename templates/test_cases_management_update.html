@@ -1,0 +1,77 @@
+{% extends 'index.html' %}
+{% block statics2 %}
+    <style>
+        #save {
+            display: block;
+            margin: 0 25%;
+            width: 6%;
+        }
+
+        .flexpos a {
+            margin-bottom: 2%;
+        }
+
+        #cke_id_introduction {
+            display: block;
+            margin: 2% 5%;
+            width: 90%;
+        }
+
+        label {
+            display: inline;
+        }
+
+        #id_short_introduction {
+            display: block;
+            margin: 2% 3%;
+            width: 59%;
+        {#            margin: 2% 5%;#}{#            width: 80%;#}
+        }
+
+        #id_audio {
+            height: 32px;
+            font-size: 1.4rem;
+            margin-left: 4%;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>题目“<span id="problemid">{{ problem.title }}</span>”的测试用例</h2>
+            <ol class="breadcrumb">
+                <li>
+                    题目管理
+                </li>
+                <li>
+                    <a href="/OJ/problem_management/">题目管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <a href="/OJ/test_cases_management/{{ problem.id }}/">测试用例(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>查看测试用例</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <form action="/OJ/test_cases_management/{{ problem.id }}/{{ test_case.order }}/" method="post"
+              enctype="multipart/form-data">{% csrf_token %}
+
+            <h2>所属题目：{{ problem.title }}</h2>
+            <h2>测试用例输入:</h2>
+            <textarea rows="18" cols="120" wrap="off" style="overflow:scroll;" autofocus="autofocus" name="in_data">{{ test_case.in_data }}</textarea>
+
+            <h2>测试用例输出:</h2>
+            <textarea rows="18" cols="120" wrap="off" style="overflow:scroll;" name="out_data">{{ test_case.out_data }}</textarea>
+            <br>
+            <input id="save" class="btn btn-primary " type="submit" value="保存"/>
+
+        </form>
+    </div>
+
+
+{% endblock %}

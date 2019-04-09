@@ -1,0 +1,71 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>竞赛管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    竞赛管理
+                </li>
+                <li class="active">
+                    <strong><a href="/t/competition_management_adviser/">竞赛管理(可跳转)</a></strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    {% if competition_table %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                {% render_table competition_table "table/table.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endif %}
+{% endblock %}
+{% block script %}
+
+
+    <script type="text/javascript">
+         window.onload=function () {
+             //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "id" %}
+                $("th.id img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-id" %}
+                $("th.id img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "title" %}
+                $("th.title img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-title" %}
+                $("th.title img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "creator" %}
+                $("th.creator img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-creator" %}
+                $("th.creator img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "start_time" %}
+                $("th.start_time img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-start_time" %}
+                $("th.start_time img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "stop_time" %}
+                $("th.stop_time img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-stop_time" %}
+                $("th.stop_time img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+    };
+   </script>
+{% endblock %}

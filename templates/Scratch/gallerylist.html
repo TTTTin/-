@@ -1,0 +1,138 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+{% endblock %}
+
+{% block mainbody %}
+<div >
+ <div id="createGallery" class="col-lg-offset-2 col-lg-5">
+        <h4>专题列表：</h4>
+    </div>
+    <div class="row " id="search-sort">
+    </div>
+
+    <div id="type-list" >
+    {% for i in test %}
+        {% if i.is_active %}
+            {% if forloop.counter0|add:3|divisibleby:3 %}
+                <div class="row list-row">
+            {% endif %}
+
+            {% if forloop.counter0|add:3|divisibleby:3 %}
+                <div class="col-lg-2 col-lg-offset-2 list-boder gallery_background">
+            {% endif %}
+            {% if forloop.counter0|add:2|divisibleby:3 %}
+                <div class="col-lg-2  col-lg-offset-1 list-boder gallery_background">
+            {% endif %}
+        {% if forloop.counter0|add:1|divisibleby:3 %}
+            <div class="col-lg-2  col-lg-offset-1 list-boder gallery_background">
+        {% endif %}
+
+        <div class="img">
+            <a href="/gallerydetail/{{ i.id }}" title="" class="img">
+                <img src="{{ i.image.url }}" class="gallery_img"  alt="image not found">
+            </a>
+        </div>
+        <div class="production nowrap">
+            专题名称： {{ i.name }}
+        </div>
+        <div class="author">
+            <a href="/userpage/{{ i.author }}" title="">
+                专题作者： {{ i.author }}
+            </a>
+
+        </div>
+        <div class="view">
+            <span class="view_img">
+                <img src="{% static "img/eye.png" %}"/>
+                 {{ i.hit }}
+            </span>
+            <span class="view_img">
+                 <img src="{% static "img/like_true.png" %}"/>
+                {{ i.like }}</div>
+            </span>
+
+        </div>
+        {% if forloop.counter0|add:1|divisibleby:3 %}
+            </div>
+        {% endif %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+    {% if is_paginated %}
+        <div class="pagination" style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% endif %}
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.next_page_number }}">下一页</a>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script>
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg); //匹配目标参数
+            if (r != null) return unescape(r[2]);
+            return null; //返回参数值
+        }
+
+        function order_by(order) {
+            var q_param = getUrlParam('q');
+            if (q_param) {
+                window.location.href = '?q=' + q_param + '&order=' + order;
+            } else {
+                window.location.href = '?order=' + order;
+            }
+        }
+
+{#        $(document).ready(function () {#}
+            {#            $("#createGallery")#}
+{#            var role = $.cookie("role");#}
+{#            if (role == 'teacher') {#}
+{#                $("#createGallery h4").append('<button id="createButton" type="button" class="btn btn-success" >\n' +#}
+{#                    '                    增加专题\n' +#}
+{#                    '                </button>');#}
+{##}
+{#                $("#createButton").click(function () {#}
+{#                        window.location.href = "/create_gallery/";#}
+{#                    }#}
+{#                );#}
+{#            }#}
+{#        })#}
+    </script>
+{% endblock %}

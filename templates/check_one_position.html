@@ -1,0 +1,88 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    <div id="boxs">
+        <h4><span id="posi"></span>职位拥有以下功能权限</h4><br>
+        <input class="allPermissions" type="checkbox" name="grade_production">
+        作业打分
+        <br />
+        <input class="allPermissions" type="checkbox" name="download_production">
+        作业下载
+        <br />
+        <input class="allPermissions" type="checkbox" name="upload_test_production">
+        上传测试
+        <br />
+        <input class="allPermissions" type="checkbox" name="analysis_production">
+        按作品作业分析
+        <br />
+        <input class="allPermissions" type="checkbox" name="analysis_class">
+        按班级作业分析
+        <br />
+        <input class="allPermissions" type="checkbox" name="analysis_data">
+        数据分析
+        <br />
+        <input class="allPermissions" type="checkbox" name="CT_define">
+        CT概念
+        <br />
+        <input class="allPermissions" type="checkbox" name="CT_explain">
+        CT评估说明
+        <br />
+        <input class="allPermissions" type="checkbox" name="download_scratch_desktop">
+        桌面版Scratch下载
+        <br />
+        <input class="allPermissions" type="checkbox" name="download_data" >
+        资料下载
+        <br />
+        <input class="allPermissions" type="checkbox" name="class_manage">
+        班级管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="batch_signup">
+        批量注册
+        <br />
+        <input class="allPermissions" type="checkbox" name="course_manage">
+        课程管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="competition_manage">
+        竞赛管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="problem_manage">
+        题目管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="admin_manage" >
+        管理员
+        <br />
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function () {
+{#        alert(escape(getQueryString("position")).toLocaleLowerCase().replace(/%u/gi, '\\u'));#}
+{#        $("#posi").html(getQueryString("position"));#}
+        var permissions = "{{ position }}";
+        permissions = permissions.split(",");
+            var c = document.getElementsByClassName("allPermissions");
+            for (var i = 0; i < c.length; i++) {
+                for (var j = 0; j < permissions.length; j++) {
+                    if (c[i].name == permissions[j]) {
+                        c[i].checked = true;
+                    }
+                }
+                $(c[i]).attr("disabled", "disabled");
+            }
+        });
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if ( r != null ){
+                return unescape(r[2]);
+            } else {
+                return null;
+            }
+        }
+
+</script>
+{% endblock %}
+

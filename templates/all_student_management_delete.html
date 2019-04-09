@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% block statics2 %}
+    <style>
+
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>学生管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>学生管理</a>
+                </li>
+                <li>
+                    <a href="/t/student_list/">学生管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>删除学生</strong>
+                </li>
+            </ol>
+        </div>
+
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <form class="text-center" action="" method="post" style="margin-top: 10%;" xmlns="http://www.w3.org/1999/html">{% csrf_token %}
+        <h1 style="line-height: 3.5rem;">您确定删除-名叫:"<strong>{{ user.username }}</strong>"的学生吗?</h1>
+        <button class="btn btn-primary" style="font-size: 2.9rem;margin-top: 5%" onclick="window.location=document.referrer;return false">取消删除</button>
+        <input class="btn btn-primary" type="submit" value="确定删除" style="font-size: 2.9rem;margin-top: 5%" />
+    </form>
+
+</form>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var previous=document.referrer;
+        $('#hrefclass').attr("href",document.referrer);
+
+    </script>
+{% endblock %}

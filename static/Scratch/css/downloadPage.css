@@ -1,0 +1,73 @@
+a.weixin {
+    position: relative;
+}
+
+.weixin img.qrcode {
+  position: absolute;
+  z-index: 9;
+  top: 15px;
+  right: -210px;
+  width: 17.5rem;
+  max-width: none;
+  height: 17.5rem;
+  transform: scale(0);
+  transform-origin: top right;
+  opacity: 0;
+  border: .3125rem solid #0085ba;
+  border-radius: .25rem;
+  -webkit-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+
+}
+
+.weixin:hover img.qrcode {
+    transform: scale(1);
+    opacity: 1;
+}
+
+
+/** {*/
+    /*-webkit-text-size-adjust: none;*/
+    /*-webkit-text-resize: 100%;*/
+    /*text-resize: 100%;*/
+/*}*/
+/*.no-link a{*/
+    /*text-decoration:none !important;*/
+    /*color:#808080 !important;*/
+/*}*/
+/*.no-link-2 a{*/
+    /*text-decoration:none !important;*/
+    /*color:#979b9c !important;*/
+/*}*/
+/*@media only screen and (max-width:500px) {*/
+    /*table[class="wrapper"]{min-width:320px !important;}*/
+    /*table[class="flexible"]{width:100% !important;}*/
+    /*td[class="img-flex"] img{*/
+        /*width:100% !important;*/
+        /*height:auto !important;*/
+    /*}*/
+    /*td[class="aligncenter"]{text-align:center !important;}*/
+    /*td[class="section-1"]{padding:15px 10px !important;}*/
+    /*td[class="section-2"]{padding:25px 0 !important;}*/
+    /*td[class="section-3"]{padding:10px 0 0 !important;}*/
+    /*td[class="section-4"]{padding:20px 10px !important;}*/
+    /*td[class="section-5"]{padding:30px 10px 20px !important;}*/
+    /*td[class="button"]{padding:0 !important;}*/
+    /*td[class="button"] a{*/
+        /*display:block !important;*/
+        /*padding:12px 16px 10px !important;*/
+        /*text-align:center !important;*/
+    /*}*/
+    /*td[class="columns"]{padding:0 0 30px !important;}*/
+    /*td[class="col"]{width:32% !important;}*/
+    /*td[class="col"] td[class="img-flex"]{*/
+        /*height:auto !important;*/
+        /*padding:0 0 10px !important;*/
+    /*}*/
+    /*td[class="col"] td[class="text"]{*/
+        /*padding:0 !important;*/
+        /*font-size:11px !important;*/
+    /*}*/
+    /*td[class="social-networks"]{padding:0 0 30px !important;}*/
+/*}*/

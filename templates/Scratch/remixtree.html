@@ -1,0 +1,71 @@
+{% extends "Scratch/index.html" %}
+{% load mptt_tags %}
+{% load staticfiles %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/jquery.orgchart.min.css' %}" >
+      <style type="text/css">
+          .orgchart {
+              background: #fff;
+              width: 70%;
+
+          }
+
+          .orgchart .node {
+              width: 200px;
+          }
+
+          .orgchart .node .title{
+              width: 200px;
+          }
+
+          .orgchart .node .content {
+              height: 150px;
+              width: 200px;
+          }
+
+  </style>
+{% endblock %}
+
+{% block mainbody %}
+    <ul class="root" id="data" style="display: none">
+    {% recursetree nodes %}
+        <li id="{{ node.pk }}" title="{{ node.image.url }}">
+            {% if node.name == obj.name %}
+                {{ node.name }}
+            {% else %}
+                {{ node.name }}
+            {% endif %}
+            {% if not node.is_leaf_node %}
+                <ul>
+                    {{ children }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endrecursetree %}
+    </ul>
+    <div class="col-lg-12" style="padding-top: 30px">
+        <div id="OrgChart"></div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/jquery.orgchart.min.js'%} "></script>
+
+    <script>
+        $('#OrgChart').orgchart({
+            'data': $('#data'),
+            'toggleSiblingsResp': false,
+            'zoom': true,
+            'pan': true,
+            'draggable': true,
+            'createNode': function($node, data) {
+                $node.children('.title').wrapInner('<a href=/productdetail/' + data.id + '></a>');
+                $('<image style="height: 150;width:200px" alt="image not found" src="' + data.title + '" />').appendTo($('<div class="content"></div>')
+                    .insertAfter($node.find('.title')));
+                //reference: https://github.com/dabeng/OrgChart/issues/252
+                //VivianSnow: **hint** I have modified jquery.orgchart.min.js to transform attribute title into data
+            }
+        });
+    </script>
+{% endblock %}

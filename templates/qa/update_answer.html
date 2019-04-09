@@ -1,0 +1,21 @@
+{% extends 'qa/index.html' %}
+
+{% block mainbody %}
+    <div class="col-lg-offset-2 col-lg-8" style="padding-top: 50px">
+        <p><strong>问题:</strong></p>
+        <h4>
+            {{ question.title }}
+        </h4>
+        {{ question.description | safe }}
+
+          <form method="post" action="">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form.as_p }}
+            <input class="btn pull-middle btn-success" type="submit" value="提交回答" />
+          </form>
+        </div>
+
+</div>
+
+{% endblock %}

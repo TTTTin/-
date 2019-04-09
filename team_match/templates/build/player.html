@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" value="notranslate">
+    <link rel="shortcut icon" href="static/favicon.ico">
+    <title>Scratch 3.0 GUI: Player Example</title>
+    
+  </head>
+  <body>
+        <script src="https://code.jquery.com/jquery-latest.js"></script>
+        <script type="text/javascript">
+            window.productionID = getUrlParam('id');
+            window.opCodeAndMess = getUrlParam('opCodeAndMess');
+            window.createProductionType = getUrlParam('createType');
+
+            function getUrlParam (name){
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            }
+
+        </script>
+  <script type="text/javascript" src="lib.min.js"></script><script type="text/javascript" src="player.js"></script></body>
+</html>

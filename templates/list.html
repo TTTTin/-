@@ -1,0 +1,288 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>作业查看</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a>作业评估</a>
+            </li>
+            <li class="active">
+                <strong>作业查看</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+
+
+<div class="wrapper wrapper-content">
+    <div class="ibox-content m-b-sm border-bottom">
+        <form method="get" id="net">
+            {% csrf_token %}
+            <div class="row">
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">学校</label>
+                        <select class="form-control" id="schoolname" tabindex="2" name="school" data-placeholder="学校">
+                            <option value="">选择学校</option>
+                            {% for school in schools %}
+                                <option value={{ school.school_name }}>{{ school.school_name }}</option>#}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">班级</label>
+                        <select class="form-control" id="classname" name="class">
+                            <!--需要在选择学校之后关联得到班级列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                            <option value="">选择班级</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">学生</label>
+                        <select class="form-control" id="studentname" name="student">
+                            <!--需要在选择学校和班级之后关联得到学生列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                            <option value="">选择学生</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="control-label">作品名称</label>
+                        <input type="text" id="workname" ignore="ignore" name="workname" placeholder="作品名称" class="form-control">
+                        <!--value="${pageModel.workName}"-->
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label class="control-label">课程名称</label>
+                                    <select class="form-control"   onpropertychange="()" id="lessonname" tabindex="2" name="lessonname" data-placeholder="课程">
+                                        <option value="">选择课程</option>
+                                        {% for lesson in lessons %}
+                                            <option value={{ lesson.name }}>{{ lesson.name }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <!--value="${pageModel.workName}"-->
+                                </div>
+                        </div>
+                <div class="col-sm-1">
+                    <div class="form-group">
+                        <label class="control-label"> </label>
+                        <div class="input-group-btn">
+                            <button class="btn btn-lg btn-primary" onclick="return sub3();" type="submit">查询</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    {% if production_table %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content">
+                        {% render_table production_table "table/table.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}
+{% block script %}
+<!-- Jasny -->
+<script src={% static "js/plugins/jasny/jasny-bootstrap.min.js" %}></script>
+
+<!-- DROPZONE -->
+<script src={% static "js/plugins/dropzone/dropzone.js" %}></script>
+
+<!-- CodeMirror -->
+<script src={% static "js/plugins/codemirror/codemirror.js" %}></script>
+<script src={% static "js/plugins/codemirror/mode/xml/xml.js" %}></script>
+
+<script>
+if (document.getElementById('getPage')) {
+    document.getElementById('getPage').onclick = function () {
+        var page = $("#pagenum").val();
+        console.log(page);
+        window.location.href = "/t/list?" + "&school=" + getCookie("schoolname") + "&class=" + getCookie("classname") + "&student=" + getCookie("stuname") + "&workname=" + getCookie("workname") + "&lessonname=" + getCookie("lessonname") + "&page=" + page;
+    }
+}
+    $("#schoolname").change(function () {
+        var schoolid=$("#schoolname").val();
+        $.getJSON(encodeURI("/ajax/get_class?school="+schoolid),function(data){
+            console.log(data);
+            var content='';
+            content+='<option value=>'+' '+'</option>'
+            $.each(data,function (i,item) {
+                content+='<option value='+item.pk+'>'+item.fields.class_name+'</option>'
+            });
+            $("#classname").html('');
+            $('#classname').append(content)
+            $("#studentname").html('');
+        });
+    });
+    $("#classname").change(function () {
+        var classid=$("#classname").val();
+        $.getJSON(encodeURI("/ajax/get_student?class="+classid),function(data){
+            var content='';
+            content+='<option value=>'+' '+'</option>'
+            $.each(data,function (i,item) {
+                content+='<option value='+item.pk+'>'+item.fields.name+'</option>'
+            });
+            $("#studentname").html('');
+            $("#studentname").append(content);
+        });
+    });
+
+
+    function ViewCall(obj) {
+        console.dir(obj);
+        var str1 = obj.pathname;
+        str2 = str1;
+        $.ajax({
+            type: "GET",
+            url: str2 + '/',
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+        return false;
+    }
+    function sub3() {
+        document.cookie="schoolname="+$("#schoolname").val();
+        document.cookie="stuname="+ $("#studentname").val();
+        document.cookie="classname="+$("#classname").val();
+        document.cookie="workname="+$("#workname").val();
+        document.cookie="lessonname="+$('#lessonname').val();
+        $.ajax({
+            type: "GET",
+            url: "/t/list/",
+            data: $("#net").serialize(),
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+        return false;
+    }
+    function SortCall(obj) {
+        {#            console.dir(obj);#}
+        console.log(obj.childNodes[0].search)
+        {#            var str1=obj.innerHTML;#}
+        {#            var start=str1.indexOf("href");#}
+        {#            var stop=str1.indexOf(">");#}
+        var str2 = obj.childNodes[0].search;
+        $.ajax({
+            type: "GET",
+            url: "/t/list/" + str2,
+            //data:$("#net").serialize(),
+            async: false,
+            error: function (request) {
+                alert("Connection error:" + request.error);
+            },
+            success: function (data) {
+                $("#page").html(data);
+            }
+        });
+        //alert(str2);
+        return false;
+    }
+</script>
+
+ <script type="text/javascript">
+        $(document).ready(function () {
+            $(".ibox-content  td").css({"vertical-align": "middle !important"});
+            {% if no_access %}
+                alert('{{no_access}}');
+                setTimeout(window.location.href = '/t/', 3);
+            {% endif %}
+            var schoolname=getCookie("schoolname"),
+                classname=getCookie("classname"),
+                stuname=getCookie("stuname"),
+                workname=getCookie("workname"),
+                lessonname=getCookie("lessonname");
+            if(schoolname!=null){
+                $('#schoolname').val(schoolname);
+                $('#workname').val(workname);
+                $('#lessonname').val(lessonname);
+{#                console.log($('#schoolname').html());#}
+                $.getJSON(encodeURI("/ajax/get_class?school=" + schoolname), function (data) {
+                var content = '';
+                var schoolnum=0;
+{#                显示的为空还是名字，进行判断开始#}
+                $.each(data, function (i, item) {
+                    if (item.pk == classname) {
+                        schoolnum+=1;
+                        content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                    }
+                });
+                if(schoolnum==0){
+                    content += '<option value=""></option>';
+                }
+                {#                显示的为空还是名字，进行判断结束#}
+                $.each(data, function (i, item) {
+                    if (item.pk != classname)
+                        content += '<option value=' + item.pk + '>' + item.fields.class_name + '</option>'
+                });
+                if(schoolnum!=0){
+                    content += '<option value=""></option>';
+                }
+                $("#classname").html('');
+                $('#classname').html(content);
+                $("#studentname").html('');
+                var classid = classname;
+                $.getJSON(encodeURI("/ajax/get_student?class=" + classid), function (data) {
+                    var content = '';
+                    var classnum=0;
+                    $.each(data, function (i, item) {
+                        if (item.pk == stuname) {
+                            classnum+=1;
+                            content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                        }
+                    });
+                    if(classnum==0){
+                        content += '<option value=""></option>';
+                    }
+                    $.each(data, function (i, item) {
+                        if (item.pk != stuname) {
+                            content += '<option value=' + item.pk + '>' + item.fields.name + '</option>';
+                        }
+                    });
+                    if(classnum!=0){
+                         content += '<option value=""></option>';
+                    }
+                    $("#studentname").html('');
+                    $("#studentname").html(content);
+                });
+            });
+            }
+        });
+   </script>
+
+{% endblock %}
+

@@ -1,0 +1,375 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+{% load avatar_tags %}
+{% block statics2 %}
+    <style rel="stylesheet" >
+        input[type=submit]{
+            margin-left: 7rem;
+        }
+        .row .left {
+            float: left;
+            width: 230px;
+            text-align: center;
+            border: 0;
+            background: none;
+        }
+        .left .pic {
+            display: block;
+            width: 100px;
+            height: 100px;
+            border-radius: 10%;
+            overflow: hidden;
+            border: 3px solid #eee;
+            margin: 50px auto 20px;
+        }
+        .setting-right {
+            width: 600px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+    </style>
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href={% static "Scratch/css/jquery-ui.css" %}>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src={% static "Scratch/js/jquery.cookie.js" %}></script>
+    <script type="text/javascript" src="{% static "Scratch/js/jquery-ui.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/ui.datepicker-zh-CN.js" %}"></script>
+    <script type="text/javascript" src="{% static 'js/method01.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/city.js' %}"></script>
+
+
+    <script>
+        $(function() {
+            $( "#id_birthday" ).datepicker(
+                {
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy/mm/dd',
+                    regional: 'zh-CN',
+                    yearRange: "-100:+0"
+                }
+            );
+        });
+        function getFormatSchool(prov, city, country, format_school){
+            $.ajax({
+                url: '/format_school/',
+                type: 'get',
+                dataType: 'json',
+                data:{
+                    province:prov,
+                    city: city,
+                    district: country
+                },
+                success:function (response) {
+                    // console.log("response: " + response);
+                    for(var i=0; i<response.length; i++){
+                        var data = response[i];
+                        // console.log(data);
+                        var schoolOpt = document.createElement('option');
+                        schoolOpt.innerText = data.name;
+                        schoolOpt.value = data.id;
+                        format_school.append(schoolOpt);
+                    }
+                }
+            })
+        }
+        $(document).ready(function () {
+             $.ajaxSetup({headers: {"X-CSRFToken": '{{ csrf_token }}'}});
+            var is_changePassword = false;
+            showProv($("#prov"));
+            {% if teacher.format_school %}
+               //自动填充用户的所在学校
+                for(var i=0;i<provice.length;i++){
+                    if("{{ teacher.format_school.province }}" == provice[i].name){
+                        $("#prov").val(i);
+                        showCity($('#prov'), $('#city'), $("#district"), $("#format_school"));
+                        for(var j=0;j<provice[i]["city"].length; j++){
+                            if("{{ teacher.format_school.city }}" == provice[i]["city"][j].name){
+                                $("#city").val(j);
+                                showCountry($('#prov'), $('#city'), $("#district"), $("#format_school"));
+                                for(var k = 0; k < provice[i]["city"][j].districtAndCounty.length; k++){
+                                    if("{{ teacher.format_school.district }}" == provice[i]["city"][j].districtAndCounty[k]){
+                                        $("#district").val(k);
+                                        selecCountry($('#prov'), $('#city'), $("#district"), $("#format_school"));
+                                        setTimeout(function () {
+                                            $("#format_school").val({{ teacher.format_school.id }});
+                                        },100);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+            {% endif %}
+            $('#old_imgpass').click(function () {
+                if($('#old_password').attr("type")=="password"){
+                    $('#old_imgpass').attr("src","{% static "img/view.png" %}");
+                    $('#old_password').attr("type","text");
+                }else if($('#old_password').attr("type")=="text"){
+                    $('#old_imgpass').attr("src","{% static "img/hide.png" %}");
+                    $('#old_password').attr("type","password");
+                }
+            });
+            $('#new_imgpass1').click(function () {
+                if($('#new_password1').attr("type")=="password"){
+                    $('#new_imgpass1').attr("src","{% static "img/view.png" %}");
+                    $('#new_password1').attr("type","text");
+                }else if($('#new_password1').attr("type")=="text"){
+                    $('#new_imgpass1').attr("src","{% static "img/hide.png" %}");
+                    $('#new_password1').attr("type","password");
+                }
+            });
+            $('#new_imgpass2').click(function () {
+                if($('#new_password2').attr("type")=="password"){
+                    $('#new_imgpass2').attr("src","{% static "img/view.png" %}");
+                    $('#new_password2').attr("type","text");
+                }else if($('#new_password2').attr("type")=="text"){
+                    $('#new_imgpass2').attr("src","{% static "img/hide.png" %}");
+                    $('#new_password2').attr("type","password");
+                }
+            });
+            $("#change_button").click(function () {
+                $("#old_password").val("");
+                $("#new_password1").val("");
+                $("#new_password2").val("");
+                $("#old_password_error").hide();
+                $("#new_password1_error").hide();
+                $("#new_password2_error").hide();
+            });
+            $("#submit_change").click(function () {
+                $("#new_password2_error").hide();
+                $("#new_password1_error").hide();
+                $("#old_password_error").hide();
+                if(is_changePassword)
+                    return;
+                is_changePassword = true;
+                var token = $.cookie("token");
+                var token = "Token " + token;
+                $.ajax({
+                    url: "/t/change_password/",
+                    method: "POST",
+                    data:{
+                        username: $.cookie("username"),
+                        old_password: $("#old_password").val(),
+                        new_password1: $("#new_password1").val(),
+                        new_password2: $("#new_password2").val(),
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        if(response.status != undefined && response.status == "success"){
+                             $("#resultModal_title").text("修改成功");
+                             $("#resultModal_body").text("修改密码成功,请重新登录");
+                             $("#ChangePassword").modal("hide");
+                             $("#resultModal").modal("show");
+                             $("#resultModal").on("hide.bs.modal", function () {
+                                 document.location.href = "/";
+                             })
+                        }else{
+                            if(response["old_password"] != undefined){
+                                $("#old_password_error").show();
+                                $("#old_password_error").find("i").text(response["old_password"]);
+                            }else if(response["new_password1"] != undefined){
+                                $("#new_password1_error").show();
+                                $("#new_password1_error").find("i").text(response["new_password1"]);
+                            }else if(response["new_password2"] != undefined){
+                                $("#new_password2_error").show();
+                                $("#new_password2_error").find("i").text(response["new_password2"]);
+                            }
+                        }
+
+                        is_changePassword = false;
+                    },
+                    error: function (response) {
+                        is_changePassword = false;
+                        $("#resultModal_title").text("修改密码失败");
+                        $("#resultModal_body").text("请重新登录后尝试");
+                        $("#ChangePassword").modal("hide");
+                        $("#resultModal").modal({show:true});
+                    }
+                });
+            });
+            console.log('{{ form.errors.phone_number }}');
+        });
+        function checkDisabled() {
+            $("#id_username").attr("disabled", false);
+            return true;
+        }
+
+    </script>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10" style="margin-top: 10px">
+            <h2>修改个人信息</h2>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+        <div class="wrapper wrapper-content">
+            <div class="ibox-content m-b-sm border-bottom">
+                <div class="row wrapper border-bottom white-bg page-heading">
+                    <div class="left" style="width: 242px;">
+                        <span id="avatardiv" class="pic">
+                            <img width="100" height="100" class="js-img-show" id = "avatarShow" src="{% avatar_url user %}"/>
+                        </span>
+                        <button class="btn btn-primary" onclick="javascript:window.open('{% url 'avatar_change' %}','','width=632,height=388,toolbar=no, status=no, menubar=no, resizable=yes, scrollbars=yes, left=500, top=300');return false;">修改头像</button>
+                    </div>
+                    <div class="setting-right">
+                        <form action="" method="post" onsubmit="return checkDisabled();">
+                            {% csrf_token %}
+                            <table class="table" align="center" style="border-spacing: 0px">
+                                <tr>
+                                    <td style="width: 100px;">
+                                        用&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名：
+                                    </td>
+                                    <td style="width: 300px;">
+                                        {{ form.username }}
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        教&nbsp;师&nbsp;姓&nbsp;名：
+                                    </td>
+                                    <td>
+                                        {{ form.name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：
+                                    </td>
+                                    <td>
+                                        {{ form.email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        电&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;话：
+                                    </td>
+                                    <td>
+                                        {{ form.phone_number }}
+                                    </td>
+                                </tr>
+                                {% if form.errors.phone_number %}
+                                    <tr style="border-top: hidden">
+                                        <td colspan="2" style="color:red;">{{ form.errors.phone_number }}</td>
+                                    </tr>
+                                {% endif %}
+                                <tr>
+                                    <td>
+                                        学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;校：
+                                    </td>
+                                    <td>
+                                        <select id="prov" onchange="showCity($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                            <option>=请选择省份=</option>
+                                        </select>
+                                        <select id="city" onchange="showCountry($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                            <option>=请选择城市=</option>
+                                        </select>
+                                        <select id="district" onchange="selecCountry($('#prov'), $('#city'), $('#district'), $('#format_school'))" style="height: 30px">
+                                            <option>=请选择县区=</option>
+                                        </select>
+                                        <select id="format_school" name="format_school" style="height: 30px">
+                                            <option value="0">=请选择学校=</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button id="change_button" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ChangePassword">修改密码</button>
+                                    </td>
+                                    <td>
+                                        <input type="submit" value="&nbsp;&nbsp;保&nbsp;&nbsp;&nbsp;&nbsp;存&nbsp;&nbsp;" class="btn btn-primary block m-b"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="ChangePassword" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h3 class="modal-title center-block" id="sinLabel" align="center">
+                            修改密码
+                        </h3>
+                    </div>
+{#                    <form method="post" action="/t/change_password/">#}
+                        <div class="modal-body">
+                            <table class="table" align="center">
+                                <tr>
+                                    <td>旧密码：</td>
+                                    <td>
+                                        <input id="old_password" name="old_password" type="password" autofocus>
+                                        <img id="old_imgpass" src="{% static "img/hide.png"%}" style="margin-left: -2.5rem"/>
+                                    </td>
+                                </tr>
+                                <tr id="old_password_error" style="border-top: hidden;" hidden>
+                                    <td></td>
+                                    <td>
+                                        <i style="color: red;font-size: 14px"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>新密码：</td>
+                                    <td>
+                                        <input id="new_password1" name="new_password1" type="password">
+                                        <img id="new_imgpass1" src="{% static "img/hide.png"%}" style="margin-left: -2.5rem"/>
+                                    </td>
+                                </tr>
+                                <tr id="new_password1_error" style="border-top: hidden;" hidden>
+                                    <td></td>
+                                    <td>
+                                        <i style="color: red;font-size: 14px"></i>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>确认密码：</td>
+                                    <td>
+                                        <input id="new_password2" name="new_password2" type="password">
+                                        <img id="new_imgpass2" src="{% static "img/hide.png"%}" style="margin-left: -2.5rem"/>
+                                    </td>
+                                </tr>
+                                <tr id="new_password2_error" style="border-top: hidden;" hidden >
+                                    <td></td>
+                                    <td>
+                                        <i style="color: red;font-size: 14px"></i>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="submit_change" class="btn btn-primary center-block">&nbsp;确&nbsp;&nbsp;定&nbsp;</button>
+                        </div>
+{#                    </form>#}
+
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title" id="resultModal_title" align="center"></h3>
+                    </div>
+                    <div class="modal-body">
+                        <h4 class="center-block" align="center" id="resultModal_body"></h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary center-block" data-dismiss="modal" >确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

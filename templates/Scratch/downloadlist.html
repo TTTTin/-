@@ -1,0 +1,54 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{#{% load competition_extra %}#}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+    <style>
+        .a-title{
+            color: #E74C3C;
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
+{% block mainbody %}
+
+
+<div id="type-list" class="col-lg-offset-1 col-lg-10">
+<h4>下载列表：</h4>
+        <table class="table table-hover">
+{#        <caption>悬停表格布局</caption>#}
+        <thead>
+            <tr>
+                <th>文件名</th>
+                <th>文件说明</th>
+                <th>下载选项</th>
+            </tr>
+        </thead>
+
+        <tbody>
+             {% for i in test %}
+            <tr>
+                <td>{{ i.name }}</td>
+                <td>{{i.description }}</td>
+                <td><a href="{{ i.fileUrl }}" download>点此下载</a></td>
+
+            </tr>
+             {% endfor %}
+{#            <tr>#}
+{#                <td>Sachin</td>#}
+{#                <td>Mumbai</td>#}
+{#                <td>400003</td>#}
+{#            </tr>#}
+{#            <tr>#}
+{#                <td>Uma</td>#}
+{#                <td>Pune</td>#}
+{#                <td>411027</td>#}
+{#            </tr>#}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

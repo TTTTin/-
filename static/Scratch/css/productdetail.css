@@ -1,0 +1,155 @@
+.download-padding {
+	padding-top: 20px
+}
+.textarea{
+    background-color: #ffffff;
+    border: 1px solid #04be02 ;
+    margin-left: 2rem;
+}
+#content{
+    padding: 50px 0 0em 0;
+    height: auto;
+}
+.container{
+    padding: 50px 0 0em 0;
+    width: 980px;
+    height: auto;
+    margin: auto;
+    zoom: 1;
+}
+.box{
+    width: 980px;
+    height: 510px;
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 3px rgba(34,25,25,0.3);
+    margin: 0 0 20px;
+    padding: 0;
+}
+.box .box-head{
+    padding: 7px 20px;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid #fff;
+    -webkit-border-radius:10px;
+    margin-left: 0;
+}
+.box-head{
+    padding-bottom: 2px!important;
+}
+.box .box-content{
+    background-color: #f8f8f8;
+    padding: 0;
+    border-top: 1px solid #e0e0e0;
+    position: relative;
+}
+.box .stage{
+    float: left;
+    display: inline;
+    width: 480px;
+    background-color: #fff;
+    height: 400px;
+    position: relative;
+}
+.box .info{
+    padding-left: 8px;
+    float: left;
+    display: inline;
+    width: 480px;
+    height: 400px;
+    position: relative;
+    border-left: 1px solid #e0e0e0;
+}
+.box h4,h5{
+    font-weight: bold;
+}
+.box p{
+    color: #322f31;
+    line-height: 1.5385em;
+    text-shadow: 0 1px #fff;
+}
+.box .text-block{
+    height: 160px;
+    word-wrap: break-word;
+}
+.box .view{
+    height: 100%;
+}
+.box .divider{
+    border-bottom:1px solid #ddd;
+    height: 2px;
+    display: block;
+    margin: 0 -10px 0 -6px;
+}
+.box .actions{
+    background-color: #ddd;
+    display: block;
+    padding: 2px 12px 2px 22px;
+    list-style-type: none;
+    margin-top: -10px;
+    clear: both;
+    border-top: 1px solid #ccc;
+    height: 58px;
+}
+.box .box-content p a{
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    margin-left: 25%;
+}
+.box .col-lg-2{
+    width: 100px;
+    display: inline;
+    float: left;
+}
+#divHover img{
+   position: relative;
+    z-index: 999;
+}
+#talk{
+    position: absolute;
+    z-index: 1;
+    width: 650px;
+     height: auto;
+}
+#talk>.box-head{
+    height: 42px;
+}
+#related-work{
+    margin-left: 20px;
+}
+#id_comment{
+    width: 600px;
+    margin-top: 20px;
+}
+#tree{
+    width: 300px;
+    height: auto;
+    float: right;
+}
+input[type=submit]{
+    margin-top: 10px;
+}
+input[type=submit]:nth-of-type(1){
+    margin-left:35% ;
+}
+input[type=submit]:nth-of-type(2){
+    margin-left:10px ;
+}
+#index-foot{
+    width: 100%;
+    margin-top: 40px;
+}
+.project-info-program{ float:left;width:49%}
+.project-info-detail{ float:left;width:49%}
+div.flash_content {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+.stage #swfid{
+    width: 480px!important;
+    height: 400px!important;
+}

@@ -1,0 +1,36 @@
+.badges{
+    border:1px solid gainsboro;
+    width: 180px;
+}
+.badges div{
+    margin-top: 2%;
+    color: #ff0000;
+    font-size: 17px;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 3px #FFF000;
+}
+.badges img{
+    width: 170px;
+}
+.name{
+  -webkit-animation: bglow 1.0s ease infinite;
+}
+/*.name{*/
+  /*-webkit-animation: rglow .3s ease infinite;*/
+/*}*/
+
+@-webkit-keyframes bglow {
+  0% {
+    color: rgb(255,105,180);
+    text-shadow: 3px 3px 3px rgb(30,244,255);
+    /*text-shadow: 0 0 10px;*/
+  }
+}
+@-webkit-keyframes rglow {
+  100% {
+    color: rgb(233, 54, 40);
+    text-shadow: 0 0 15px;
+  }
+}

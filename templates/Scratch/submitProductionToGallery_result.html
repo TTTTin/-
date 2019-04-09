@@ -1,0 +1,67 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% load comments static %}
+{% load avatar_tags %}
+{% load pinax_badges_tags %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'fluent_comments/js/ajaxcomments.js' %}"></script>
+    {% block inside_script %}
+        <script src={% static "Scratch/js/userpage.js" %}></script>
+    {% endblock %}
+{% endblock %}
+
+{% block css %}
+    <link href={% static "Scratch/css/userpage.css" %} rel='stylesheet' type='text/css' />
+{#    <link href={% static "Scratch/css/test_badges.css" %} rel='stylesheet' type='text/css' />#}
+    <link href={% static "Scratch/css/submit_result.css" %} rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" type="text/css" href="{% static 'fluent_comments/css/ajaxcomments.css' %}" />
+    {% block insidecss %}
+    {% endblock %}
+{% endblock %}
+
+{% block mainbody %}
+
+{#    {% for i in list %}#}
+<div id="information" class="row" >
+    <div class="top">欢迎您参加专题活动</div>
+    <br>
+    <br>
+    {% for i in list %}
+       <div class="col-lg-offset-2 col-lg-10 red">{{ i }}<br></div>
+    {% endfor %}
+    <div class="col-lg-offset-2 col-lg-10 blue">
+        <br>
+        待管理员审核通过后，您的作品会展示在对应专题中
+        <br>
+        <br/>
+        {% badges_for_user user as badges %}
+    {% if award %}
+{#        恭喜您投稿成功，奖励勋章已放入您的个人中心！#}
+        <span class="text">获得奖励：</span>
+        {% for badge in badges %}
+          <div class="tab-content col-lg-offset-2 badges" >
+            <div class="img">
+                <img src="{{ badge.image.url }}" />
+                 <div class="decoration">
+                    恭喜您获得<br>首届编程周纪念章
+                </div>
+            </div>
+
+        </div>
+
+        {% endfor %}
+    {% endif %}
+    </div>
+    <br/>
+
+    <div class="col-lg-offset-8 col-lg-10">
+        <a  style="color: #ffffff;font-size: 20px;text-decoration: none" href="/website_submitProductiontToGallery/{{user}}/{{ galleryObject.id }}/" title="">
+        <button type="button" class="btn btn-success"  >
+                返回投稿页
+        </button>
+        </a>
+    </div>
+</div>
+{% endblock %}

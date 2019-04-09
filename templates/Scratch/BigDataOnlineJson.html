@@ -1,0 +1,1017 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+{% endblock %}
+{% block script %}
+{% endblock %}
+
+
+{% block mainbody %}
+   <body style="height: 100%; margin: 0">
+
+{#   <div id="example" style="width: 600px;height:400px;"></div>#}
+{##}
+{##}
+{#<div id="like_rank" style="width: 600px;height:400px;"></div>#}
+{##}
+{#<div id="gender" style="width: 600px;height:400px;"></div>#}
+{##}
+{##}
+{#<div id="school_rank" style="width: 800px;height:400px;"></div>#}
+{##}
+{#<div id="grade_rank" style="width: 800px;height:400px;"></div>#}
+{##}
+{##}
+{#<div id="school_proportion" style="width: 1000px;height:800px;"></div>#}
+{##}
+{##}
+{#<div id="date_line" style="width: 800px;height:400px;"></div>#}
+
+{#<div id="map" style="width: 800px;height:400px;"></div>#}
+
+<div id="map_point" style="width: 800px;height:400px;"></div>
+
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=tUbV409hAdGzffQWNu5jtMFHs60MyCga"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+
+
+<script type="text/javascript">
+    function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('example'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+        title: {
+            text: '异步数据加载示例'
+        },
+        tooltip: {},
+        legend: {
+            data: ['发布排行']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {
+            splitLine: { show: false },//去除网格线
+            name: ''
+        },
+        series: [{
+            barWidth: "30px",
+            name: '发布排行',
+            type: 'bar',
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true,
+                        position: 'top',
+                        textStyle: {
+                            color: '#333'
+                        }
+                    }
+                }
+            },
+            data: []
+        }]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（实际用来盛放X轴坐标值）
+    var nums = [];    //销量数组（实际用来盛放Y坐标值）
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/test.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            var i = 0;
+            $.each(result.data, function (index, item) {
+                if (index >= 1) return false;    //
+                names.push(item.department);    //挨个取出类别并填入类别数组
+                nums.push(item.num);    //挨个取出销量并填入销量数组
+
+
+            });
+
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                xAxis: {
+                    data: names
+                },
+                series: [{
+                    // 根据名字对应到相应的系列
+                    name: '发布排行',  //显示在上部的标题
+                    data: nums
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+
+    loadOneColumn();
+
+</script>
+
+
+   <script type="text/javascript">
+    function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('like_rank'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+        title: {
+            text: '作品点赞排行榜',
+            subtext: '数据来自maibao'
+        },
+        tooltip: {},
+        legend: {
+            data: ['发布排行']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {
+{#            splitLine: { show: false },//去除网格线#}
+            name: ''
+        },
+        series: [{
+            barWidth: "30px",
+            name: '发布排行',
+            type: 'bar',
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true,
+                        position: 'top',
+                        textStyle: {
+                            color: '#333'
+                        }
+                    }
+                }
+            },
+            data: []
+        }]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（实际用来盛放X轴坐标值）
+    var nums = [];    //销量数组（实际用来盛放Y坐标值）
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/查询点赞数最多作品排行.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            var i = 0;
+            $.each(result.data, function (index, item) {
+                if (index >= 5) return false;    //
+                names.push(item.name);    //挨个取出类别并填入类别数组
+                nums.push(item.like);    //挨个取出销量并填入销量数组
+
+
+            });
+
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                xAxis: {
+                    data: names
+                },
+                series: [{
+                    // 根据名字对应到相应的系列
+                    name: '发布排行',  //显示在上部的标题
+                    data: nums
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+
+    loadOneColumn();
+
+    </script>
+
+
+   <script type="text/javascript">
+
+function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('gender'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+        color: ['#ff7d27', '#47b73d', '#fcc36e', '#57a2fd', "#228b22"],//饼图颜色
+        title: {
+            text: '参赛男女比例',
+            subtext: 'from麦宝',
+            x:'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data: []
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: { show: true },
+{#                dataView: { show: true, readOnly: false },#}
+                magicType: {
+                    show: true,
+                    type: ['pie', 'funnel'],
+                    option: {
+                        funnel: {
+                            x: '25%',
+                            width: '50%',
+                            funnelAlign: 'left',
+                            max: 1548
+                        }
+                    }
+                },
+{#                restore: { show: true },#}
+{#                saveAsImage: { show: true }#}
+            }
+        },
+        series: [{
+            name: '发布排行',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: []
+        }]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（用于存放饼图的类别）
+    var brower = [];
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/查询结果集中的男女人数.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            $.each(result.data, function (index, item) {
+                names.push(item.department);    //挨个取出类别并填入类别数组
+                brower.push({
+                    name: item.sex,
+                    value: item.nums
+                });
+            });
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                legend: {
+                    data: names
+                },
+                series: [{
+                    data: brower
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+loadOneColumn();
+</script>
+
+
+   <script type="text/javascript">
+    function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('school_rank'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+        title: {
+            text: '学校参与排行榜',
+            subtext: '数据来自maibao'
+        },
+        tooltip: {},
+        legend: {
+            data: ['发布排行']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {
+{#            splitLine: { show: false },//去除网格线#}
+            name: ''
+        },
+        series: [{
+            barWidth: "30px",
+            name: '发布排行',
+            type: 'bar',
+            itemStyle: {
+                normal: {
+                    label: {
+                        show: true,
+                        position: 'top',
+                        textStyle: {
+                            color: '#333'
+                        }
+                    }
+                }
+            },
+            data: []
+        }]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（实际用来盛放X轴坐标值）
+    var nums = [];    //销量数组（实际用来盛放Y坐标值）
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/查询某专题活动学校参与度排名.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            var i = 0;
+            $.each(result.data, function (index, item) {
+                if (index >= 5) return false;    //
+                names.push(item.school_id);    //挨个取出类别并填入类别数组
+                nums.push(item.nums);    //挨个取出销量并填入销量数组
+
+
+            });
+
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                xAxis: {
+                    data: names
+                },
+                series: [{
+                    // 根据名字对应到相应的系列
+                    name: '发布排行',  //显示在上部的标题
+                    data: nums
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+
+    loadOneColumn();
+
+    </script>
+
+
+<script type="text/javascript">
+
+function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('grade_rank'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data: names
+    },
+    series: [
+        {
+            name:'年级占比',
+            type:'pie',
+            radius: ['40%', '55%'],
+            label: {
+                normal: {
+                    formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                    backgroundColor: '#eee',
+                    borderColor: '#aaa',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    // shadowBlur:3,
+                    // shadowOffsetX: 2,
+                    // shadowOffsetY: 2,
+                    // shadowColor: '#999',
+                    // padding: [0, 7],
+                    rich: {
+                        a: {
+                            color: '#999',
+                            lineHeight: 22,
+                            align: 'center'
+                        },
+                        // abg: {
+                        //     backgroundColor: '#333',
+                        //     width: '100%',
+                        //     align: 'right',
+                        //     height: 22,
+                        //     borderRadius: [4, 4, 0, 0]
+                        // },
+                        hr: {
+                            borderColor: '#aaa',
+                            width: '100%',
+                            borderWidth: 0.5,
+                            height: 0
+                        },
+                        b: {
+                            fontSize: 16,
+                            lineHeight: 33
+                        },
+                        per: {
+                            color: '#eee',
+                            backgroundColor: '#334455',
+                            padding: [2, 4],
+                            borderRadius: 2
+                        }
+                    }
+                }
+            },
+            data:[
+
+            ]
+        }
+    ]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（用于存放饼图的类别）
+    var brower = [];
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/查询查询年级占比.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            $.each(result.data, function (index, item) {
+                names.push(item.grade);    //挨个取出类别并填入类别数组
+                brower.push({
+                    name: item.grade,
+                    value: item.nums
+                });
+            });
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                legend: {
+                    data: names
+                },
+                series: [{
+                    data: brower
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+loadOneColumn();
+</script>
+
+
+<script type="text/javascript">
+
+function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('school_proportion'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data: names
+    },
+    series: [
+        {
+            name:'学校占比',
+            type:'pie',
+            radius: ['40%', '55%'],
+            label: {
+                normal: {
+                    formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+                    backgroundColor: '#eee',
+                    borderColor: '#aaa',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    // shadowBlur:3,
+                    // shadowOffsetX: 2,
+                    // shadowOffsetY: 2,
+                    // shadowColor: '#999',
+                    // padding: [0, 7],
+                    rich: {
+                        a: {
+                            color: '#999',
+                            lineHeight: 22,
+                            align: 'center'
+                        },
+                        // abg: {
+                        //     backgroundColor: '#333',
+                        //     width: '100%',
+                        //     align: 'right',
+                        //     height: 22,
+                        //     borderRadius: [4, 4, 0, 0]
+                        // },
+                        hr: {
+                            borderColor: '#aaa',
+                            width: '100%',
+                            borderWidth: 0.5,
+                            height: 0
+                        },
+                        b: {
+                            fontSize: 16,
+                            lineHeight: 33
+                        },
+                        per: {
+                            color: '#eee',
+                            backgroundColor: '#334455',
+                            padding: [2, 4],
+                            borderRadius: 2
+                        }
+                    }
+                }
+            },
+            data:[
+
+            ]
+        }
+    ]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（用于存放饼图的类别）
+    var brower = [];
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/查询学校占比.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            $.each(result.data, function (index, item) {
+                names.push(item.school_id);    //挨个取出类别并填入类别数组
+                brower.push({
+                    name: item.school_id,
+                    value: item.nums
+                });
+            });
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                legend: {
+                    data: names
+                },
+                series: [{
+                    data: brower
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+loadOneColumn();
+</script>
+
+
+      <script type="text/javascript">
+    function loadOneColumn() {
+    var myChart = echarts.init(document.getElementById('date_line'));
+    // 显示标题，图例和空的坐标轴
+    myChart.setOption({
+        tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            crossStyle: {
+                color: '#999'
+            }
+        }
+    },
+    toolbox: {
+        feature: {
+{#            dataView: {show: true, readOnly: false},#}
+            magicType: {show: true, type: ['line', 'bar']},
+            restore: {show: true},
+{#            saveAsImage: {show: true}#}
+        }
+    },
+    legend: {
+        data:['投稿量']
+    },
+    xAxis: [
+        {
+            type: 'category',
+            data: names,
+            axisPointer: {
+                type: 'shadow'
+            }
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value',
+            name: '投稿量',
+            min: 0,
+            max: 40,
+            interval: 5,
+            axisLabel: {
+                formatter: '{value} '
+            }
+        }
+    ],
+    series: [
+
+        {
+            name:'投稿趋势',
+            type:'line',
+            // yAxisIndex: 1,
+            data: nums
+        }
+    ]
+    });
+    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
+    var names = [];    //类别数组（实际用来盛放X轴坐标值）
+    var nums = [];    //销量数组（实际用来盛放Y坐标值）
+    $.ajax({
+        type: 'get',
+        url: '{% static "BigDataAnalysis/查询作品提交时间.json" %}',//请求数据的地址
+        dataType: "json",        //返回数据形式为json
+        success: function (result) {
+            //请求成功时执行该函数内容，result即为服务器返回的json对象
+            var i = 0;
+            $.each(result.data, function (index, item) {
+{#                if (index >= 5) return false;    //#}
+                names.push(item.date);    //挨个取出类别并填入类别数组
+                nums.push(item.nums);    //挨个取出销量并填入销量数组
+
+
+            });
+
+            myChart.hideLoading();    //隐藏加载动画
+            myChart.setOption({        //加载数据图表
+                xAxis: {
+                    data: names
+                },
+                series: [{
+                    // 根据名字对应到相应的系列
+                    name: '单日投稿量',  //显示在上部的标题
+                    data: nums
+                }]
+            });
+        },
+        error: function (errorMsg) {
+            //请求失败时执行该函数
+            alert("图表请求数据失败!");
+            myChart.hideLoading();
+        }
+    });
+};
+
+    loadOneColumn();
+
+    </script>
+
+
+    <script type="text/javascript">
+    var dom = document.getElementById("map");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    app.title = '热力图与百度地图扩展';
+
+    $.get('{% static "BigDataAnalysis/hangzhou-tracks.json" %}', function (data) {
+
+        var points = [].concat.apply([], data.map(function (track) {
+            return track.map(function (seg) {
+                return seg.coord.concat([1]);
+            });
+        }));
+        myChart.setOption(option = {
+            animation: false,
+            bmap: {
+                center: [120.13066322374, 30.240018034923],
+                zoom: 14,
+                roam: true
+            },
+            visualMap: {
+                show: false,
+                top: 'top',
+                min: 0,
+                max: 5,
+                seriesIndex: 0,
+                calculable: true,
+                inRange: {
+                    color: ['blue', 'blue', 'green', 'yellow', 'red']
+                }
+            },
+            series: [{
+                type: 'heatmap',
+                coordinateSystem: 'bmap',
+                data: points,
+                pointSize: 5,
+                blurSize: 6
+            }]
+        });
+        if (!app.inNode) {
+            // 添加百度地图插件
+            var bmap = myChart.getModel().getComponent('bmap').getBMap();
+            bmap.addControl(new BMap.MapTypeControl());
+        }
+    });
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+    </script>
+
+
+
+   <script type="text/javascript">
+        var dom = document.getElementById("map_point");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = null;
+        var data = [
+             {name: '稠城一校', value: 716},
+             {name: '义乌市廿三里第一小学', value: 571},
+             {name: '义乌市吴店小学', value: 442},
+             {name: '义乌市绣湖小学', value: 358},
+             {name: '义亭小学', value: 341},
+             {name: '义乌市江湾小学', value: 307},
+             {name: '义乌市赤岸小学', value: 284},
+             {name: '义乌市廿三里第二小学', value: 260},
+             {name: '义乌市上溪小学', value: 256},
+             {name: '义乌市东河小学', value: 225},
+             {name: '上溪小学', value: 225},
+             {name: '杭州市文海实验学校', value: 187},
+             {name: '义乌市大陈小学', value: 181},
+             {name: '义乌市徐江小学', value: 130},
+             {name: '义乌市倍磊小学', value: 123},
+             {name: '义乌市香山小学教育集团胜利校区', value: 87},
+             {name: '麦宝教育', value: 71},
+             {name: 'BUPT', value: 40},
+             {name: '义乌市苏溪镇西山下小学', value: 33},
+             {name: '柯桥区漓渚镇中心小学', value: 33},
+             {name: '义乌市保联小学', value: 32},
+             {name: '北京邮电大学', value: 23},
+             {name: '杭州市育海外国语学校', value: 15},
+             {name: '义乌市大陈镇大陈小学', value: 7},
+             {name: '义乌市上溪镇吴店小学', value: 3},
+             {name: '义乌市苏溪镇第三小学', value: 1}
+
+        ];
+        var geoCoordMap = {
+            '稠城一校':[120.079845,29.306292],
+            '义乌市廿三里第一小学':[120.174312,29.32387],
+            '义乌市吴店小学':[119.911287,29.258073],
+            '义乌市绣湖小学':[120.070803,29.307213],
+            '义亭小学':[119.963402,29.240663],
+            '义乌市江湾小学':[120.027102,29.262128],
+            '义乌市赤岸小学':[120.038164,29.144239],
+            '义乌市廿三里第二小学':[120.173303,29.3393],
+            '义乌市上溪小学':[119.931584,29.27996],
+            '义乌市东河小学':[119.991707,29.309221],
+            '上溪小学':[119.931561,29.279982],
+            '杭州市文海实验学校':[120.380516,30.3059],
+            '义乌市大陈小学':[120.0984,29.466781],
+            '义乌市徐江小学':[120.054342,29.253904],
+            '义乌市倍磊小学':[119.982153,29.167134],
+            '义乌市香山小学教育集团胜利校区':[120.066606,29.303548],
+            '麦宝教育':[120.035696,29.310189],
+            'BUPT':[116.356244,39.960464],
+            '义乌市苏溪镇西山下小学':[120.165749,29.394101],
+            '柯桥区漓渚镇中心小学':[120.469319,29.95452],
+            '义乌市保联小学':[120.078764,29.297556],
+            '北京邮电大学':[116.358103,39.961554],
+            '杭州市育海外国语学校':[119.997496,30.229866],
+            '义乌市大陈镇大陈小学':[120.0984,29.466781],
+            '义乌市上溪镇吴店小学':[119.911287,29.258073],
+            '义乌市苏溪镇第三小学':[120.136356,29.432928]
+
+        };
+
+        var convertData = function (data) {
+            var res = [];
+            for (var i = 0; i < data.length; i++) {
+                var geoCoord = geoCoordMap[data[i].name];
+                if (geoCoord) {
+                    res.push({
+                        name: data[i].name,
+                        value: geoCoord.concat(data[i].value)
+                    });
+                }
+            }
+            return res;
+        };
+
+        option = {
+            title: {
+                text: '参与学校热力分布图',
+                subtext: 'from 麦宝',
+        {#        sublink: 'http://www.pm25.in',#}
+                left: 'center'
+            },
+                tooltip : {
+                    trigger: 'item',
+                    show:true,
+                    formatter: '{b}(经纬度,人数):{c}人'
+                },
+            bmap: {
+                center: [120.07, 29.30],
+                zoom: 12,
+                roam: true,
+                mapStyle: {
+                    styleJson: [{
+                        'featureType': 'water',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#d1d1d1'
+                        }
+                    }, {
+                        'featureType': 'land',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#f3f3f3'
+                        }
+                    }, {
+                        'featureType': 'railway',
+                        'elementType': 'all',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    }, {
+                        'featureType': 'highway',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#fdfdfd'
+                        }
+                    }, {
+                        'featureType': 'highway',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    }, {
+                        'featureType': 'arterial',
+                        'elementType': 'geometry',
+                        'stylers': {
+                            'color': '#fefefe'
+                        }
+                    }, {
+                        'featureType': 'arterial',
+                        'elementType': 'geometry.fill',
+                        'stylers': {
+                            'color': '#fefefe'
+                        }
+                    }, {
+                        'featureType': 'poi',
+                        'elementType': 'all',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    }, {
+                        'featureType': 'green',
+                        'elementType': 'all',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    }, {
+                        'featureType': 'subway',
+                        'elementType': 'all',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    }, {
+                        'featureType': 'manmade',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#d1d1d1'
+                        }
+                    }, {
+                        'featureType': 'local',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#d1d1d1'
+                        }
+                    }, {
+                        'featureType': 'arterial',
+                        'elementType': 'labels',
+                        'stylers': {
+                            'visibility': 'off'
+                        }
+                    }, {
+                        'featureType': 'boundary',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#fefefe'
+                        }
+                    }, {
+                        'featureType': 'building',
+                        'elementType': 'all',
+                        'stylers': {
+                            'color': '#d1d1d1'
+                        }
+                    }, {
+                        'featureType': 'label',
+                        'elementType': 'labels.text.fill',
+                        'stylers': {
+                            'color': '#999999'
+                        }
+                    }]
+                }
+            },
+            series : [
+                {
+                    name: '参与人数',
+                    type: 'scatter',
+                    coordinateSystem: 'bmap',
+                    data: convertData(data),
+                    symbolSize: function (val) {
+                        return val[2] / 20;
+                    },
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: false
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: 'purple'
+                        }
+                    }
+                },
+                {
+                    name: 'Top 3',
+                    type: 'effectScatter',
+                    coordinateSystem: 'bmap',
+                    data: convertData(data.sort(function (a, b) {
+                        return b.value - a.value;
+                    }).slice(0, 3)),
+                    symbolSize: function (val) {
+                        return val[2] / 20;
+                    },
+                    showEffectOn: 'render',
+                    rippleEffect: {
+                        brushType: 'stroke'
+                    },
+                    hoverAnimation: true,
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: true
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: 'red',
+                            shadowBlur: 10,
+                            shadowColor: '#333'
+                        }
+                    },
+                    zlevel: 1
+                }
+            ]
+        };
+
+
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+       </script>
+
+
+
+   </body>
+{% endblock %}

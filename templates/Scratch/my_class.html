@@ -1,0 +1,197 @@
+{% extends "Scratch/userpage.html" %}
+{% load staticfiles %}
+{% load comment_eachother_extra %}
+
+{% block diffproduct %}
+<script type="text/javascript">
+    $.ajaxSetup({headers: {"X-CSRFToken": '{{ csrf_token }}'}});
+</script>
+
+    <ul id="myTab" class="nav nav-tabs" style="margin-top: 20px" >
+        <li class="{% if not homework_lesson_id %}active{% endif %}">
+            <a href="#publish" data-toggle="tab">班级同学的作品</a>
+        </li>
+        <li class="{% if homework_lesson_id %}active{% endif %}">
+            <a href="#homework" data-toggle="tab">我的课程作业</a>
+        </li>
+    </ul>
+
+    <div id="myTabContent" class="tab-content" style="border:1px solid #eaeaea; border-top: hidden;">
+        <div class="tab-pane fade {% if not homework_lesson_id %}active in{% endif %} " id="publish" style="padding-top: 20px">
+            <div>
+                <form id="class_form" method="get" action="" style="margin-left: 30%" >
+                    <select id="class_lesson_list" name="class_lesson_id">
+                        <option value="0" >=请选择课程=</option>
+                        {% for lesson in lessons %}
+                            <option value="{{ lesson.pk }}" {% if class_lesson_id == lesson.pk %}selected="selected"{% endif %}>{{ lesson.name }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+            <div id="products">
+                <script>
+                    var productionids = [];
+                    var haveScore = [];
+                    var totalScores = [];
+                </script>
+                {% if class_lesson_id %}
+                    {% for i in production %}
+                        {% if i.is_active %}
+                            <div class="row" style="border:1px solid #ADADAD; margin-left: 50px;margin-right: 50px;margin-top: 10px;padding: 10px">
+                                <div height="150px" class="col-lg-3">
+                                    <a href="/productdetail/{{ i.id }}">
+                                        <img src="{{ i.image.url }}" style="height: 150px;width:250px" alt="image not found">
+                                    </a>
+                                </div>
+                                <div class="col-lg-offset-1 col-lg-3" style="margin-top: 30px">
+                                    <h4>
+                                        {{ i.name }}
+                                    </h4>
+                                    <p>
+                                        作者：{{ i.author.name }}
+                                    </p>
+                                    <small>
+                                        {{ i.create_time }}
+                                    </small>
+                                </div>
+                                <div class="col-lg-offset-2 col-lg-3 divs" style="margin-top: 30px">
+                                    <p>班级互评得分：{{ i.comment_eachother_all_score }}</p>
+                                    <p>
+                                        你的评价：<div class="demo-default"></div>
+                                    </p>
+                                </div>
+                            </div>
+                            <script>
+                                productionids.push("{{ i.id }}");
+                                haveScore.push(Number({% count_production_score i %}));
+                                totalScores.push(Number({{ i.comment_eachother_all_score }}));
+                            </script>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                <script>
+                    var divs = $(".divs > div");
+                    for (var i = 0; i < $(divs).length; i++) {
+                        $(divs)[i].id = 'production_' + i;
+                    }
+                </script>
+            </div>
+            {% if class_lesson_id %}
+                <div class="pageturn">
+                    <ul class="pagelist">
+                        {% if is_paginated %}
+                            {% if page_obj.has_previous %}
+                                <li class="long"><a href="?{% if class_lesson_id %}class_lesson_id={{ class_lesson_id }}&{% endif %}page={{ page_obj.previous_page_number}}" class="prev">上一页</a></li>
+                            {% else %}
+                                <li class="long"><a href="javascript:void(0)" class="prev" style="text-decoration: none">上一页</a></li>
+                            {% endif %}
+                            {% for page in paginator.page_range %}
+                                {% if page %}
+                                    {% if page == page_obj.number %}
+                                        <li class="active"><a href="?{% if class_lesson_id %}class_lesson_id={{ class_lesson_id }}&{% endif %}page={{ page }}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?{% if class_lesson_id %}class_lesson_id={{ class_lesson_id }}&{% endif %}page={{ page }}" class="page">{{ page }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="none"><a href="">...</a> </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="long"><a href="?{% if class_lesson_id %}class_lesson_id={{ class_lesson_id }}&{% endif %}page={{ page_obj.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="long"><a href="javascript:void(0)" style="text-transform: none;">下一页</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+
+        </div>
+        <div class="tab-pane fade {% if homework_lesson_id %}active in{% endif %}" id="homework">
+            <div class="row" id="homework-top">
+                <form id="homework_form" type="GET" action="" style="margin-left: 30%">
+                    <select id="homework_lesson_list" name="homework_lesson_id">
+                        <option value="0">=请选择课程=</option>
+                        {% for lesson in lessons %}
+                            <option value="{{ lesson.pk }}" {% if lesson.pk == homework_lesson_id %}selected="selected"{% endif %}>{{ lesson.name }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <div class="row col-lg-12" id="homeworklist">
+                    {% if homework_lesson_id %}
+                        {% for item in production %}
+                        <div class="row" style="border: 1px solid #ADADAD;margin-left: 50px;margin-right: 50px; margin-top: 10px;padding: 10px">
+                            <div style="height: 150px;" class="col-lg-3">
+                                <a href="/productdetail/{{ item.pk }}">
+                                    <img src="{{ item.image.url }}" style="height: 150px;width: 250px" alt="image not found">
+                                </a>
+                            </div>
+                            <div class="col-lg-offset-1 col-lg-3" style="margin-top: 30px">
+                                <h4>
+                                    {{ item.name }}
+                                </h4>
+                                <p>
+                                    作者:{{ item.author.name }}
+                                </p>
+                                <small>
+                                    更新时间:{{ item.update_time }}
+                                </small>
+                            </div>
+                            <div class="col-lg-offset-2 col-lg-3 divs" style="margin-top: 55px" >
+                                <p>老师评分：{% get_teacher_score_of_production_by_id item.pk %}</p>
+                                <p>老师评价：{% get_teacher_comment_of_production_by_id item.pk %}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            {% if homework_lesson_id %}
+                <div class="pageturn">
+                    <ul class="pagelist">
+                        {% if is_paginated %}
+                            {% if page_obj.has_previous %}
+                                <li class="long"><a href="?{% if homework_lesson_id %}homework_lesson_id={{ homework_lesson_id }}&{% endif %}page={{ page_obj.previous_page_number}}" class="prev">上一页</a></li>
+                            {% else %}
+                                <li class="long"><a href="javascript:void(0)" class="prev" style="text-decoration: none">上一页</a></li>
+                            {% endif %}
+                            {% for page in paginator.page_range %}
+                                {% if page %}
+                                    {% if page == page_obj.number %}
+                                        <li class="active"><a href="?{% if homework_lesson_id %}homework_lesson_id={{ homework_lesson_id }}&{% endif %}page={{ page }}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li><a href="?{% if homework_lesson_id %}homework_lesson_id={{ homework_lesson_id }}&{% endif %}page={{ page }}" class="page">{{ page }}</a></li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="none"><a href="">...</a> </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="long"><a href="?{% if homework_lesson_id %}homework_lesson_id={{ homework_lesson_id }}&{% endif %}page={{ page_obj.next_page_number }}">下一页</a></li>
+                            {% else %}
+                                <li class="long"><a href="javascript:void(0)" style="text-transform: none;">下一页</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block inside_script %}
+    <script src="{% static "star/js/application.js" %}"></script>
+    <script src="{% static "star/js/jQuery.score.js" %}"></script>
+    <script src="{% static "star/js/prism.js" %}"></script>
+    <script src={% static "Scratch/js/my_class.js" %}></script>
+    <script src={% static "Scratch/js/jquery.combo.select.js" %}></script>
+{% endblock %}
+
+{% block insidecss %}
+    <link href={% static "Scratch/css/my_class.css" %} rel='stylesheet' type='text/css' />
+    <link href={% static "Scratch/css/combo.select.css" %} rel='stylesheet' type='text/css' />
+    <link href={% static "star/css/jQuery.score.css" %} rel='stylesheet' type='text/css' />
+    <link href={% static "star/css/prism.css" %} rel='stylesheet' type='text/css' />
+{% endblock %}

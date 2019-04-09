@@ -1,0 +1,197 @@
+{% extends 'exam/index.html' %}
+{% load staticfiles %}
+{% block statics2 %}
+    <link href={% static "css/plugins/iCheck/custom.css" %} rel="stylesheet">
+    <style>
+        .flexpos{
+            width: 50%;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .flexpos a{
+            margin-right: 5%;
+        }
+        li{
+            list-style: none;
+        }
+        #lischapter{
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>课程管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    课程管理
+                </li>
+                <li>
+                    <a href="/exam/course_management/">课程管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong id="lischapter">第<span id="lessonid">{{ lesson_id }}</span>课的章节管理(可跳转)</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+     <div class="wrapper wrapper-content">
+        <div class="flexpos" >
+            <input type="text" id="sousuo" placeholder="请输入章节名称" style="margin-left: 7%;"><a class="btn btn-primary" href="#" id="sousuobtn">搜索</a>
+            <a class="btn btn-primary"id="crechapter" href="/exam/chapter_management/{{ lesson_id }}/new/"> 新建章节</a>
+            <a class="btn btn-primary" id="updchapter" href="#">查看章节</a>
+            <a class="btn btn-primary"  id="delchapter" href="#">删除章节</a>
+        </div>
+        <ul style="font-size: medium;">
+            {% for chapter in chapters %}
+                <li>
+                    <p>
+                        <div class="ibox-content">
+                            <div class="row"><div class="col-md-4"><fieldset>
+                                <div class="i-checks"><label> <input type="radio" value={{ chapter.chapter_id }} name="a"> <i></i> {{ chapter.chapter_id }}<span style="margin:0 0.25rem 0 0;font-weight: bold;">  {{ chapter.name }}</span></label></div>
+                                 </fieldset></div>
+                            </div>
+                        </div>
+                    </p>
+
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if is_paginated %}
+        <div class="pagination"  style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+
+                    <a href="/exam/chapter_management/{{ lesson_id }}?page={{ page_obj.previous_page_number }}">上一页</a>
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="/exam/chapter_management/{{ lesson_id }}?page={{ page_obj.next_page_number }}">下一页</a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block script %}
+    <script src={% static "js/plugins/iCheck/icheck.min.js"%}></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+               $('.ibox-content').hover(function (event) {
+                var target=event.target;
+                $(target).find("label").addClass("hover");
+                $(target).find("div").addClass("hover");
+            },function (event) {
+                var target=event.target;
+                $(target).find("label").removeClass("hover");
+                $(target).find("div").removeClass("hover");
+            });
+
+            $('.ibox-content').click(function (event) {
+                console.log(event.target);
+                var target=event.target;
+                console.log($(target).parents("li").siblings());
+                $(target).parents("li").siblings().find("div").removeClass("checked");
+                $(target).parents("li").siblings().find("input").attr("checked",false);
+                $(target).find("div").addClass("checked");
+                $(target).find("input").attr("checked",true);
+            });
+
+
+         });
+          var lessonid=document.getElementById("lessonid").innerHTML;
+          $('#lischapter').click(function () {
+              window.location.href="/exam/chapter_management/"+lessonid+"/";
+          })
+          $('#sousuobtn').click(function () {
+            var $sousuo=$('#sousuo').val();
+             $.ajax({
+                type:"GET",
+                url:"/exam/get_chapter/"+lessonid,
+                data:{
+                    "target":$sousuo
+                },
+                async: false,
+            error: function(request) {
+                alert("Connection error:"+request.error);
+            },
+            success: function(data) {
+                $("#page").html(data);
+            }
+            });
+        });
+         $('#updchapter').click(function () {
+            var $radios=$('.i-checks input:radio:checked').val();
+            if($radios===undefined){
+                alert("请选择课程!");
+            }else{
+                console.log(lessonid);
+                console.log($radios);
+                window.location.href="/exam/chapter_management/"+lessonid+"/"+$radios;
+            }
+        });
+          $('#delchapter').click(function () {
+            var $radios=$('.i-checks input:radio:checked').val();
+            console.log($radios);
+            if($radios===undefined){
+                alert("请选择课程!");
+            }else{
+             window.location.href="/exam/chapter_management/"+lessonid+"/"+$radios+"/delete/";
+
+            }
+        });
+
+        var $previous=document.getElementById("previous");
+        var $next=document.getElementById("next");
+        console.log($previous);
+        console.log($next);
+        if($next!=null) {
+            document.getElementById("next").onclick = function () {
+                nextval = parseInt($('#current').html()) + 1;
+                console.log(nextval);
+                $.ajax({
+                    url: "/exam/course_management?page=" + nextval,
+                    type: "GET",
+                    success: function (data) {
+                        $('#page').html(data)
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+
+                })
+            };
+        }
+        if($previous!=null) {
+            document.getElementById("previous").onclick = function () {
+                previousval= parseInt($('#current').html()) - 1;
+                console.log(previousval);
+                $.ajax({
+                    url: "/exam/course_management?page=" + previousval,
+                    type: "GET",
+                    success: function (data) {
+                        $('#page').html(data)
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+
+                });
+            };
+        }
+
+
+
+</script>
+
+{% endblock %}

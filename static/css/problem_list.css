@@ -1,0 +1,27 @@
+.base_content{
+    display: flex;
+    justify-content: center;
+    margin-top:20px;
+}
+.filter_div{
+    /*过滤*/
+    display: flex;
+    justify-content: center;
+}
+.problem_div{
+    width:60%;
+    justify-content: space-around;
+    background-color: white;
+    float: left;
+}
+.information_div{
+    width: 30%;
+    float: right;
+}
+.even{
+    /*奇数行*/
+    background-color: whitesmoke;
+}
+
+
+

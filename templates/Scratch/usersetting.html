@@ -1,0 +1,303 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% load avatar_tags %}
+{% block css %}
+    <link rel="stylesheet" href={% static "Scratch/css/jquery-ui.css" %}>
+    <style type="text/css">
+        .head{
+            border-bottom: 1px solid #eaeaea;
+            background: #f8f8f8;
+            color: #333;
+            line-height: 50px;
+            text-indent: 20px;
+            font-size: 14px;
+        }
+        .inforcon .left {
+            float: left;
+            width: 230px;
+            height: 100%;
+            text-align: center;
+            border: 0;
+            background: none;
+        }
+        .left .pic {
+            display: block;
+            width: 100px;
+            height: 100px;
+            border-radius: 10%;
+            overflow: hidden;
+            border: 3px solid #eee;
+            margin: 50px auto 20px;
+        }
+        .right {
+            width: 280px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .inforcon .right {
+            width: 700px !important;
+            border-left: 1px solid #eaeaea;
+            border-right: 1px solid #eaeaea;
+            border-bottom: 1px solid #eaeaea;
+            font-size: 14px;
+            margin: 0;
+        }
+        .inforcon .right li input[type=text]{
+            color: #3d3d3d;
+            height: 30px;
+            line-height: 30px;
+            margin-left: 20px;
+            text-indent: 10px;
+            width: 300px;
+            background: #fafafa;
+        }
+        .inforcon .right li input[type=date]{
+            color: #3d3d3d;
+            height:40px;
+            width: 300px;
+            margin-left: 20px;
+            background: #fafafa;
+        }
+        .inforcon .right > li, .inputs li {
+{#            height: 50px;#}
+            line-height: 50px;
+            border-bottom: 1px solid #eaeaea;
+            color: #a9a9a9;
+            position: relative;
+        }
+        .inforcon .right > li {
+            float: left;
+            width: 100%;
+            overflow: auto;
+        }
+        .inforcon .li-col3 li {
+            float: left;
+            width: 33.3%;
+        }
+        #id_userName{
+            border: 0;
+        }
+        #id_birthday{
+            text-indent: 5px;
+        }
+    </style>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{% static "Scratch/js/jquery-ui.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/ui.datepicker-zh-CN.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/city.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/method01.js" %}"></script>
+    <script>
+        $(function() {
+            $( "#id_birthday" ).datepicker(
+                {
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'yy-mm-dd',
+                    regional: 'zh-CN',
+                    yearRange: "-100:+0"
+                }
+            );
+        });
+        function formCheck() {
+            //提交表单验证
+            $("#id_phoneNumberError").text("");
+            $("#id_birthdayError").text("");
+            var local_province = $("#id_cmbProvince").find("option:selected").text();
+            var local_city = $("#id_cmbCity").find("option:selected").text();
+            var local_district = $("#id_cmbArea").find("option:selected").text();
+            var format_school = $("#id_formatSchool").val();
+            if (local_province == "=请选择省份="){
+                $("#localProvince").val("");
+            }else{
+                $("#localProvince").val(local_province);
+            }
+            if(local_city == "=请选择城市="){
+                $("#localCity").val("");
+            }else{
+                $("#localCity").val(local_city);
+            }
+            if(local_district == "=请选择县区="){
+                $("#localDistrict").val("");
+            }else{
+                $("#localDistrict").val(local_district);
+            }
+            if(format_school == "=请选择学校="){
+                $("#formatSchool").val("");
+            }else{
+                $("#formatSchool").val(format_school)
+            }
+            {% if not user.enrollment_number %}
+                var note = {
+                    "enrollment_number": $("#id_enrollmentNumber").val()
+                };
+                note = JSON.stringify(note);
+                $("#note").val(note);
+            {% endif %}
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'usersetting' user.username %}",
+                data: $("#jsEditUserForm").serialize(),
+                async:true,
+                success:function (response) {
+                    if(response.status == "success"){
+                        window.location.href = "{% url 'userpage' user.username %}";
+                    }else{
+                        if(response.phone_number != undefined){
+                            $("#id_phoneNumberError").text(response.phone_number[0]);
+                        }
+                        if(response.birthday != undefined){
+                            $("#id_birthdayError").text(response.birthday[0]);
+                        }
+                    }
+                },
+                fail:function (response) {
+                    console.log("fail", response);
+                }
+            });
+            return true;
+        }
+        $(document).ready(function () {
+            showCmbProv($("#id_cmbProvince"));
+            showProv($("#id_province"));
+            //自动填充用户的所在地
+            for(var i=0;i<provice.length;i++){
+                if("{{ user.local_province }}" == provice[i].name){
+                    $("#id_cmbProvince").val(i);
+                    showCmbCity($("#id_cmbProvince"), $("#id_cmbCity"), $("#id_cmbArea"));
+                    for(var j=0;j<provice[i]["city"].length;j++){
+                        if("{{ user.local_city }}" == provice[i]["city"][j].name){
+                            $("#id_cmbCity").val(j);
+                            showCmbCountry($("#id_cmbProvince"), $("#id_cmbCity"), $("#id_cmbArea"));
+                            for(var k = 0; k < provice[i]["city"][j].districtAndCounty.length; k++){
+                                if("{{ user.local_district }}" == provice[i]["city"][j].districtAndCounty[k]){
+                                    $("#id_cmbArea").val(k);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //自动填充用户的所在学校
+            for(var i=0;i<provice.length;i++){
+                if("{{ user.format_school.province }}" == provice[i].name){
+                    $("#id_province").val(i);
+                    showCity($('#id_province'), $('#id_city'), $("#id_district"), $("#id_formatSchool"));
+                    for(var j=0;j<provice[i]["city"].length; j++){
+                        if("{{ user.format_school.city }}" == provice[i]["city"][j].name){
+                            $("#id_city").val(j);
+                            showCountry($('#id_province'), $('#id_city'), $("#id_district"), $("#id_formatSchool"));
+                            for(var k = 0; k < provice[i]["city"][j].districtAndCounty.length; k++){
+                                if("{{ user.format_school.district }}" == provice[i]["city"][j].districtAndCounty[k]){
+                                    $("#id_district").val(k);
+                                    selecCountry($('#id_province'), $('#id_city'), $("#id_district"), $("#id_formatSchool"));
+                                    setTimeout(function () {
+                                        $("#id_formatSchool").val({{ user.format_school.id }});
+                                    },100);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //学籍号验证
+            {% if not user.enrollment_number %}
+                var enrollment_number = {{ user.note|safe }}.enrollment_number;
+                $("#id_enrollmentNumber").val(enrollment_number);
+                $("#enrollment_number_error").text("未通过认证");
+            {% else %}
+                $("#id_enrollmentNumber").val({{ user.enrollment_number }});
+                $("#id_enrollmentNumber").attr("readonly", "readonly");
+                $("#id_enrollmentNumber").css("border","0");
+                $("#enrollment_number_error").text("通过验证");
+                $("#enrollment_number_error").css("color", "");
+            {% endif %}
+        })
+
+    </script>
+{% endblock %}
+
+{% block mainbody %}
+
+    <div class="col-lg-offset-2 col-lg-8">
+        <div class="head" style="border: 1px solid #eaeaea; ">
+            <h2>个人信息</h2>
+        </div>
+        <div class="inforcon">
+            <div class="left" style="width: 242px;">
+                <span id="avatardiv" class="pic">
+                    <img width="100" height="100" class="js-img-show" id = "avatarShow" src="{% avatar_url user %}"/>
+                </span>
+                <button class="btn btn-success" onclick="javascript:window.open('{% url 'avatar_change' %}','','width=632,height=388,toolbar=no, status=no, menubar=no, resizable=yes, scrollbars=yes, left=500, top=300');return false;">修改头像</button>
+            </div>
+{#            <form class="perinform" id="jsEditUserForm" autocomplete="off" action="{% url 'usersetting' user.username %}" method="post" onsubmit="return formCheck();">#}
+            <form class="perinform" id="jsEditUserForm" autocomplete="off">
+                <ul class="right">
+                    <li>用&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;&nbsp;名：
+                        <input id="id_userName" type="text" name="username" readonly="readonly" value="{{ user.username }}"/>
+                    </li>
+                    <li>真&nbsp;实&nbsp;姓&nbsp;名：
+                        <input type="text" name="name" id="id_name" value="{{ user.name }}"/>
+                    </li>
+                    <li>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：
+                        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio"  name="sex" value="男" {% if user.sex == "男" %}checked="checked"{% endif %} >男</label>
+                        <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="sex" value="女"{% if user.sex == "女" %}checked="checked"{% endif %}>女</label>
+                    </li>
+                    <li>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日：
+                        <input id="id_birthday" name="birthday" type="date" value="{{ user.birthday|safe }}"/>
+                        <i id="id_birthdayError" style="color:red"></i>
+                    </li>
+                    <li>所&nbsp;&nbsp;&nbsp;在&nbsp;&nbsp;&nbsp;&nbsp;地：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select id="id_cmbProvince" onchange="showCmbCity($('#id_cmbProvince'), $('#id_cmbCity'), $('#id_cmbArea'))" style="height:30px; color:black;">
+                            <option>=请选择省份=</option>
+                        </select>
+                        <select id="id_cmbCity" onchange="showCmbCountry($('#id_cmbProvince'), $('#id_cmbCity'), $('#id_cmbArea'))" style="height: 30px; color:black; ">
+                            <option>=请选择城市=</option>
+                        </select>
+                        <select id="id_cmbArea" onchange="selecCmbCountry($('#id_cmbProvince'), $('#id_cmbCity'), $('#id_cmbArea'))" style="height: 30px; color:black;">
+                            <option>=请选择县区=</option>
+                        </select>
+                        <input type="hidden" name="local_province" id="localProvince">
+                        <input type="hidden" name="local_city" id="localCity">
+                        <input type="hidden" name="local_district" id="localDistrict">
+                    </li>
+                    <li>学&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;校：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select id="id_province" onchange="showCity($('#id_province'), $('#id_city'), $('#id_district'), $('#id_formatSchool'))" style="height: 30px; color:black;">
+                            <option>=请选择省份=</option>
+                        </select>
+                        <select id="id_city" onchange="showCountry($('#id_province'), $('#id_city'), $('#id_district'), $('#id_formatSchool'))" style="height: 30px; color:black;">
+                            <option>=请选择城市=</option>
+                        </select>
+                        <select id="id_district" onchange="selecCountry($('#id_province'), $('#id_city'), $('#id_district'), $('#id_formatSchool'))" style="height: 30px; color:black;">
+                            <option>=请选择县区=</option>
+                        </select>
+                        <select id="id_formatSchool" style="height: 30px; color:black;">
+                            <option value="">=请选择学校=</option>
+                        </select>
+                        <input type="hidden" name="format_school" id="formatSchool">
+                    </li>
+                    <li>手&nbsp;&nbsp;&nbsp;机&nbsp;&nbsp;&nbsp;&nbsp;号：
+                        <input id="id_phoneNumber" type="text" name="phone_number" value="{{ user.phone_number }}"/>
+                        <i id="id_phoneNumberError" style="color:red"></i>
+                    </li>
+                    <li>学&nbsp;&nbsp;&nbsp;籍&nbsp;&nbsp;&nbsp;&nbsp;号：
+                        <input id="id_enrollmentNumber" type="text"/>
+                        <input id="note" name="note" type="hidden">
+                        <i id="enrollment_number_error" style="color: red;"></i>
+                    </li>
+                    <li>个&nbsp;人&nbsp;介&nbsp;绍：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <textarea id="id_introduction" cols="40" rows="3" name="self_introduction" style="color: #000; text-indent: 5px">{{ user.self_introduction }}</textarea>
+                    </li>
+                    <li style="text-align: center">
+{#                        <input name="submit" type="submit" value="保存" class="btn btn-success" style="margin-top: 10px;margin-bottom: 10px"/>#}
+                        <input name="submit"  onclick="formCheck()" value="保存" readonly="readonly" class="btn btn-success" style="margin-top: 10px;margin-bottom: 10px">
+                    </li>
+                    {% csrf_token %}
+                </ul>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

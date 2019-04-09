@@ -1,0 +1,105 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    <h4>添加想要新增的职位名称和职位可以拥有的功能</h4><br>
+    职位名称： <input id="name" type="text" name="fname" />
+    <div id="boxs">
+        <input class="allPermissions" type="checkbox" name="grade_production">
+        作业打分
+        <br />
+        <input class="allPermissions" type="checkbox" name="download_production">
+        作业下载
+        <br />
+        <input class="allPermissions" type="checkbox" name="upload_test_production">
+        上传测试
+        <br />
+        <input class="allPermissions" type="checkbox" name="analysis_production">
+        按作品作业分析
+        <br />
+        <input class="allPermissions" type="checkbox" name="analysis_class">
+        按班级作业分析
+        <br />
+        <input class="allPermissions" type="checkbox" name="analysis_data">
+        数据分析
+        <br />
+        <input class="allPermissions" type="checkbox" name="CT_define">
+        CT概念
+        <br />
+        <input class="allPermissions" type="checkbox" name="CT_explain">
+        CT评估说明
+        <br />
+        <input class="allPermissions" type="checkbox" name="download_scratch_desktop">
+        桌面版Scratch下载
+        <br />
+        <input class="allPermissions" type="checkbox" name="download_data">
+        资料下载
+        <br />
+        <input class="allPermissions" type="checkbox" name="class_manage">
+        班级管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="batch_signup">
+        批量注册
+        <br />
+        <input class="allPermissions" type="checkbox" name="course_manage">
+        课程管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="competition_manage">
+        竞赛管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="problem_manage">
+        题目管理
+        <br />
+        <input class="allPermissions" type="checkbox" name="admin_manage">
+        管理员
+        <br />
+    </div>
+    <button class="btn-primary" id="submit">确定</button>
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#submit").click(function () {
+            var result = [];
+            var c = document.getElementsByClassName("allPermissions");
+            var f = [];
+            var name = document.getElementById("name").value;
+            for (var i = 0; i < c.length; i++) {
+                if (c[i].checked) {
+                    result.push(c[i].name);
+                }
+            }
+            var obj = {
+              permissions: result,
+                name: name
+            };
+            $.ajax({
+                url: "/t/add_teacher_permission_api/",
+                method: "post",
+                dateType: 'json',
+                traditional: true,
+                data: {
+                    "obj": JSON.stringify(obj)
+                },
+                success: function () {
+                    alert("修改成功！");
+                }
+            });
+
+        });
+    });
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if ( r != null ){
+            return unescape(r[2]);
+        } else {
+            return null;
+        }
+    }
+</script>
+{% endblock %}
+

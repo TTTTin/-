@@ -1,0 +1,324 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+{% block statics2 %}
+    <link href={% static "css/plugins/iCheck/custom.css" %} rel="stylesheet">
+    <style>
+        .flexpos{
+            width: 50%;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .flexpos a{
+            margin-right: 5%;
+        }
+        li{
+            list-style: none;
+        }
+        #lischapter{
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>课程管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    课程管理
+                </li>
+                <li>
+                    <a href="/t/course_management/">课程管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong id="lischapter">第<span id="lessonid">{{ lesson_id }}</span>课的章节管理(可跳转)</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+     <div class="wrapper wrapper-content">
+        <div class="flexpos" >
+            <input type="text" id="sousuo" placeholder="请输入章节名称" style="margin-left: 7%;"><a class="btn btn-primary" href="#" id="sousuobtn">搜索</a>
+            <a class="btn btn-primary"id="tecrechapr" href="/t/chapter_management/{{ lesson_id }}/new/"> 新建章节</a>
+{#            <a class="btn btn-primary"id="" onclick="window.location.reload()"> 保存操作</a>#}
+{#            <a class="btn btn-primary" id="updchapter" href="#">查看章节</a>#}
+{#            <a class="btn btn-primary"  id="delchapter" href="#">删除章节</a>#}
+{#            <a href="/t/chapter_management/{{ lesson_id }}?sort=chapter_id"><img src="/../static/img/up.png" style="width: 30px ; height: 30px "/></a>#}
+{#            <a href="/t/chapter_management/{{ lesson_id }}?sort=-chapter_id"><img src="/../static/img/down.png" style="width: 30px ; height: 30px "/></a>#}
+
+{#            <a class="btn btn-primary" id="paixu" href="/t/chapter_management/?sort={{ chapter_id }}">排序</a>#}
+{#            <a class="btn btn-primary" id="paixu" href="/t/chapter_management/{{ lesson_id }}/?sort={{ chapter_id }}">排序</a>#}
+{#            <a class="btn btn-primary">#}
+{#                 <select>#}
+{#                <option value="up">升序排列</option>#}
+{#                <option value="down">降序排列</option>#}
+{#                </select>#}
+{#            </a>#}
+
+
+        </div>
+{#        <ul style="font-size: medium;">#}
+{#            {% for chapter in chapters %}#}
+{#                <li>#}
+{#                    <p>#}
+{#                        <div class="ibox-content">#}
+{#                            <div class="row"><div class="col-md-4"><fieldset>#}
+{#                                <div class="i-checks" style="width: 1000%"><label><span class="tag"><input class="tag" type="radio" value={{ chapter.chapter_id }} name="a"> </span><span class="tag1"  id="chapter_id">编号：{{ chapter.chapter_id }}</span><span class="tag2">章节名称：{{ chapter.name }}</span><span class="tag3" style="font-size: 13px;color: #676a6c;">创建时间：{{ chapter.create_time }}</span>#}
+{#                                    <span class="tag4" style="font-size: 13px;color: #676a6c;">更新时间：{{ chapter.update_time }}</span></label></div>#}
+{#                                <span class="tag5">内容简介：{{ chapter.content }}</span>#}
+{##}
+{#                                </fieldset></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </p>#}
+{##}
+{#                </li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+         {% if chapter_table %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                {% render_table chapter_table "table/table.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block script %}
+    <script src={% static "js/plugins/iCheck/icheck.min.js"%}></script>
+    <script type="text/javascript">
+       window.onload=function () {
+            //排序图标恢复初始状态
+            $("th img").attr("src", "/../static/img/paixu4.png");
+            {% if sort == "order" %}
+                $("th.order img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-order" %}
+                $("th.order img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-name" %}
+                $("th.name img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "create_time" %}
+                $("th.create_time img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-create_time" %}
+                $("th.create_time img").attr("src", '/../static/img/paixu_down.png');
+            {% elif sort == "update_time" %}
+                $("th.update_time img").attr("src", '/../static/img/paixu_up.png');
+            {% elif sort == "-update_time" %}
+                $("th.update_time img").attr("src", '/../static/img/paixu_down.png');
+            {% endif %}
+        //翻页不改变当前搜索内容
+            var ex_href = "";
+            {% if sort and sort != "" %}
+                ex_href += '&sort={{ sort }}';
+            {% endif %}
+            $(".page_a").each(function () {
+                var href = $(this).attr("href");
+                $(this).attr("href", href + ex_href)
+            });
+    };
+        $(document).ready(function () {
+            var $up=$(".up")
+        $up.click(function(event){
+            var $tr=$(this).parents("tr");
+            if($tr.index()!=0){
+                $tr.fadeOut().fadeIn();
+                $tr.prev().before($tr);
+
+{#                var orderid=$("table tbody td.order");#}
+{#                alert(orderid);#}
+{#                var value=new Array();#}
+{#                for(var i=0;i<orderid.length;i++){#}
+{#                    var tdd=orderid[i].innerHTML;#}
+{#                    value[i]=tdd;#}
+{#                    alert(value[i]);#}
+{#                }#}
+            }
+            var orderup=$(event.target).parents("tr").find(".order").html();
+            $.ajax({
+                    type:"GET",
+                    url:"/t/order/",
+                    data:{"oup":orderup,"lessonid":lessonid},
+                error:function () {
+                    alert("Connection error:"+request.error);
+                },
+                success: function() {
+                    window.location.reload();
+                    console.log(orderup);
+                }
+                });
+
+            console.log($(event.target).parents("tr").find(".order").html());
+        });
+        var $down=$(".down");
+        var len=$down.length;
+        $down.click(function(){
+            var $tr=$(this).parents("tr");
+            if($tr.index()!=len-1){
+                $tr.fadeOut().fadeIn();
+                $tr.next().after($tr);
+            }
+
+            var orderdown=$(event.target).parents("tr").prev("tr").find(".order").html();
+            $.ajax({
+                    type:"GET",
+                    url:"/t/order/",
+                    data:{"odown":orderdown,"lessonid":lessonid},
+                error:function () {
+                    alert("Connection error:"+request.error);
+                },
+                success: function() {
+                        window.location.reload();
+                        console.log(orderdown);
+                }
+                });
+
+            console.log($(event.target).parents("tr").prev("tr").find(".order").html());
+        });
+{#        var $top=$(".top");#}
+{#        $top.click(function(){#}
+{#            var $tr=$(this).parents("tr");#}
+{#            $tr.fadeOut().fadeIn();#}
+{#            $(".table").prepend($tr);#}
+{##}
+{#        });#}
+{#            var tdd=document.getElementById('tab').rows[0].childNodes[0].innerHTML;#}
+{#            alert(tdd)#}
+{#            $("table tbody tr:last td:first").innerText="100";#}
+
+
+
+
+{#            $('.i-checks').iCheck({#}
+{#                checkboxClass: 'icheckbox_square-green',#}
+{#                radioClass: 'iradio_square-green',#}
+{#            });#}
+{#               $('.ibox-content').hover(function (event) {#}
+{#                var target=event.target;#}
+{#                $(target).find("label").addClass("hover");#}
+{##}
+{#                $(target).find("div").addClass("hover");#}
+{#            },function (event) {#}
+{#                var target=event.target;#}
+{#                $(target).find("label").removeClass("hover");#}
+{##}
+{#                $(target).find("div").removeClass("hover");#}
+{#            });#}
+{##}
+{#            $('.ibox-content').click(function (event) {#}
+{#                console.log(event.target);#}
+{#                var target=event.target;#}
+{#                console.log($(target).parents("li").siblings());#}
+{#                $(target).parents("li").siblings().find("div").removeClass("checked");#}
+{#                $(target).parents("li").siblings().find("input").attr("checked",false);#}
+{#                $(target).find("div").addClass("checked");#}
+{#                $(target).find("input").attr("checked",true);#}
+{#            });#}
+{##}
+{##}
+{##}
+         });
+          var lessonid=document.getElementById("lessonid").innerHTML;
+          $('#lischapter').click(function () {
+              window.location.href="/t/chapter_management/"+lessonid+"/?sort=order";
+          })
+          $('#sousuobtn').click(function () {
+              var $sousuo=$.trim($("#sousuo").val());
+              if ($sousuo == "") {
+                  window.alert("请输入搜索项..");
+              } else {
+                  window.location.href = "/t/get_chapter/" +lessonid+ "/" + $sousuo;
+              }
+            {#var $sousuo=$('#sousuo').val();#}
+            {# $.ajax({#}
+            {#    type:"GET",#}
+            {#    url:"/t/get_chapter/"+lessonid,#}
+            {#    data:{#}
+            {#        "target":$sousuo#}
+            {#    },#}
+            {#    async: false,#}
+            {#error: function(request) {#}
+            {#    alert("Connection error:"+request.error);#}
+            {# },#}
+            {#success: function(data) {#}
+            {#    $("#page").html(data);#}
+            {# }#}
+            {# });#}
+        });
+
+
+
+         $('#updchapter').click(function () {
+            var $radios=$('.i-checks input:radio:checked').val();
+            if($radios===undefined){
+                alert("请选择课程!");
+            }else{
+                console.log(lessonid);
+                console.log($radios);
+                window.location.href="/t/chapter_management/"+lessonid+"/"+$radios;
+            }
+        });
+          $('#delchapter').click(function () {
+            var $radios=$('.i-checks input:radio:checked').val();
+            console.log($radios);
+            if($radios===undefined){
+                alert("请选择课程!");
+            }else{
+             window.location.href="/t/chapter_management/"+lessonid+"/"+$radios+"/delete/";
+
+            }
+        });
+
+
+
+        {#var $previous=document.getElementById("previous");#}
+        {#var $next=document.getElementById("next");#}
+        {#console.log($previous);#}
+        {#console.log($next);#}
+        {#if($next!=null) {#}
+        {#    document.getElementById("next").onclick = function () {#}
+        {#        nextval = parseInt($('#current').html()) + 1;#}
+        {#        console.log(nextval);#}
+        {#        $.ajax({#}
+        {#            url: "/t/course_management?page=" + nextval,#}
+        {#            type: "GET",#}
+        {#            success: function (data) {#}
+        {#                $('#page').html(data)#}
+        {#            },#}
+        {#            error: function (error) {#}
+        {#                console.log(error);#}
+        {#            }#}
+        {##}
+        {#        })#}
+        {#    };#}
+        {# }#}
+        {#if($previous!=null) {#}
+        {#    document.getElementById("previous").onclick = function () {#}
+        {#        previousval= parseInt($('#current').html()) - 1;#}
+        {#        console.log(previousval);#}
+        {#        $.ajax({#}
+        {#            url: "/t/course_management?page=" + previousval,#}
+        {#            type: "GET",#}
+        {#            success: function (data) {#}
+        {#                $('#page').html(data)#}
+        {#            },#}
+        {#            error: function (error) {#}
+        {#                console.log(error);#}
+        {#            }#}
+        {##}
+        {#        });#}
+        {#    };#}
+        {# }#}
+
+
+
+</script>
+
+{% endblock %}

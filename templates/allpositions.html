@@ -1,0 +1,66 @@
+{% extends 'index.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    <div id="boxs">
+    <h4>请选择要改变的职位：</h4><br>
+        {% for foo in positions %}
+                <input class="radios" type="radio" name="position">
+                <label>{{ foo.name }}</label><br>
+        {% endfor %}
+    </div>
+    <button class="btn-primary" id="submit">确定</button>
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var u = [];
+        {% for foo in positions %}
+            u.push("{{ foo.name }}");
+        {% endfor %}
+        var c = document.getElementsByClassName("radios");
+{#        alert("{{ position }}");#}
+        for (var i = 0; i < c.length; i++) {
+            if (u[i] == "{{ position }}") {
+                $(c[i]).attr("checked", "true");
+            }
+        }
+
+        $("#submit").click(function () {
+            var result = [];
+            var u = [];
+            {% for foo in positions %}
+                 u.push("{{ foo.name }}");
+            {% endfor %}
+            var c = document.getElementsByClassName("radios");
+            var f;
+            for (var i = 0; i < c.length; i++) {
+                if (c[i].checked) {
+                    f = u[i];
+                }
+            }
+            $.ajax({
+                url: "/t/change_teacher_permission_api/?user=" + getQueryString("user") + "&position=" + f,
+                method: "post",
+                dateType: 'json',
+                success: function () {
+                    alert("修改成功！");
+                }
+            });
+
+        });
+    });
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if ( r != null ){
+            return unescape(r[2]);
+        } else {
+            return null;
+        }
+    }
+</script>
+{% endblock %}
+

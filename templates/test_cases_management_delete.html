@@ -1,0 +1,28 @@
+{% extends 'index.html' %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>题目“<span id="problemid">{{problem.title }}</span>”的测试用例</h2>
+            <ol class="breadcrumb">
+                <li>
+                    题目管理
+                </li>
+                <li>
+                    <a href="/OJ/problem_management/">题目管理(可跳转)</a>
+                </li>
+               <li class="active">
+                    <a href="/OJ/test_cases_management/{{problem.id}}">测试用例(可跳转)</a>
+                </li>
+                 <li class="active">
+                    <strong>删除测试用例</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <form class="text-center" action="" method="post" style="margin-top: 10%;" xmlns="http://www.w3.org/1999/html">{% csrf_token %}
+        <h1 style="line-height: 3.5rem;">您确定要删除所属问题:"<strong><span id="problemid">{{ problem.title }}</span></strong>"的{{ test_case_order }}号测试用例吗?</h1>
+        <input class="btn btn-primary" type="submit" value="确定删除" style="font-size: 2.9rem;margin-top: 5%" />
+    </form>
+{% endblock %}

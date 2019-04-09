@@ -1,0 +1,85 @@
+.gallery_background{
+  background-color: rgb(199,237,233) !important;
+}
+.gallery_img{
+  width: 180px;
+  height: 180px;
+  margin: auto;
+}
+#page-breadcrumb {
+  /*background-image: url(../img/tour-bg.png);*/
+  /*background-color: #fbfafa;*/
+  /*background-repeat: repeat-x,repeat-y;*/
+  /*height: 280px;*/
+  /*background-position: center;*/
+  /*margin-bottom:1%;*/
+    /*padding-bottom: 3%;*/
+  display: table;
+  position: static;
+  width: 100%;
+}
+.right{
+  float: right;
+    margin-bottom: 2%;
+}
+.right span{
+    font-size: 17px;
+}
+.right input{
+    font-size: 17px;
+}
+.title_left{
+    /*margin-left: 4rem;*/
+}
+h2{
+    font-weight: bold;
+    /*font-weight: 800;*/
+     /*font-family: KaiTi;*/
+}
+.author_strong{
+    /*color: rgb(64, 116, 52);*/
+      /*color: #006666;*/
+     /*color: tomato;*/
+    /*text-shadow: 3px 3px 3px #FFF000;*/
+    letter-spacing: 0.2rem;
+    /*font-size: 38px;*/
+}
+.strong{
+    color: tomato;
+    text-shadow: 3px 3px 3px #FFF000;
+    letter-spacing: 0.2rem;
+}
+div.content{
+    /*font-family: KaiTi;*/
+    font-weight: bold;
+}
+.title{
+     color: #669933;
+     /*color: rgb(64, 116, 52);*/
+    /*text-indent: 4rem;*/
+    /*margin-left: 10%;*/
+}
+.author_center{
+    /*font-family: KaiTi;*/
+    /*font-weight: 700;*/
+    font-size: 18px;
+    /*margin-left:1%;*/
+    /*font-family: KaiTi;*/
+
+    /*color: #FFFFCC;*/
+ color: #669933;
+     /*color: rgb(64, 116, 52);*/
+    /*color: rgb(107,47,174);*/
+}
+.gallery_desription{
+    font-size: 18px;
+    /*color: #5cb85c;*/
+  /*color: rgb(64, 116, 52);*/
+    color: #669933;
+  font-weight: bold;
+    /*font-family: "Arial","Hiragino Sans GB", \5fae\8f6f\96c5\9ed1, "Helvetica", "sans-serif";*/
+}
+.green{
+     color: #669933;
+    /*color: rgb(64,116,52);*/
+}

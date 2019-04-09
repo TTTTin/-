@@ -1,0 +1,51 @@
+{% extends "Scratch/index.html" %}
+{% load staticfiles %}
+{% block css %}
+    <link href={% static "Scratch/css/download.css" %} rel='stylesheet' type='text/css' />
+    <link href={% static "Scratch/css/jquery-ui-timepicker-addon.css" %} rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+{% endblock %}
+{% block script %}
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src={% static "Scratch/js/jquery-ui-timepicker-addon.js"%}></script>
+    <script type="text/javascript" src="{% static "Scratch/js/jquery-ui-timepicker-zh-CN.js" %}"></script>
+    <script>
+        $(function() {
+            $('#id_start_time').prop("readonly", true).datetimepicker({
+                        timeText: '时间',
+                        hourText: '小时',
+                        minuteText: '分钟',
+                        secondText: '秒',
+                        currentText: '现在',
+                        closeText: '完成',
+                        showSecond: true, //显示秒
+                        dateFormat: "yy-mm-dd",
+                        timeFormat: 'HH:mm:ss' //格式化时间
+                    });
+             $('#id_stop_time').prop("readonly", true).datetimepicker({
+                        timeText: '时间',
+                        hourText: '小时',
+                        minuteText: '分钟',
+                        secondText: '秒',
+                        currentText: '现在',
+                        closeText: '完成',
+                        showSecond: true, //显示秒
+                        dateFormat: "yy-mm-dd",
+                        timeFormat: 'HH:mm:ss' //格式化时间
+                    });
+
+
+        });
+
+    </script>
+{% endblock %}
+{% block mainbody %}
+     <br>
+     <br>
+	 <div class="row col-lg-offset-2">
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {{ form.as_p }}
+        <input id="save" class="btn btn-success " type="submit" value="保存" />
+        </form>
+    </div>
+{% endblock %}

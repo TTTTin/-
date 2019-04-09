@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load render_table from django_tables2 %}
+     <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>资源下载</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a >资源下载</a>
+                        </li>
+                        <li class="active">
+                            <strong>桌面版scratch下载</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+<div class="panel-body col-lg-10 col-lg-offset-1">
+    <section id="level26">
+        <div>
+            桌面版正在维护,敬请期待
+{#            <a class="btn btn-primary btn-lg active" href="http://scratch-bucket.oss-cn-hangzhou.aliyuncs.com/MaiBao-win32-x64.zip">windows 64位</a>#}
+{#            <a class="btn btn-primary btn-lg active" href="http://scratch-bucket.oss-cn-hangzhou.aliyuncs.com/MaiBao-win32-ia32.zip">windows 32位</a>#}
+        </div>
+    </section>
+</div>
+{% endblock %}

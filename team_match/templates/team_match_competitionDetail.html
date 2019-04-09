@@ -1,0 +1,100 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% load matchArrange_extra %}
+{% load competition_extra %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+    <style>
+        .a-title{
+            color: #E74C3C;
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
+{% block mainbody %}
+<div>
+    <div>
+        <br><br>
+    </div>
+
+    <div id="type-list" class="col-lg-offset-1 col-lg-10">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <th width="20%">问题</th>
+                <th width="70%">描述</th>
+                <th width="10%">查看详情</th>
+            </tr>
+            {% for i in competitionQuestions %}
+                <tr class="{{ forloop.counter | get_class }}">
+
+                    <td>{{ i.question }}</td>
+                    <td>{{ i.detail }}</td>
+                    <td><a href="{% url "team_match:team_match_questionDetail" i.pk %}">查看</a></td>
+
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    {% if is_paginated %}
+        <div class="pagination" style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.previous_page_number }}">上一页</a>
+                    {% endif %}
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    {% if request.GET.q and request.GET.order %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.order %}
+                        <a href="/gallerylist/?order={{ request.GET.order }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% elif request.GET.q %}
+                        <a href="/gallerylist/?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">下一页</a>
+                    {% else %}
+                        <a href="/gallerylist/?page={{ page_obj.next_page_number }}">下一页</a>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script src={% static "Scratch/js/jquery.cookie.js" %}></script>
+    <script>
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg); //匹配目标参数
+            if (r != null) return unescape(r[2]);
+            return null; //返回参数值
+        }
+
+        function order_by(order) {
+            var q_param = getUrlParam('q');
+            if (q_param) {
+                window.location.href = '?q=' + q_param + '&order=' + order;
+            } else {
+                window.location.href = '?order=' + order;
+            }
+        }
+    </script>
+{% endblock %}

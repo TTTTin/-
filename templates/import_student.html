@@ -1,0 +1,115 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block content %}
+
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-8">
+            <h2>班级管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a>班级管理</a>
+                </li>
+                <li class="active">
+                    <strong>批量注册</strong>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="col-lg-2">
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label class="control-label">学校</label>
+                <select style="width: 100%" class="form-control"   onpropertychange="()" id="schoolname" tabindex="2" name="school" data-placeholder="学校">
+                    {% for school in schools %}
+                        <option value={{ school.school_name }}>{{ school.school_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="col-sm-2">
+            <div class="form-group">
+                <label class="control-label">班级</label>
+                <select class="form-control"  id="classname" name="class">
+                    <!--需要在选择学校之后关联得到班级列表，然后在jsp中添加或去掉option选项，下面是测试使用-->
+                </select>
+            </div>
+        </div>
+        <div class="col-lg-12">
+              <div class="ibox-content">
+                    <form enctype="multipart/form-data" method="post" id="net">
+                        {% csrf_token %}
+                        <input type="file" id="myfile" name="myfile" style="height: 32px;font-size: 1.4rem;"/>
+                        <input  type="submit" id="upload" value="上传" class="btn btn-primary" style="width: 82px;
+                        margin:auto 4% auto auto"/>
+                    </form>
+                     <div>
+                        <button id="muban"  class="btn btn-primary" onclick="window.open('http://static.tuopinpin.com/static/muban.xlsx','_self');" style="width: 82px;margin:auto auto auto auto">模版下载</button>
+                    </div>
+                  <div class="ibox-content">
+                      <img height="auto" width="960" src="{% static 'img/upload.gif' %}" />
+                  </div>
+              </div>
+
+
+        </div>
+
+    </div>
+{% endblock %}
+{% block script %}
+    <script src={% static "Scratch/js/select2.full.min.js"%}></script>
+    <link href={% static "Scratch/css/select2.min.css" %} rel="stylesheet">
+    <script type="text/javascript">
+        $("#upload").click(function () {
+            var myfilecontent=document.getElementById('myfile').value;
+            if(myfilecontent=="")
+            {
+                alert('未选择文件');
+                return false;
+            }
+            else {
+                var formData = new FormData();
+                formData.append("myfile", document.getElementById("myfile").files[0]);
+                formData.append("csrfmiddlewaretoken", document.getElementsByName("csrfmiddlewaretoken")[0].value);
+                $.ajax({
+                    url: "/t/import_student/",
+                    type: "POST",
+                    data: formData,
+                    /**
+                     *必须false才会自动加上正确的Content-Type
+                     */
+                    contentType: false,
+                    /**
+                     * 必须false才会避开jQuery对 formdata 的默认处理
+                     * XMLHttpRequest会对 formdata 进行正确的处理
+                     */
+                    processData: false,
+                    success: function (data) {
+                        alert("提交成功，正在后台进行处理，稍后请查看右上角的消息中心。");
+                    },
+                    error: function () {
+                        alert("上传失败！");
+                    }
+                });
+            }
+            return false;
+        });
+
+        $('#schoolname').select2({
+            placeholder: "选择学校..."
+        });
+        $('#classname').select2({
+            placeholder: "选择班级..."
+        });
+
+    </script>
+{% endblock %}
+
+
+
+
+

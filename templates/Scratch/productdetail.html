@@ -1,0 +1,557 @@
+{% extends "Scratch/index.html" %}
+{% load comments static %}
+{% load teacher_extra %}
+{% load qr_url_extra %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% load favorite_extra %}
+{% load mptt_tags %}
+{% load qr_code %}
+{% load avatar_tags %}
+
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'fluent_comments/css/ajaxcomments.css' %}"/>
+    <link href={% static "Scratch/css/productdetail.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "css/select2.min.css" %} rel='stylesheet' type='text/css'/>
+{% endblock %}
+
+{% block script %}
+    <script>
+        window.sb2_url = "{{ test.file.url }}";
+    </script>
+    <script src={% static "Scratch/js/swfobject.js" %}></script>
+    <script src={% static "Scratch/js/productdetail.js" %}></script>
+    <script type="text/javascript" src="{% static 'fluent_comments/js/ajaxcomments.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/select2.min.js' %}"></script>
+    <script>
+    $(function() {
+    $(".tags_enter").blur(function () { //焦点失去触发
+        var txtvalue = $(this).val().trim();
+        if (txtvalue != '') {
+            addTag($(this));
+            $(this).parents(".tags").css({"border-color": "#d5d5d5"})
+        }
+    }).keydown(function (event) {
+        var key_code = event.keyCode;
+        var txtvalue = $(this).val().trim();
+        if (key_code == 13 && txtvalue != '') { //enter
+            addTag($(this));
+        }
+        if (key_code == 32 && txtvalue != '') { //space
+            addTag($(this));
+        }
+    });
+    $(".close").on("click", function () {
+        $(this).parent(".tag").remove();
+    });
+    $(".tags").click(function () {
+        $(this).css({"border-color": "#f59942"})
+    }).blur(function () {
+        $(this).css({"border-color": "#d5d5d5"})
+    })
+});
+function addTag(obj) {
+	var tag = obj.val();
+	if (tag != '') {
+		var i = 0;
+		$(".tag").each(function() {
+			if ($(this).text() == tag + "×") {
+				$(this).addClass("tag-warning");
+				setTimeout("removeWarning()", 400);
+				i++;
+			}
+		})
+		obj.val('');
+		if (i > 0) { //说明有重复
+			return false;
+		}
+		$("#form-field-tags").before("<span style='cursor:hand'  class='tag'><span class='spantext'>" + tag + "</span><button class='close' type='button'>×</button></span>"); //添加标签
+
+	}
+	$(".spantext").on('click', function(){
+        var text = $(this).text();
+{#        alert(text);#}
+        $("#id_comment").append(text);
+	});
+};
+function removeWarning() {
+	$(".tag-warning").removeClass("tag-warning");
+};
+// 绑定 div 下面所有span标签的click事件
+$(".spantext").on('click', function(){
+        var text = $(this).text();
+{#        alert(text);#}
+        $("#id_comment").append(text);
+	});
+
+        $(document).ready(function () {
+            $("#submit-change").attr("disabled", true);
+            $("#tags").change( function() {
+                 if (($("#tags").val() != null) && ($("#tags").val()) != undefined) {
+                     $("#submit-change").attr("disabled", false);
+                 } else {
+                     $("#submit-change").attr("disabled", true);
+                 }
+            });
+            $('#tags').select2({
+                    tags: true,
+                    placeholder: "请选择种类",
+                    maximumSelectionLength: 3
+                }
+            );
+        });
+        $('#message-text').val('{{ test.description }}');
+        $('#op_message-text').val('{{ test.operation_instructions }}');
+
+        function adddescriptionajax() {
+            var description = $.trim($("#message-text").val());
+            var op_description = $.trim($("#op_message-text").val());
+            var tags = '';
+            var tagstring = '';
+            var token = "Token " + $.cookie('token');
+            var proid = '{{ test.id }}';
+            var parentid = '';
+            var lessonnum = '';
+            {% if test.parent %}
+                parentid = '{{ test.parent.id}}';
+            {% endif %}
+            {% if test.lesson %}
+                lessonnum = '{{ test.lesson.lesson_id}}';
+            {% endif %}
+            if (($("#tags").val() != null) && ($("#tags").val()) != undefined) {
+                tags = $("#tags").val();
+
+                for (var i = 0; i < tags.length; i++) {
+                    tagstring += tags[i];
+                    if (i != tags.length - 1) {
+                        tagstring += ',';
+                    }
+
+
+                }
+                console.log(tagstring);
+            }
+
+            $.ajax({
+                headers: {
+                    Accept: "application/json; charset=utf-8",
+                    Authorization: token
+                },
+                data: {
+                    id: proid,
+                    description: description,
+                    operation_instructions: op_description,
+                    parent: parentid,
+                    tags: tagstring,
+                    lesson: lessonnum
+
+                },
+                type: "post",
+                url: "/updateProductionInfo/",
+                success: function (result) {
+                    $('#changeinfobutton').modal('hide');
+                    alert("修改成功");
+                    window.location.href = window.location.href;
+                }
+            });
+        };
+
+        function handle_favorite() {
+            //$.get('/website/ajax/favorite_production/' + "{{ test.id }}" + '/');
+            $.ajax({
+                url: '/website/ajax/favorite_production/' + "{{ test.id }}" + '/',
+                success: function () {
+                    if (document.getElementById("favorite_false").style.display == "none") {
+                        document.getElementById("favorite_false").style.display = "block";
+                        document.getElementById("favorite_true").style.display = "none";
+                        ///alert(count)
+                        $("#favorite_false > p").html("收藏：<span>" + (count - 1) + "</span>");
+                        count = count - 1;
+
+                    } else {
+                        document.getElementById("favorite_false").style.display = "none";
+                        document.getElementById("favorite_true").style.display = "block";
+                        $("#favorite_true > p").html("收藏：<span>" + (count + 1) + "</span>");
+                        count = count + 1;
+                    }
+                }
+            });
+        }
+
+        function handle_like() {
+            if (document.getElementById("like_false").style.display == "none") {
+                return;
+            }
+            $.ajax({
+                url: '/website/ajax/like_production/' + '{{ test.id }}' + '/',
+                success: function () {
+                    if (document.getElementById("like_false").style.display == "none") {
+                        document.getElementById("like_false").style.display = "block";
+                        document.getElementById("like_true").style.display = "none";
+                        ///alert(count)
+                        //$("#favorite_false > p").html("收藏：<span>" + (count - 1) + "</span>");
+                        countlike = countlike - 1;
+
+                    } else {
+                        document.getElementById("like_false").style.display = "none";
+                        document.getElementById("like_true").style.display = "block";
+                        //$("#favorite_true > p").html("收藏：<span>" + (count + 1) + "</span>");
+                        countlike = countlike + 1;
+                    }
+
+                    $("#zancount").html("点赞：" + countlike);
+                }
+            });
+        }
+
+        function hoverShowDiv() {
+            var x = event.clientX;
+            y = event.clientY;
+            document.getElementById("divHover").style.display = "block";
+
+            document.getElementById("divHover").y = document.getElementById("phone").y - 500;
+            document.getElementById("divHover").x = x - 500;
+            console.log(document.getElementById("phone").y);
+            console.log(document.getElementById("divHover").y);
+        }
+
+        function hoverHiddendiv() {
+            document.getElementById("divHover").style.display = "none";
+        }
+
+    </script>
+{% endblock %}
+
+{% block mainbody %}
+
+    <div id="changeinfobutton" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-title">
+                    <h1 class="text-center">添加作品描述</h1>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">作品描述:</label>
+                            <textarea class="form-control" id="message-text" ></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">操作说明:</label>
+                            <textarea class="form-control" id="op_message-text" ></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">作品类型:</label>
+                            <select class="select2-container--default" id="tags" multiple="multiple" placehoder="请选择类型">
+                                <option value="游戏">游戏</option>
+                                <option value="音乐">音乐</option>
+                                <option value="故事">故事</option>
+                                <option value="动画">动画</option>
+                                <option value="艺术">艺术</option>
+                                <option value="模拟">模拟</option>
+                            </select>
+                            至少选择一个作品类型！
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="submit-change" type="button" class="btn btn-primary" onclick="adddescriptionajax()">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="container">
+        <div class="box">
+            <div class="box-head">
+                <h4>&nbsp;&nbsp;&nbsp;&nbsp;{{ test.name }}</h4>
+
+                <small>
+                    <a href="/userpage/{{ test.author }}" title="">
+                        {% avatar test.author 20 %}&nbsp;{{ test.author }}
+                    </a>
+                    &nbsp;
+                    更新时间：{{ test.update_time }}
+                </small>
+            </div>
+
+
+            <div class="box-content">
+                <div class="stage">
+                    <div id="swfid" style="height:400px;" class="flash_content">Alt content if you don't have Flash
+                    </div>
+                </div>
+
+                <div class="info" id="info">
+                    <div class="text-block">
+                        <div class="view">
+                            <h4>作品介绍：</h4>
+                            <p class="small">
+                                {% if test.description %}
+                                    {{ test.description }}
+                                {% endif %}
+                                {% if not test.description %}
+                                    此作品暂时还没有介绍！
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="divider"></div>
+                    </div>
+                    <div class="text-block">
+                        <div class="view">
+                            <h4>操作说明：</h4>
+                            <p class="small">
+                                {% if test.operation_instructions %}
+                                    {{ test.operation_instructions }}
+                                {% endif %}
+                                {% if not test.operation_instructions %}
+                                    此作品暂时还没有介绍！
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="divider"></div>
+                    </div>
+
+                    <div class="text-block">
+                        <h5>标签：</h5>
+                        <div class="view">
+
+                                {#                    lalal#}
+                                {% for tag in tags %}
+                                    {% if tag.name == '游戏' %}
+                                        <a href="/productlist/?type=youxi">{{ tag }}</a>
+                                    {% endif %}
+                                    {% if tag.name == '音乐' %}
+                                        <a href="/productlist/?type=yinyue">{{ tag }}</a>
+                                    {% endif %}
+                                    {% if tag.name == '故事' %}
+                                        <a href="/productlist/?type=gushi">{{ tag }}</a>
+                                    {% endif %}
+                                    {% if tag.name == '动画' %}
+                                        <a href="/productlist/?type=donghua">{{ tag }}</a>
+                                    {% endif %}
+                                    {% if tag.name == '艺术' %}
+                                        <a href="/productlist/?type=yishu">{{ tag }}</a>
+                                    {% endif %}
+                                    {% if tag.name == '模拟' %}
+                                        <a href="/productlist/?type=moni">{{ tag }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                        </div>
+{#                        <div class="divider"></div>#}
+                    </div>
+
+
+                </div>
+
+
+            </div>
+            <div class="actions">
+
+                {% if user.is_authenticated %}
+                    <div class="col-lg-2">
+                        <div id="favorite_true">
+                            <img src="{% static 'img/favorite_true.png' %}" onclick="handle_favorite()"/>
+                            <p>收藏：<span>{% count_production_favorite test %}</span></p>
+                        </div>
+                        <div id="favorite_false">
+                            <img src="{% static 'img/favorite_false.png' %}" onclick="handle_favorite()"/>
+                            <p>收藏：<span>{% count_production_favorite test %}</span></p>
+                        </div>
+                        <script>
+                            var count = 0;
+                            {% get_if_favorite test as if_favorite %}
+                            {% if if_favorite %}
+                                document.getElementById("favorite_false").style.display = "none";
+                                count = Number($("#favorite_true > p > span").text());
+                            {% else %}
+                                document.getElementById("favorite_true").style.display = "none";
+                                count = Number($("#favorite_false > p > span").text());
+                            {% endif %}
+                        </script>
+                    </div>
+                {% endif %}
+
+                <div class="col-lg-2">
+                    <div id="like_true">
+                        <img src="{% static 'img/like_true.png' %}" onclick="handle_like()"/>
+                    </div>
+                    <div id="like_false">
+                        <img src="{% static 'img/like_false.png' %}" onclick="handle_like()"/>
+                    </div>
+                    <script>
+                        var countlike = Number({{ test.like }});
+                        {% get_if_like test as if_like %}
+                        {% if if_like %}
+                            document.getElementById("like_false").style.display = "none";
+                        {% else %}
+                            document.getElementById("like_true").style.display = "none";
+                        {% endif %}
+                    </script>
+                    <p id="zancount">点赞：{{ test.like }}</p>
+                </div>
+                <div class="col-lg-2">
+                    <a href="{% url 'remixtree' test.pk %}"><img src="{% static 'img/tree.png' %}" title="查看改编树"/></a>
+                    <p id="gaibiancount">改编:({{ test.get_descendant_count }}个)</p>
+                </div>
+                {% if request.user.username == test.author.username %}
+                <div class="col-lg-2" id="changeinfoclass">
+                    <img data-toggle="modal" data-target="#changeinfobutton" id="changeif"
+                         src="{% static 'img/modify.png' %}"/>
+                    <p id="changeinfo">修改</p>
+                </div>
+                {% endif %}
+                <div class="col-lg-2" id="Revision">
+                    <a href="http://scratch.tuopinpin.com/scratch.html?url={{ url }}&parent={{ test.id }}"><img
+                            src="{% static 'img/remix.png' %}"/></a>
+                    <p>改编作品</p>
+                </div>
+                <div class="col-lg-2" onmouseover="hoverShowDiv()" onmouseout="hoverHiddendiv()">
+                    <img id="phone" src="{% static 'img/phone.png' %}"/>
+                    <p id="gaibiancount">用手机玩</p>
+                    <div id="divHover" style="display: none">{% get_qr_url test as qr_url %}
+                        {% qr_from_text text=qr_url size="3" image_format='png' %}</div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container">
+        <div class="box" id="talk">
+            <div class="box-head">评论</div>
+            <div class="box-content">
+                <section id="related-work" class="padding-top padding-bottom">
+                    {% render_comment_list for test %}
+                    {% if user.is_authenticated %}
+                        <div class="tags" id="tags" tabindex="1">
+                            <span style='cursor:hand' class='tag'><span class="spantext">作品很棒！</span><button class='close' type='button'>×</button></span>
+                            <span style='cursor:hand' class='tag'><span class="spantext">吼吼看，好有趣~~</span><button class='close' type='button'>×</button></span>
+                            <span style='cursor:hand' class='tag'><span class="spantext">顶顶顶</span><button class='close' type='button'>×</button></span>
+                            <input id="form-field-tags" type="text"  placeholder="请输入标签 ..." value="Tag Input Control" name="tags" style="display: none;"/>
+                            <input type="text" placeholder="请输入标签 ...回车键结束" class="tags_enter" autocomplete="off" />
+                        </div>
+                    {% else %}
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        {% render_comment_form for test %}
+
+                    {% else %}
+                        <p>请登陆后评论</p>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+        <div class="box" id="tree">
+            <div class="box-head"><img src="{% static 'img/user.png' %}">创作坊</div>
+            <div class="box-content">
+
+                <h4>
+
+                    <a href="{% url 'productionremix' test.pk %}">查看全部</a>
+                </h4>
+                {% for node in children %}
+                    <p>
+                        <img src="{{ node.image.url }}" style="width:200px; hight:auto;">
+                        <a href="{% url 'productiondetail' node.pk %}">{{ node.name }}</a>
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {# 作品基本信息介绍：作品介绍，作者，提交时间，修改时间 #}
+
+
+<style>
+.tags {
+	background-color: #fff;
+	border: 1px solid #d5d5d5;
+	color: #777;
+	padding: 4px 6px;
+	width: 500px;
+	margin:10px auto;
+}
+.tags:hover {
+	border-color: #f59942;
+	outline: 0 none;
+}
+.tags[class*="span"] {
+	float: none;
+	margin-left: 0;
+}
+.tags input[type="text"], .tags input[type="text"]:focus {
+	border: 0 none;
+	box-shadow: none;
+	display: inline;
+	line-height: 22px;
+	margin: 0;
+	outline: 0 none;
+	padding: 4px 6px;
+}
+.tags .tag {
+	background-color: #91b8d0;
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: normal;
+	margin-bottom: 3px;
+	margin-right: 3px;
+	padding: 4px 22px 5px 9px;
+	position: relative;
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+	transition: all 0.2s ease 0s;
+	vertical-align: baseline;
+	white-space: nowrap;
+}
+.tags .tag .close {
+	bottom: 0;
+	color: #fff;
+	float: none;
+	font-size: 12px;
+	line-height: 20px;
+	opacity: 1;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	text-shadow: none;
+	top: 0;
+	width: 18px;
+}
+.tags .tag .close:hover {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+.close {
+	color: #000;
+	float: right;
+	font-size: 21px;
+	font-weight: bold;
+	line-height: 1;
+	opacity: 0.2;
+	text-shadow: 0 1px 0 #fff;
+}
+.close:hover, .close:focus {
+	color: #000;
+	cursor: pointer;
+	opacity: 0.5;
+	text-decoration: none;
+}
+button.close {
+	background: transparent none repeat scroll 0 0;
+	border: 0 none;
+	cursor: pointer;
+	padding: 0;
+}
+.tags .tag-warning {
+	background-color: #ffb752;
+}
+</style>
+
+
+
+{% endblock %}
+

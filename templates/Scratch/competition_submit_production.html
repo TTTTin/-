@@ -1,0 +1,95 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block css %}
+{% load competition_extra %}
+{% endblock %}
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script>
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            var r = window.location.search.substr(1).match(reg); //匹配目标参数
+            if (r != null) return unescape(r[2]);
+            return null; //返回参数值
+        }
+        function getQueryString(key){
+        var reg = new RegExp("(^|&)"+key+"=([^&]*)(&|$)");
+        var result = window.location.search.substr(1).match(reg);
+        return result?decodeURIComponent(result[2]):null;
+      }
+        function toChineseWords(data){
+            if(data == '' || typeof data == 'undefined') return '请输入十六进制unicode';
+            data = data.split("\\u");
+            var str ='';
+            for(var i=0;i<data.length;i++){
+                str+=String.fromCharCode(parseInt(data[i],16).toString(10));
+            }
+            return str;
+        }
+        function clickButton(productionId) {
+            var competition = getUrlParam("competition");
+            var question = getUrlParam("question");
+            competition = getQueryString("competition");
+            $.ajax({
+                url: "/submit_competition_production?competition=" + competition + "&question=" + question + "&productionid=" + productionId,
+                success: function (result) {
+                    result = eval(result);
+                    if (result.state == "success") {
+                        alert("提交成功！");
+                        window.location.href = "/competitions/" + competition + "/";
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block mainbody %}
+    <br><br>
+    <div class="col-lg-offset-2">
+    选择想要参加竞赛的作品，点击提交作品
+    <br><br>
+    </div>
+    <div id="type-list">
+        {% for i in productions %}
+            {% if forloop.counter0|add:3|divisibleby:3 %}
+                <div class="row list-row">
+            {% endif %}
+
+            {% if forloop.counter0|add:3|divisibleby:3 %}
+                <div class="col-lg-2 col-lg-offset-2 list-boder">
+            {% endif %}
+            {% if forloop.counter0|add:2|divisibleby:3 %}
+                <div class="col-lg-2  col-lg-offset-1 list-boder">
+            {% endif %}
+        {% if forloop.counter0|add:1|divisibleby:3 %}
+            <div class="col-lg-2  col-lg-offset-1 list-boder">
+        {% endif %}
+
+        <div class="img">
+            <a href="/productdetail/{{ i.id }}" title="" class="img">
+                <img src="{{ i.image.url }}" style="height: 200px;width:100%" alt="image not found">
+            </a>
+        </div>
+        <div class="production">
+            作品名称： {{ i.name }}
+        </div>
+        <div class="author">
+            <a href="/userpage/{{ i.author }}" title="">
+                作者： {{ i.author }}
+            </a>
+            <img src="{% static "img/eye.png" %}"/>
+            {{ i.hit }}
+            <img src="{% static "img/like_true.png" %}"/>
+            {{ i.like }}
+            <button class="submit_production btn-success" onclick="clickButton('{{ i.id }}')">提交作品</button>
+        </div>
+        </div>
+        {% if forloop.counter0|add:1|divisibleby:3 %}
+            </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+{% endblock %}
+

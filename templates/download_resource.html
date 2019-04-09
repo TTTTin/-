@@ -1,0 +1,30 @@
+{% extends 'index.html' %}
+{% block content %}
+{% load render_table from django_tables2 %}
+     <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>资源下载</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a >资源下载</a>
+                        </li>
+                        <li class="active">
+                            <strong>资源下载</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+<div class="panel-body col-lg-10 col-lg-offset-1">
+    <section id="level26">
+        <p>
+            ScreenToGif，顾名思义，这款软件就是将屏幕上的内容录制成GIF动画的。打开软件后，在界面的4个选项中，选择“录像机”功能开始屏幕录制功能。进入后，将出现一个透明的框，代表录制的屏幕的范围，我们可以通过拉动软件右下角来控制录制屏幕的范围。点击右下角的红色录制按钮，或者使用键盘上的f7键，可以开始录制视屏。录制后，可以在右下角点击停止按钮或者使用f8停止录制。停止后能够查看录制的内容，点击上部菜单中文件-另存为可以选择并保存动画。
+        </p>
+        <div>
+            <a class="btn btn-primary btn-lg active" href="http://scratch-bucket.oss-cn-hangzhou.aliyuncs.com/ScreenToGif.2.10.Portable.zip">ScreenToGif下载</a>
+        </div>
+    </section>
+</div>
+{% endblock %}

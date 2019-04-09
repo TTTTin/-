@@ -1,0 +1,200 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% load avatar_tags %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+
+{% endblock %}
+
+{% block mainbody %}
+
+    <div class="row" id="search-sort">
+        <form method="get" action="">
+            <div class="col-lg-3 col-lg-offset-2">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for..." name="q" value="{{ q }}">
+                    <input type="hidden" name="type" value="{{ type }}">
+                    <input type="hidden" name="order" value="{{ order }}">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Go!</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <div class="col-lg-5 pull-right">
+            <ul class="nav nav-pills">
+                <li role="presentation" {% if order == "name" %} class="active"{% endif %}>
+                    <a style="cursor: pointer" href="?{% if order != 'name' %}order=name{% endif %}{% if q %}&q={{ q }}{% endif %}{% if type %}&type={{ type }}{% endif %}">按照名称排序</a>
+                </li>
+                <li role="presentation" {% if order == "-update_time" %} class="active"{% endif %}>
+                    <a style="cursor: pointer" href="?{% if order != '-update_time' %}order=-update_time{% endif %}{% if q %}&q={{ q }}{% endif %}{% if type %}&type={{ type }}{% endif %}">按照最新排序</a>
+                </li>
+                <li role="presentation" {% if order == "-hit" %} class="active"{% endif %}>
+                    <a style="cursor: pointer" href="?{% if order != '-hit' %}order=-hit{% endif %}{% if q %}&q={{ q }}{% endif %}{% if type %}&type={{ type }}{% endif %}">按照点击排序</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {#    <div id="list">#}
+
+    <div class="row" id="type-nav">
+        <div class="btn-group col-lg-offset-2" role="group" aria-label="..." id="change-type">
+{#            <a id="quanbu" type="button" class="btn btn-default {% if type == 'quanbu' %}active{% endif %}"#}
+{#                href="?{% if type != 'quanbu' %}"#}
+{#            >全部</a>#}
+            <a id="youxi" type="button" class="btn btn-default {% if type == 'youxi' %}active{% endif %}"
+                href="?{% if type != 'youxi' %}type=youxi{% endif %}{% if q %}&q={{ q }}{% endif %}{% if order %}&order={{ order }}{% endif %}"
+            >游戏</a>
+            <a id="yinyue" type="button" class="btn btn-default {% if type == 'yinyue' %}active{% endif %}"
+                href="?{% if type != 'yinyue' %}type=yinyue{% endif %}{% if q %}&q={{ q }}{% endif %}{% if order %}&order={{ order }}{% endif %}"
+            >音乐</a>
+            <a id="gushi" type="button" class="btn btn-default {% if type == 'gushi' %}active{% endif %}"
+                href="?{% if type != 'gushi' %}type=gushi{% endif %}{% if q %}&q={{ q }}{% endif %}{% if order %}&order={{ order }}{% endif %}"
+            >故事</a>
+            <a id="donghua" type="button" class="btn btn-default {% if type == 'donghua' %}active{% endif %}"
+                href="?{% if type != 'donghua' %}type=donghua{% endif %}{% if q %}&q={{ q }}{% endif %}{% if order %}&order={{ order }}{% endif %}"
+            >动画</a>
+            <a id="yishu" type="button" class="btn btn-default {% if type == 'yishu' %}active{% endif %}"
+               href="?{% if type != 'yishu' %}type=yishu{% endif %}{% if q %}&q={{ q }}{% endif %}{% if order %}&order={{ order }}{% endif %}"
+            >艺术</a>
+            <a id="moni" type="button" class="btn btn-default {% if type == 'moni' %}active{% endif %}"
+                href="?{% if type != 'moni' %}type=moni{% endif %}{% if q %}&q={{ q }}{% endif %}{% if order %}&order={{ order }}{% endif %}"
+            >模拟</a>
+        </div>
+    </div>
+    <div id="type-list">
+        {% for i in test %}
+            {% if forloop.counter0|add:3|divisibleby:3 %}
+                <div class="row list-row">
+            {% endif %}
+
+            {% if forloop.counter0|add:3|divisibleby:3 %}
+                <div class="col-lg-2 col-lg-offset-2 list-boder" style="border: 2px solid #eaeaea; padding: 10px">
+            {% endif %}
+            {% if forloop.counter0|add:2|divisibleby:3 %}
+                <div class="col-lg-2  col-lg-offset-1 list-boder" style="border: 2px solid #eaeaea; padding: 10px">
+            {% endif %}
+            {% if forloop.counter0|add:1|divisibleby:3 %}
+                <div class="col-lg-2  col-lg-offset-1 list-boder" style="border: 2px solid #eaeaea; padding: 10px">
+            {% endif %}
+
+            <div class="img">
+                <a href="/productdetail/{{ i.id }}" title="" class="img">
+                    <img src="{{ i.image.url }}" style="height: 200px;width:100%" alt="image not found">
+                </a>
+    {#            <a href="javascript:void(0);" onclick="getdetail('{{ i.author}}','{{ i.id }}')" title="" class="img">#}
+    {#                <img src="{{ i.image.url }}" style="height: 200px;width:300px" alt="image not found">#}
+    {#            </a>#}
+            </div>
+            <div class="production">
+            作品名称： {{ i.name }}
+            </div>
+            <div class="author">
+                <a href="/userpage/{{ i.author }}" title="">
+    {#                作者： {{ i.author }}#}
+{#                    {% avatar i.author 20 %}&nbsp;#}
+                    {{ i.author.name }}
+                </a>
+                <img src="{% static "img/eye.png" %}"/>
+                {{ i.hit }}
+                <img src="{% static "img/like_true.png" %}"/>
+                {{ i.like }}
+            </div>
+        </div>
+        {% if forloop.counter0|add:1|divisibleby:3 %}
+            </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if not is_all %}
+    <div align="center">
+        <button id="get_more_productions" class="btn btn-circle">查看更多</button>
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block script %}
+    <script src={% static "Scratch/js/productlist.js" %}></script>
+    <script>
+    $(document).ready(function () {
+        var offset = {{ test.count }};
+        $("#get_more_productions").click(function () {
+            $.ajax({
+               url: "/get_more_productions/",
+               type: "GET",
+               data: {
+                   offset: offset
+               },
+               success:function (response) {
+                   console.log(response);
+                   if(response.is_all){
+                       $("#get_more_productions").hide();
+                   }
+                   response = response.result;
+                   offset = offset + response.length;
+                   var div_parent = document.createElement("div");
+                   div_parent.className = "row list-row";
+                   for(var i=0; i<response.length;i++){
+                       var div_a_img = document.createElement("img");
+                       div_a_img.src = response[i].image;
+                       div_a_img.style = "height:200px; width:100%";
+                       div_a_img.alt = "image not found";
+                       var div_a = document.createElement("a");
+                       div_a.href = "/productdetail/" + response[i].id;
+                       div_a.className += 'img';
+                       div_a.append(div_a_img);
+                       var div_img = document.createElement("div");
+                       div_img.className += "img";
+                       div_img.append(div_a);
+                       var div_production = document.createElement("div");
+                       div_production.className += "production";
+                       div_production.innerText = "作品名称：" + response[i].name;
+                       var div_author = document.createElement("div");
+                       div_author.class = "author";
+                       var div_author_a = document.createElement("a");
+                       div_author_a.href = "/userpage/" + response[i].author;
+                       div_author_a.innerText = response[i].author_name + "  ";
+                       var div_author_img_eye = document.createElement("img");
+                       div_author_img_eye.src = "/static/img/eye.png";
+                       var div_author_img_like = document.createElement("img");
+                       div_author_img_like.src = "/static/img/like_true.png";
+                       div_author.append(div_author_a);
+                       div_author.append(div_author_img_eye);
+                       div_author.append(response[i].hit + "  ");
+                       div_author.append(div_author_img_like);
+                       div_author.append(response[i].like);
+{#                       div_author.innerHTML = '{% avatar_url "zdz" %}';#}
+                       var div_child = document.createElement("div");
+                       if(Math.round(i%3) == 0){
+                           div_child.className += "col-lg-2 col-lg-offset-2 list-boder";
+                       }else{
+                           div_child.className += "col-lg-2 col-lg-offset-1 list-boder";
+                       }
+                       div_child.append(div_img);
+                       div_child.append(div_production);
+                       div_child.append(div_author);
+                       div_parent.append(div_child);
+                       if(Math.round(i%3) == 2 || (i+1) == response.length){
+                           $("#type-list").append(div_parent.cloneNode(true));
+                           div_parent.innerHTML = "";
+                       }
+                   }
+                   $('.list-boder').hover(function (event) {
+                        //console.log($(this));
+                        $(this).animate({bottom:"8px"},700);
+                        $(this).addClass("shadow");
+                    },function (event) {
+                         $(this).animate({bottom:"-8px"});
+                         $(this).removeClass("shadow");
+                    });
+               }
+            });
+        });
+    });
+    </script>
+{% endblock %}

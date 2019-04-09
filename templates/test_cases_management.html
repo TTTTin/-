@@ -1,0 +1,102 @@
+{% extends 'index.html' %}
+{% load staticfiles %}
+{% block statics2 %}
+    <link href={% static "css/plugins/iCheck/custom.css" %} rel="stylesheet">
+    <style>
+        .flexpos{
+            width: 50%;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .flexpos a{
+            margin-right: 5%;
+        }
+        li{
+            list-style: none;
+        }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>题目“<span id="problemid">{{ title }}</span>”的测试用例</h2>
+            <ol class="breadcrumb">
+                <li>
+                    题目管理
+                </li>
+                <li>
+                    <a href="/OJ/problem_management/">题目管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>测试用例</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+     <div class="wrapper wrapper-content">
+        <div class="flexpos" >
+            <a class="btn btn-primary"id="tecrechapr" href="/OJ/test_cases_management/{{ id }}/new/"> 添加测试用例</a>
+        </div>
+
+     <div class="ibox-content m-b-sm border-bottom">
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-lg-12">
+                {% load render_table from django_tables2 %}
+                {% render_table table "table/table.html" %}
+            </div>
+        </div>
+        </div>
+
+        {% if is_paginated %}
+        <div class="pagination"  style="margin:auto 25%;font-size: medium;">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="/OJ/test_cases_management/{{ id }}?page={{ page_obj.previous_page_number }}">上一页</a>
+                {% endif %}
+                <span class="page-current">
+                    第{{ page_obj.number }}页，共{{ page_obj.paginator.num_pages }}页
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="/OJ/test_cases_management/{{ id }}?page={{ page_obj.next_page_number }}">下一页</a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block script %}
+    <script src={% static "js/plugins/iCheck/icheck.min.js"%}></script>
+    <script type="text/javascript">
+             if (document.getElementById('getPage')){
+                 document.getElementById('getPage').onclick=function () {
+                     var page=Number($("#pagenum").val());
+                     console.log(page);
+                     var pos=window.location.href.indexOf("?");
+                     var hrf="";
+                     if(pos==-1){
+                         hrf=window.location.href.slice(0);
+                     }else{
+                         hrf =window.location.href.slice(0,pos);
+                     }
+                     var sortpos=window.location.search.indexOf("sort=");
+                     var sortendpos=window.location.search.indexOf("&",sortpos);
+                     console.log(sortpos);
+                     console.log(window.location.search.slice(sortpos+5));
+                     if(sortpos>-1){
+                         if(sortendpos>-1){
+                             window.location.href=hrf+"?page="+page+"&sort="+window.location.search.slice(sortpos+5,sortendpos);
+                         }else {
+                             window.location.href = hrf + "?page=" + page + "&sort=" + window.location.search.slice(sortpos + 5);
+                         }
+                     }else {
+                         window.location.href=hrf+"?page="+page;
+                     }
+
+                 }
+             }
+
+</script>
+
+{% endblock %}

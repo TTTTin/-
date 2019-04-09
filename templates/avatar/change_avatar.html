@@ -1,0 +1,29 @@
+{% load i18n avatar_tags %}
+
+<html>
+    <head>
+        <title>头像更改</title>
+    </head>
+    <body>
+        <p>你现在的头像:</p>
+        {% avatar user %}
+        {% if not avatars %}
+            <p> 你还没有头像,赶快上传一个吧~ </p>
+        {% else %}
+{#            <form method="POST" action="{% url 'avatar_change' %}">#}
+{#                <ul>#}
+{#                    {{ primary_avatar_form.as_ul }}#}
+{#                </ul>#}
+{#                <p>{% csrf_token %}<input type="submit" value="Choose new Default" /></p>#}
+{#            </form>#}
+        {% endif %}
+        <form enctype="multipart/form-data" method="POST" action="{% url 'avatar_add' %}">
+            {% for i in upload_avatar_form %}
+                {{ i }}
+            {% endfor %}
+{#            {{ upload_avatar_form.as_p }}#}
+            <p>{% csrf_token %}<input type="submit" value="上传新头像" /></p>
+        </form>
+    </body>
+</html>
+

@@ -1,0 +1,58 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+{% load staticfiles %}
+<link href={% static "css/bootstrap.min.css" %} rel="stylesheet">
+{% block css %}
+    <link rel="stylesheet" type="text/css" href={% static "css/problem_list.css" %}>
+{% endblock css %}
+{#这里我们需要通过extend base，美化前端#}
+{% block script %}
+    <script src={% static "js/chart.js" %}></script>
+{% endblock script %}
+{% block mainbody %}
+    <div class="container">
+        <div class="base_content">
+            <div  class="problem_div">
+                <div class="filter_div">
+                    <form action="" method="get" class="form form-inline">
+                        {% bootstrap_form filter.form layout='inline' %}
+                        {% bootstrap_button '过滤' %}
+                    </form>
+                    <form  method="get" class="form form-inline">
+                        {% bootstrap_form search_form layout='inline' %}
+                        {% bootstrap_button '搜索' %}
+                    </form>
+                    <div>
+                    {% if request.GET.search %}
+                        {% bootstrap_button '取消搜索' button_type="link"  href="/OJ/problems/" %}
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="table_div">
+                    {% render_table table %}
+                </div>
+            </div>
+            <div class="information_div" height="400" width="600" style="margin:50px">
+                <canvas id="chart">你的浏览器不支持HTML5 canvas</canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var chartData = [[{{ problem_nums }} - {{ ac_nums }},"#428bca","未完成"], [{{ ac_nums }},"#449d44","已完成"]];
+            goChart(chartData);
+            $(".level").each(function (i,dom) {
+                var me = $(dom);
+                var str = me.text();
+                if(str == "简单"){
+                    me.css("color", "#5cb85c");
+                }else if (str == "中等"){
+                    me.css("color", "#f0ad4e");
+                }else if (str == "困难"){
+                    me.css("color", "#d9534f");
+                }
+            })
+        });
+    </script>
+{% endblock mainbody %}

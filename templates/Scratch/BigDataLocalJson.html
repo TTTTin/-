@@ -1,0 +1,72 @@
+{% extends "Scratch/index.html" %}
+{% load render_table from django_tables2 %}
+{% load favorite_extra %}
+{% load staticfiles %}
+{% block css %}
+    <link href={% static "Scratch/css/productlist.css" %} rel='stylesheet' type='text/css'/>
+    <link href={% static "Scratch/css/gallerylist.css" %} rel='stylesheet' type='text/css'/>
+{% endblock %}
+
+{% block mainbody %}
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="width: 600px;height:400px;"></div>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+    <script>
+            $(document).ready(function(){
+                var chart = document.getElementById('container');
+                var chartData = echarts.init(chart);
+
+                chartData.setOption({
+                    title: {
+                        text: '异步数据加载示例localjson'
+                    },
+                    tooltip: {},
+                    legend: {
+                        data:['销量']
+                    },
+                    xAxis: {
+                        data: []
+                    },
+                    yAxis: {},
+                    series: [{
+                        name: '销量',
+                        type: 'bar',
+                        data: []
+                    }]
+                });
+
+                $.get('{% static "BigDataAnalysis/data.json" %}').done(function (data) {
+
+                    console.dir(data);
+                    // 填入数据
+                    chartData.setOption({
+                        xAxis: {
+                            data: data.categories
+                        },
+                        series: [{
+                            name: '销量',
+                            data: data.data
+                        }]
+                    });
+
+                });
+
+                function eConsole(param)
+                {
+                    console.dir(param);
+                }
+
+                chartData.on("click",eConsole);
+            });
+
+        </script>
+   </body>
+{% endblock %}

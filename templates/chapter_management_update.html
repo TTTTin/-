@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+{% block statics2 %}
+    <style>
+         #save{
+            display: block;
+            margin:0 30%;
+             width: 6%;
+        }
+        .flexpos a{
+            margin-bottom: 2%;
+        }
+        #cke_id_introduction{
+            display: block;
+            margin: 2% 5%;
+            width: 90%;
+        }
+        label{
+            display: inline;
+        }
+        #id_short_introduction{
+            display: block;
+            margin:2% 3%;
+            width: 59%;
+{#            margin: 2% 5%;#}
+{#            width: 80%;#}
+        }
+       #id_audio{
+        height: 32px;
+        font-size: 1.4rem;
+        margin-left:4%;
+    }
+    </style>
+{% endblock %}
+{% block nav_bar %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>课程管理</h2>
+            <ol class="breadcrumb">
+                <li>
+                    课程管理
+                </li>
+                <li>
+                    <a href="/t/course_management/">课程管理(可跳转)</a>
+                </li>
+                <li >
+                    <a href="/t/chapter_management/{{ object.lesson.lesson_id }}/?sort=order">第<span >{{ object.lesson.lesson_id }}</span>课的章节管理(可跳转)</a>
+                </li>
+                <li class="active">
+                    <strong>查看章节</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="wrapper wrapper-content">
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            {{ form.media }}
+            {{ form.as_p }}
+        <input id="save" class="btn btn-primary " type="submit" value="保存" />
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+    $("#id_lesson").attr("disabled","disabled")
+    $("#id_chapter_id").attr("disabled","disabled")
+    $("#save").click(function () {
+        $("#id_lesson").attr("disabled",false)
+        $("#id_chapter_id").attr("disabled",false)
+    })
+    </script>
+{% endblock %}

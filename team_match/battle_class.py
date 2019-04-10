@@ -528,7 +528,7 @@ class snake_battle(battle):
         elif self.id1current_to == self.ALGORITHM2:
             self.id1current_to = self.mybfs(self.id1x, self.id1y, self.applex[2], self.appley[2])
         elif self.id1current_to == self.ALGORITHM3:
-            self.id1current_to = self.mybfs(self.id2x, self.id2y, self.applex[0], self.appley[0])
+            self.id1current_to = self.mybfs(self.id1x, self.id1y, self.applex[0], self.appley[0])
         if self.id2current_to == self.ALGORITHM1:
             self.id2current_to = self.mybfs(self.id2x,self.id2y,self.applex[1],self.appley[1])
         elif self.id2current_to == self.ALGORITHM2:
